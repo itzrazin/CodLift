@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button, GlassCard } from './ui/Core';
+import { Button, GlassCard } from '../components/ui/Core';
 import { 
   User, Share2, 
   ExternalLink,
@@ -8,8 +8,8 @@ import {
   Code2, Layout, Database, Terminal, Rocket
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { SEO } from './SEO';
+import { useAuth } from '../components/AuthContext';
+import { SEO } from '../utils/SEO';
 
 const Badge = ({ icon: Icon, title, color }) => (
   <div className="flex flex-col items-center gap-2 group">

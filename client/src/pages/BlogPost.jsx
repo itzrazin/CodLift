@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { SEO } from './SEO';
+import { SEO } from '../utils/SEO';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from './ui/Core';
+import { Button } from '../components/ui/Core';
 
 export const BlogPost = () => {
   const { slug } = useParams();

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { GlassCard, Button } from './ui/Core';
+import { useAuth } from '../components/AuthContext';
+import { GlassCard, Button } from '../components/ui/Core';
 import { Rocket, Code2, Zap, Terminal } from 'lucide-react';
-import { API_URL } from '../config';
+import { API_URL } from '../utils/config';
 
 const levels = [
   { id: 'beginner', title: 'BEGINNER', icon: Rocket, color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/30', desc: 'New to coding? Start from HTML and work your way up.' },

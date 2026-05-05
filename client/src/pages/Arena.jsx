@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button, GlassCard } from './ui/Core';
+import { Button, GlassCard } from '../components/ui/Core';
 import { 
   Gamepad2, Trophy, Clock, Zap, 
   Search, Filter, ChevronRight, Star,

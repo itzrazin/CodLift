@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, GlassCard } from './ui/Core';
+import { Button, GlassCard } from '../components/ui/Core';
 import { 
   ArrowLeft, Play, Send, Lightbulb, 
   ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, 
   Terminal, Globe, Sparkles 
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { XPAnimation } from './ui/XPAnimation';
-import { SEO } from './SEO';
-import { API_URL } from '../config';
+import { useAuth } from '../components/AuthContext';
+import { XPAnimation } from '../components/ui/XPAnimation';
+import { SEO } from '../utils/SEO';
+import { API_URL } from '../utils/config';
 
 export const LessonPage = () => {
   const [lesson, setLesson] = useState(null);
@@ -138,16 +138,30 @@ export const LessonPage = () => {
         
         // Save progress to backend
         // Save progress to localStorage
+        // Save progress to localStorage & Backend
         if (user) {
           updateProgress(10); // Gain 10 XP
           
-          // Store specific lesson completion
+          // Store specific lesson completion in localStorage
           const progress = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
           const exerciseKey = `${level}-${slug}-${exercise.number}`;
           if (!progress.includes(exerciseKey)) {
             progress.push(exerciseKey);
             localStorage.setItem('codlift_progress', JSON.stringify(progress));
           }
+
+          // Sync to Backend (Optional: don't block UI)
+          fetch(`${API_URL}/api/progress`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              user_id: user.id, // 'default_user'
+              lesson_id: lesson.id,
+              exercise_id: exercise.number,
+              code_submitted: code,
+              xp_earned: 10
+            })
+          }).catch(err => console.error('Sync failed:', err));
           
           setXpEarned(10);
           setShowXP(true);

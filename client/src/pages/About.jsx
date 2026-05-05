@@ -1,5 +1,5 @@
 import React from 'react';
-import { SEO } from './SEO';
+import { SEO } from '../utils/SEO';
 import { Rocket, Target, BookOpen, Code2 } from 'lucide-react';
 
 export const About = () => {

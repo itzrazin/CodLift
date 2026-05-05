@@ -1,8 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { SEO } from './SEO';
-import { GlassCard } from './ui/Core';
+import { SEO } from '../utils/SEO';
+import { GlassCard } from '../components/ui/Core';
 
 export const BlogPage = () => {
   const navigate = useNavigate();

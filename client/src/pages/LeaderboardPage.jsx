@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button, GlassCard } from './ui/Core';
+import { Button, GlassCard } from '../components/ui/Core';
 import { 
   Trophy, Medal, Crown, Search, 
   ArrowUpRight, Users, Globe, Filter,

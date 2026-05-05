@@ -1,11 +1,11 @@
 import React from 'react';
-import { Hero } from './Hero';
-import { Features, Marquee } from './Features';
-import { LevelProgression } from './Levels';
-import { Button } from './ui/Core';
+import { Hero } from '../components/Hero';
+import { Features, Marquee } from '../components/Features';
+import { LevelProgression } from '../components/Levels';
+import { Button } from '../components/ui/Core';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { SEO } from './SEO';
+import { SEO } from '../utils/SEO';
 
 const Navbar = () => {
   const navigate = useNavigate();

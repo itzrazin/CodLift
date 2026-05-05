@@ -1,5 +1,5 @@
 import React from 'react';
-import { SEO } from './SEO';
+import { SEO } from '../utils/SEO';
 
 export const TermsOfService = () => {
   const lastUpdated = "May 5, 2026";

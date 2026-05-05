@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Button, GlassCard } from './ui/Core';
+import { Button, GlassCard } from '../components/ui/Core';
 import { 
   BarChart3, Users, BookOpen, DollarSign, 
   Settings, ShieldAlert, Activity, ArrowUpRight,

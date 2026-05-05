@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Button, GlassCard } from './ui/Core';
+import { Button, GlassCard } from '../components/ui/Core';
 import { 
   Home, BookOpen, Gamepad2, User, Settings, 
   Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Loader2 
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { SEO } from './SEO';
-import { API_URL } from '../config';
+import { useAuth } from '../components/AuthContext';
+import { SEO } from '../utils/SEO';
+import { API_URL } from '../utils/config';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
