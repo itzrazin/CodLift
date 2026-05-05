@@ -1,7 +1,9 @@
 {
+  "buildCommand": "cd client && npm run build",
+  "outputDirectory": "client/dist",
   "rewrites": [
     {
-      "source": "/(?!sitemap\\.xml|robots\\.txt|favicon\\.svg|icons\\.svg)(.*)",
+      "source": "/(?!sitemap\\.xml|robots\\.txt|favicon\\.svg|icons\\.svg|_redirects)(.*)",
       "destination": "/index.html"
     }
   ]
