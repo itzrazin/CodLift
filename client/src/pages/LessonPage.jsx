@@ -28,7 +28,7 @@ export const LessonPage = () => {
   
   const navigate = useNavigate();
   const { level, slug, exerciseId = 1 } = useParams();
-  const { user, setUser } = useAuth();
+  const { user, setUser, updateProgress } = useAuth();
 
   useEffect(() => {
     fetchExercise();
@@ -137,31 +137,21 @@ export const LessonPage = () => {
         setMessage(data.feedback || 'Excellent! You mastered this challenge.');
         
         // Save progress to backend
-        if (user && user.id) {
-          const token = localStorage.getItem('token');
-          const progRes = await fetch(`${API_URL}/api/progress`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ 
-              lesson_id: lesson.id,
-              exercise_id: exercise.number,
-              code_submitted: code,
-              xp_earned: 10
-            })
-          });
+        // Save progress to localStorage
+        if (user) {
+          updateProgress(10); // Gain 10 XP
           
-          if (progRes.ok) {
-            const progData = await progRes.json();
-            if (progData.xp_gained > 0) {
-              setXpEarned(progData.xp_gained);
-              setShowXP(true);
-              setTimeout(() => setShowXP(false), 3000);
-              setUser({ ...user, xp_total: progData.total_xp });
-            }
+          // Store specific lesson completion
+          const progress = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+          const exerciseKey = `${level}-${slug}-${exercise.number}`;
+          if (!progress.includes(exerciseKey)) {
+            progress.push(exerciseKey);
+            localStorage.setItem('codlift_progress', JSON.stringify(progress));
           }
+          
+          setXpEarned(10);
+          setShowXP(true);
+          setTimeout(() => setShowXP(false), 3000);
         }
       } else {
         setStatus('error');

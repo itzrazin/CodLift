@@ -77,18 +77,11 @@ export const Dashboard = () => {
 
   React.useEffect(() => {
     if (user) {
-      fetch(`${API_URL}/api/progress/${user.id}`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.progress) setProgress(data.progress);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error(err);
-        setLoading(false);
-      });
+      // Load progress from localStorage
+      const localProgress = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+      // Map to the format the component expects if necessary, or just use the array
+      setProgress(localProgress);
+      setLoading(false);
     }
   }, [user]);
 

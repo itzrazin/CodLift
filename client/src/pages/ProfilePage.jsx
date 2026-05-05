@@ -8,6 +8,7 @@ import {
   Code2, Layout, Database, Terminal, Rocket
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 import { SEO } from './SEO';
 
 const Badge = ({ icon: Icon, title, color }) => (
@@ -46,6 +47,7 @@ const ProjectCard = ({ title, tech, image, date }) => (
 
 export const ProfilePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,7 +73,7 @@ export const ProfilePage = () => {
           <div className="flex-1">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
               <div>
-                <h1 className="text-4xl font-syne font-extrabold mb-2">ByteBandit <span className="text-gray-600 text-xl font-normal ml-2">#0421</span></h1>
+                <h1 className="text-4xl font-syne font-extrabold mb-2">{user?.username} <span className="text-gray-600 text-xl font-normal ml-2">#0001</span></h1>
                 <p className="text-gray-400 max-w-lg italic">"Building the future, one semi-colon at a time. Full-stack enthusiast and CSS wizard in training."</p>
               </div>
               <div className="flex gap-3">
@@ -81,19 +83,18 @@ export const ProfilePage = () => {
                 <Button size="sm">Edit Profile</Button>
               </div>
             </div>
-
             <div className="flex flex-wrap gap-8 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
-                <span className="text-gray-400">Joined <span className="text-white font-bold">April 2024</span></span>
+                <span className="text-gray-400">Joined <span className="text-white font-bold">Today</span></span>
               </div>
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-yellow" />
-                <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">42 Days</span></span>
+                <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">{user?.current_streak || 0} Days</span></span>
               </div>
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-cyan" />
-                <span className="text-gray-400">Total XP <span className="text-cyan font-bold">12,450</span></span>
+                <span className="text-gray-400">Total XP <span className="text-cyan font-bold">{user?.xp_total || 0}</span></span>
               </div>
             </div>
           </div>

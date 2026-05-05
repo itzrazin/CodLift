@@ -27,8 +27,7 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="hidden sm:flex" onClick={() => navigate('/login')}>Login</Button>
-          <Button size="sm" onClick={() => navigate('/signup')}>Get Started</Button>
+          <Button size="sm" onClick={() => navigate('/dashboard')}>Start Learning</Button>
         </div>
       </div>
     </nav>
@@ -49,8 +48,8 @@ const CTA = () => {
             No credit card required. No setup needed. Just pure, gamified learning
             that helps you ship real software.
           </p>
-          <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate('/signup')}>
-            Get Started Free <ArrowRight className="w-6 h-6" />
+          <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate('/dashboard')}>
+            Start Learning Free <ArrowRight className="w-6 h-6" />
           </Button>
         </div>
       </div>
