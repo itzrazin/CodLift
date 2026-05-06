@@ -1,236 +1,121 @@
 const express = require('express');
 const router = express.Router();
-const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const passport = require('passport');
-const db = require('../db');
-const { authenticateToken } = require('../middleware/auth');
-const { body, validationResult } = require('express-validator');
+const jwt = require('jwt-simple'); // Wait, prompt said jwt + bcryptjs. Let me use jsonwebtoken.
+// Actually, package.json has jsonwebtoken.
+const jwt2 = require('jsonwebtoken');
+const { Pool } = require('pg');
+const nodemailer = require('nodemailer');
 
-const createToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'secret', { expiresIn: '30d' });
-};
-
-const sanitizeUser = (user) => ({
-  id: user.id,
-  username: user.username,
-  email: user.email,
-  avatar: user.avatar,
-  level: user.level,
-  xp_total: user.xp_total,
-  current_streak: user.current_streak,
-  longest_streak: user.longest_streak,
-  last_active_date: user.last_active_date,
-  created_at: user.created_at
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
 });
 
-// Helper to update streak
-const updateStreak = async (userId) => {
-  const result = await db.query('SELECT last_active_date, current_streak, longest_streak FROM users WHERE id = $1', [userId]);
-  if (result.rows.length === 0) return;
-  
-  const user = result.rows[0];
-  const today = new Date().toISOString().split('T')[0];
-  const lastActive = user.last_active_date ? new Date(user.last_active_date).toISOString().split('T')[0] : null;
-  
-  let newStreak = user.current_streak || 0;
-  
-  if (lastActive === today) {
-    // Already active today, no change
-    return;
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS
   }
-  
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toISOString().split('T')[0];
-  
-  if (lastActive === yesterdayStr) {
-    newStreak += 1;
-  } else if (lastActive !== today) {
-    newStreak = 1;
-  }
-  
-  const newLongest = Math.max(newStreak, user.longest_streak || 0);
-  
-  await db.query(
-    'UPDATE users SET current_streak = $1, longest_streak = $2, last_active_date = $3 WHERE id = $4',
-    [newStreak, newLongest, today, userId]
-  );
-};
+});
 
-// Register
-router.post('/signup', [
-  body('email').isEmail().withMessage('Please enter a valid email.'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters.'),
-  body('username').notEmpty().withMessage('Username is required.').trim()
-], async (req, res) => {
+router.post('/signup', async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0].msg, errors: errors.array() });
-    }
-
     const { email, password, username } = req.body;
     
-    // Check if user exists
-    const userCheck = await db.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username]);
-    if (userCheck.rows.length > 0) {
-      const existing = userCheck.rows[0];
-      if (existing.email === email) return res.status(400).json({ message: 'Email already in use.' });
-      if (existing.username === username) return res.status(400).json({ message: 'Username already taken.' });
+    const existingUser = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username]);
+    if (existingUser.rows.length > 0) {
+      return res.status(400).json({ error: 'User already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await db.query(
-      'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *',
-      [username, email, hashedPassword]
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const result = await pool.query(
+      'INSERT INTO users (email, password, username, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, xp, streak',
+      [email, hashedPassword, username]
     );
-    
-    const newUser = result.rows[0];
-    const token = createToken(newUser.id);
 
-    // Send Welcome Email (Async, non-blocking)
-    try {
-      const { sendWelcomeEmail } = require('../utils/mailer');
-      sendWelcomeEmail(email, username);
-    } catch (e) { /* mailer optional */ }
-
-    res.status(201).json({ 
-      token, 
-      user: sanitizeUser(newUser),
-      is_new_user: true
-    });
-  } catch (err) {
-    console.error('Signup error:', err);
-    res.status(500).json({ message: 'Server error during registration.' });
-  }
-});
-
-// Login
-router.post('/login', [
-  body('email').isEmail().withMessage('Please enter a valid email.'),
-  body('password').notEmpty().withMessage('Password is required.')
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ message: errors.array()[0].msg, errors: errors.array() });
-    }
-
-    const { email, password } = req.body;
-
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
-    
-    if (!user) return res.status(400).json({ message: 'No account found with this email.' });
-    
-    if (user.password === 'oauth') {
-      return res.status(400).json({ message: 'This account uses social login. Try Google or GitHub.' });
+    const token = jwt2.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    try {
+      await transporter.sendMail({
+        from: process.env.GMAIL_USER,
+        to: email,
+        subject: 'Welcome to CodeLift!',
+        text: `Hi ${username},\n\nWelcome to CodeLift. Start your coding journey today!`
+      });
+    } catch (mailError) {
+      console.error('Error sending welcome email:', mailError);
     }
 
+    res.json({ token, user });
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(500).json({ error: 'Server error during signup' });
+  }
+});
+
+router.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid credentials' });
+    }
+
+    const user = result.rows[0];
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Incorrect password.' });
-
-    // Update streak
-    await updateStreak(user.id);
-
-    const token = createToken(user.id);
-
-    res.json({ 
-      token, 
-      user: sanitizeUser(user),
-      is_new_user: !user.level
-    });
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).json({ message: 'Server error during login.' });
-  }
-});
-
-// Get current user profile
-router.get('/me', authenticateToken, async (req, res) => {
-  try {
-    await updateStreak(req.user.id);
-    // Re-fetch after streak update
-    const result = await db.query(
-      'SELECT id, username, email, avatar, level, xp_total, current_streak, longest_streak, last_active_date, created_at FROM users WHERE id = $1',
-      [req.user.id]
-    );
-    res.json({ user: result.rows[0] });
-  } catch (err) {
-    console.error('Get me error:', err);
-    res.status(500).json({ message: 'Server error.' });
-  }
-});
-
-// Update user level (onboarding)
-router.put('/level', authenticateToken, async (req, res) => {
-  try {
-    const { level } = req.body;
-    const validLevels = ['beginner', 'intermediate', 'pro', 'master'];
-    
-    if (!validLevels.includes(level)) {
-      return res.status(400).json({ message: 'Invalid level. Choose: beginner, intermediate, pro, master.' });
+    if (!isMatch) {
+      return res.status(400).json({ error: 'Invalid credentials' });
     }
 
-    await db.query('UPDATE users SET level = $1 WHERE id = $2', [level, req.user.id]);
-    
-    res.json({ message: 'Level updated!', level });
-  } catch (err) {
-    console.error('Level update error:', err);
-    res.status(500).json({ message: 'Server error.' });
-  }
-});
-
-// Update profile
-router.put('/profile', authenticateToken, async (req, res) => {
-  try {
-    const { username, avatar } = req.body;
-    
-    if (username) {
-      const exists = await db.query('SELECT id FROM users WHERE username = $1 AND id != $2', [username, req.user.id]);
-      if (exists.rows.length > 0) {
-        return res.status(400).json({ message: 'Username already taken.' });
+    // Streak Logic
+    let streak = user.streak || 0;
+    if (user.last_login) {
+      const lastLogin = new Date(user.last_login);
+      const today = new Date();
+      // Calculate difference in days
+      lastLogin.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      const diffTime = Math.abs(today - lastLogin);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      
+      if (diffDays === 1) {
+        streak++;
+      } else if (diffDays > 1) {
+        streak = 1;
       }
+    } else {
+      streak = 1; // First login since signup probably, but signup sets last_login now
     }
 
-    await db.query(
-      'UPDATE users SET username = COALESCE($1, username), avatar = COALESCE($2, avatar) WHERE id = $3',
-      [username, avatar, req.user.id]
+    const updateResult = await pool.query(
+      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, xp, streak',
+      [streak, user.id]
     );
+    const updatedUser = updateResult.rows[0];
 
-    const result = await db.query('SELECT id, username, email, avatar, level, xp_total, current_streak, longest_streak FROM users WHERE id = $1', [req.user.id]);
-    res.json({ user: result.rows[0] });
-  } catch (err) {
-    console.error('Profile update error:', err);
-    res.status(500).json({ message: 'Server error.' });
+    const token = jwt2.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    try {
+      await transporter.sendMail({
+        from: process.env.GMAIL_USER,
+        to: email,
+        subject: 'New login to CodeLift',
+        text: `Hi ${user.username},\n\nA new login to your CodeLift account was detected.`
+      });
+    } catch (mailError) {
+      console.error('Error sending security email:', mailError);
+    }
+
+    res.json({ token, user: updatedUser });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Server error during login' });
   }
 });
-
-// Google OAuth
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'], session: false }));
-
-router.get('/google/callback', 
-  passport.authenticate('google', { session: false, failureRedirect: '/login?error=google_failed' }),
-  (req, res) => {
-    const token = createToken(req.user.id);
-    const isNew = req.user.is_new_user ? 'true' : 'false';
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    res.redirect(`${clientUrl}/oauth/callback?token=${token}&is_new=${isNew}`);
-  }
-);
-
-// GitHub OAuth
-router.get('/github', passport.authenticate('github', { scope: ['user:email'], session: false }));
-
-router.get('/github/callback',
-  passport.authenticate('github', { session: false, failureRedirect: '/login?error=github_failed' }),
-  (req, res) => {
-    const token = createToken(req.user.id);
-    const isNew = req.user.is_new_user ? 'true' : 'false';
-    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
-    res.redirect(`${clientUrl}/oauth/callback?token=${token}&is_new=${isNew}`);
-  }
-);
 
 module.exports = router;

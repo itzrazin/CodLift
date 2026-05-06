@@ -80,10 +80,8 @@ app.get('/sitemap.xml', (req, res) => {
 
   // Dynamic lesson pages from curriculum
   const lessonPages = [];
-  curriculum.forEach(lesson => {
-    lesson.exercises.forEach(ex => {
-      lessonPages.push(`/learn/${lesson.level}/${lesson.id}/${ex.number || 1}`);
-    });
+  curriculum.forEach((lesson, index) => {
+    lessonPages.push(`/lessons/${index + 1}`);
   });
 
   const allUrls = [...staticPages, ...lessonPages];
@@ -125,7 +123,11 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 CodLift API running on port ${PORT}`);
-  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 CodLift API running on port ${PORT}`);
+    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+  });
+}
+
+module.exports = app;
