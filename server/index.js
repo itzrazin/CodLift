@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const helmet = require('helmet');
 
 // Load .env from parent directory
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
@@ -11,6 +12,12 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Security HTTP headers
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
 
 // CORS configuration
 const allowedOrigins = [
@@ -107,7 +114,15 @@ app.use('/api/leaderboard', require('./routes/leaderboard'));
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
-  res.status(500).json({ message: 'Internal server error' });
+  const status = err.status || err.statusCode || 500;
+  const message = process.env.NODE_ENV === 'production' 
+    ? 'Internal server error' 
+    : err.message || 'Internal server error';
+  
+  res.status(status).json({ 
+    message, 
+    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack 
+  });
 });
 
 app.listen(PORT, () => {

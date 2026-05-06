@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { authenticateToken } = require('../middleware/auth');
+const { body, validationResult } = require('express-validator');
 
 // Get all progress for a user
 router.get('/:userId', authenticateToken, async (req, res) => {
@@ -24,8 +25,18 @@ router.get('/:userId', authenticateToken, async (req, res) => {
 });
 
 // Save exercise completion
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', [
+  authenticateToken,
+  body('lesson_id').notEmpty().withMessage('Lesson ID is required'),
+  body('exercise_id').notEmpty().withMessage('Exercise ID is required'),
+  body('code_submitted').optional().isString()
+], async (req, res) => {
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: errors.array()[0].msg, errors: errors.array() });
+    }
+
     const { lesson_id, exercise_id, code_submitted, xp_earned = 10 } = req.body;
     const userId = req.user.id;
 

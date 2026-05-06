@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './components/AuthContext';
 import { Footer } from './components/Footer';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load page components
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
@@ -103,11 +104,13 @@ function AppRoutes() {
 function App() {
   return (
     <HelmetProvider>
-      <Router>
-        <AuthProvider>
-          <AppRoutes />
-        </AuthProvider>
-      </Router>
+      <ErrorBoundary>
+        <Router>
+          <AuthProvider>
+            <AppRoutes />
+          </AuthProvider>
+        </Router>
+      </ErrorBoundary>
     </HelmetProvider>
   );
 }

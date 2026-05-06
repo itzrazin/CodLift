@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
@@ -34,6 +34,10 @@ export const LessonPage = () => {
   useEffect(() => {
     fetchExercise();
   }, [level, slug, exerciseId]);
+
+  const handleCodeChange = useCallback((val) => {
+    setCode(val || '');
+  }, []);
 
   const fetchExercise = async () => {
     // First try client-side curriculum (fast, no network)
@@ -395,7 +399,7 @@ export const LessonPage = () => {
               language={editorLang}
               theme="vs-dark"
               value={code}
-              onChange={(val) => setCode(val || '')}
+              onChange={handleCodeChange}
               options={{
                 fontSize: 14,
                 minimap: { enabled: false },
