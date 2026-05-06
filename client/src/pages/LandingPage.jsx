@@ -4,7 +4,7 @@ import { Features, Marquee } from '../components/Features';
 import { LevelProgression } from '../components/Levels';
 import { Button } from '../components/ui/Core';
 import { ArrowRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { SEO } from '../utils/SEO';
 
 const Navbar = () => {
@@ -21,13 +21,14 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
           <a href="#curriculum" className="hover:text-white transition-colors">Curriculum</a>
-          <button onClick={() => navigate('/arena')} className="hover:text-white transition-colors">Arena</button>
-          <a href="#community" className="hover:text-white transition-colors">Community</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Free Forever</a>
+          <Link to="/arena" className="hover:text-white transition-colors">Arena</Link>
+          <Link to="/leaderboard" className="hover:text-white transition-colors">Leaderboard</Link>
+          <Link to="/about" className="hover:text-white transition-colors">About</Link>
         </div>
 
         <div className="flex items-center gap-4">
-          <Button size="sm" onClick={() => navigate('/dashboard')}>Start Learning</Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="hidden sm:flex">Log In</Button>
+          <Button size="sm" onClick={() => navigate('/signup')}>Start Free</Button>
         </div>
       </div>
     </nav>
@@ -48,8 +49,8 @@ const CTA = () => {
             No credit card required. No setup needed. Just pure, gamified learning
             that helps you ship real software.
           </p>
-          <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate('/dashboard')}>
-            Start Learning Free <ArrowRight className="w-6 h-6" />
+          <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate('/signup')}>
+            Get Started Free <ArrowRight className="w-6 h-6" />
           </Button>
         </div>
       </div>
@@ -116,12 +117,12 @@ const Footer = () => (
       </div>
 
       <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5 text-gray-600 text-sm gap-4">
-        <p>© 2024 CodLift Platform. All rights reserved.</p>
-        <div className="flex gap-8">
-          <a href="#" className="hover:text-white">Privacy Policy</a>
-          <a href="#" className="hover:text-white">Terms of Service</a>
-          <a href="#" className="hover:text-white">Cookie Policy</a>
-        </div>
+                <p>© 2025 CodLift Platform. All rights reserved.</p>
+          <div className="flex gap-8">
+            <Link to="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
+            <Link to="/terms-of-service" className="hover:text-white">Terms of Service</Link>
+            <Link to="/about" className="hover:text-white">About</Link>
+          </div>
       </div>
     </div>
   </footer>

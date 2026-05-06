@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
-  Home, BookOpen, Gamepad2, User, Settings, 
-  Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Loader2 
+  Home, BookOpen, Gamepad2, User, 
+  Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Trophy
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { SEO } from '../utils/SEO';
-import { API_URL } from '../utils/config';
+import { clientCurriculum } from '../data/curriculum';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
@@ -17,30 +17,12 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
       active ? 'bg-cyan text-black shadow-[0_0_15px_rgba(0,245,212,0.3)]' : 'text-gray-400 hover:text-white hover:bg-white/5'
     }`}
   >
-    <Icon className="w-5 h-5" />
+    <Icon className="w-5 h-5 shrink-0" />
     <span className="font-medium">{label}</span>
   </button>
 );
 
-const StatsBar = ({ user }) => (
-  <div className="flex items-center gap-6">
-    <div className="flex items-center gap-2 glass px-4 py-2 rounded-full border-yellow/20">
-      <Flame className="w-5 h-5 text-yellow" />
-      <span className="font-bold">{user?.current_streak || 0}</span>
-    </div>
-    <div className="flex items-center gap-2 glass px-4 py-2 rounded-full border-cyan/20">
-      <Zap className="w-5 h-5 text-cyan" />
-      <span className="font-bold">{user?.xp_total || 0} XP</span>
-    </div>
-    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan to-blue-500 p-[2px]">
-      <div className="w-full h-full rounded-full bg-navy flex items-center justify-center">
-        <User className="w-5 h-5" />
-      </div>
-    </div>
-  </div>
-);
-
-const SkillNode = ({ title, status, x, y, delay, slug }) => {
+const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
   const navigate = useNavigate();
   return (
     <motion.div
@@ -49,20 +31,20 @@ const SkillNode = ({ title, status, x, y, delay, slug }) => {
       transition={{ delay, type: 'spring' }}
       style={{ left: x, top: y }}
       className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
-      onClick={() => status !== 'locked' && slug && navigate(`/learn/beginner/${slug}`)}
+      onClick={() => status !== 'locked' && slug && navigate(`/learn/${nodeLevel}/${slug}/1`)}
     >
       <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${
         status === 'completed' ? 'bg-cyan shadow-[0_0_20px_rgba(0,245,212,0.4)]' :
-        status === 'current' ? 'bg-navy border-2 border-cyan animate-pulse shadow-[0_0_15px_rgba(0,245,212,0.2)]' :
+        status === 'current'   ? 'bg-navy border-2 border-cyan animate-pulse shadow-[0_0_15px_rgba(0,245,212,0.2)]' :
         'bg-gray-800 border-2 border-white/10 opacity-50 grayscale'
       }`}>
         {status === 'completed' ? <CheckCircle2 className="w-8 h-8 text-black" /> : 
-         status === 'locked' ? <Lock className="w-6 h-6 text-gray-500" /> :
+         status === 'locked'    ? <Lock className="w-6 h-6 text-gray-500" /> :
          <Star className="w-8 h-8 text-cyan" />}
       </div>
-      <div className="absolute top-20 left-1/2 -translate-x-1/2 whitespace-nowrap text-center">
-        <p className={`font-bold text-sm ${status === 'locked' ? 'text-gray-600' : 'text-white'}`}>{title}</p>
-        {status === 'current' && <p className="text-[10px] text-cyan font-bold tracking-widest">START HERE</p>}
+      <div className="absolute top-[72px] left-1/2 -translate-x-1/2 whitespace-nowrap text-center">
+        <p className={`font-bold text-xs ${status === 'locked' ? 'text-gray-600' : 'text-white'}`}>{title}</p>
+        {status === 'current' && <p className="text-[9px] text-cyan font-black tracking-widest mt-0.5">START HERE</p>}
       </div>
     </motion.div>
   );
@@ -71,153 +53,184 @@ const SkillNode = ({ title, status, x, y, delay, slug }) => {
 export const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState('home');
   const [progress, setProgress] = useState([]);
-  const [loading, setLoading] = useState(true);
 
-  React.useEffect(() => {
-    if (user) {
-      // Load progress from localStorage
-      const localProgress = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
-      // Map to the format the component expects if necessary, or just use the array
-      setProgress(localProgress);
-      setLoading(false);
-    }
-  }, [user]);
+  useEffect(() => {
+    const local = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+    setProgress(local);
+  }, []);
 
   if (!user) return null;
 
-  const stats = [
-    { label: "Total XP", value: (user.xp_total || 0).toLocaleString(), icon: Zap, color: "text-cyan" },
-    { label: "Day Streak", value: user.current_streak || 0, icon: Flame, color: "text-yellow" },
-    { label: "Rank", value: "#142", icon: Star, color: "text-purple-400" },
-  ];
+  // Build dynamic skill tree from curriculum (beginner only on main dashboard)
+  const beginnerLessons = clientCurriculum.filter(l => l.level === 'beginner');
+  const completedLessons = new Set(
+    progress.map(key => key.split('-').slice(1, -1).join('-'))
+  );
 
-  const skillTree = [
-    { title: "HTML Basics", status: "completed", x: "50%", y: "100px", delay: 0.1, slug: "html-basics" },
-    { title: "CSS Styling", status: "completed", x: "30%", y: "250px", delay: 0.2, slug: "css-styling" },
-    { title: "Flexbox", status: "completed", x: "70%", y: "250px", delay: 0.3, slug: "flexbox" },
-    { title: "JavaScript Fundamentals", status: "current", x: "50%", y: "400px", delay: 0.4, slug: "js-fundamentals" },
-    { title: "DOM Manipulation", status: "locked", x: "30%", y: "550px", delay: 0.5, slug: "dom-manipulation" },
-    { title: "API Fetching", status: "locked", x: "70%", y: "550px", delay: 0.6, slug: "api-fetching" },
-    { title: "React Components", status: "locked", x: "50%", y: "700px", delay: 0.7, slug: "react-components" },
+  const buildSkillTree = () => {
+    const positions = [
+      { x: '50%', y: '80px' },
+      { x: '30%', y: '220px' },
+      { x: '70%', y: '220px' },
+      { x: '50%', y: '360px' },
+      { x: '25%', y: '500px' },
+      { x: '75%', y: '500px' },
+      { x: '50%', y: '640px' },
+    ];
+    let foundCurrent = false;
+    return beginnerLessons.slice(0, 7).map((lesson, i) => {
+      const isCompleted = completedLessons.has(lesson.id);
+      let status = 'locked';
+      if (isCompleted) status = 'completed';
+      else if (!foundCurrent) { status = 'current'; foundCurrent = true; }
+      return {
+        title: lesson.title,
+        status,
+        slug: lesson.id,
+        level: lesson.level,
+        ...(positions[i] || { x: '50%', y: `${80 + i * 150}px` }),
+        delay: i * 0.1
+      };
+    });
+  };
+  const skillTree = buildSkillTree();
+  const currentLesson = skillTree.find(n => n.status === 'current') || skillTree[0];
+  const completedCount = skillTree.filter(n => n.status === 'completed').length;
+
+  const stats = [
+    { label: 'Total XP', value: (user.xp_total || 0).toLocaleString(), icon: Zap, color: 'text-cyan' },
+    { label: 'Day Streak', value: user.current_streak || 0, icon: Flame, color: 'text-yellow' },
+    { label: 'Lessons Done', value: completedCount, icon: Trophy, color: 'text-purple-400' },
   ];
 
   return (
-    <div className="min-h-screen bg-background flex text-white font-sans overflow-hidden">
-      <SEO 
-        title="Dashboard | CodLift"
-        description="Track your coding progress, view achievements, and continue your interactive lessons on CodLift."
-        url="/dashboard"
-      />
+    <div className="min-h-screen bg-background flex text-white font-sans">
+      <SEO title="Dashboard | CodLift" description="Track your coding progress, XP, and continue learning." url="/dashboard" />
+
       {/* Sidebar */}
-      <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full">
-        <div className="flex items-center gap-2 mb-12">
-          <div className="w-8 h-8 bg-cyan rounded-lg flex items-center justify-center">
-            <div className="w-4 h-4 bg-navy rounded-sm rotate-45"></div>
+      <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full z-20 bg-navy/70 backdrop-blur-md">
+        <Link to="/" className="flex items-center gap-2 mb-10">
+          <div className="w-8 h-8 bg-cyan rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,245,212,0.3)]">
+            <div className="w-4 h-4 bg-navy rounded-sm rotate-45" />
           </div>
           <span className="text-xl font-syne font-extrabold tracking-tighter">CODELIFT</span>
-        </div>
+        </Link>
 
-        <nav className="flex-1 space-y-2">
-          <SidebarItem icon={Home} label="Dashboard" active={activeTab === 'home'} onClick={() => navigate('/dashboard')} />
-          <SidebarItem icon={BookOpen} label="Curriculum" active={activeTab === 'curriculum'} onClick={() => setActiveTab('curriculum')} />
-          <SidebarItem icon={Gamepad2} label="Arena" active={activeTab === 'arena'} onClick={() => navigate('/arena')} />
-          <SidebarItem icon={User} label="Profile" active={activeTab === 'profile'} onClick={() => navigate('/profile')} />
+        <nav className="flex-1 space-y-1.5">
+          <SidebarItem icon={Home}     label="Dashboard"  active onClick={() => navigate('/dashboard')} />
+          <SidebarItem icon={BookOpen} label="Curriculum" onClick={() => navigate('/dashboard')} />
+          <SidebarItem icon={Gamepad2} label="Arena"      onClick={() => navigate('/arena')} />
+          <SidebarItem icon={Trophy}   label="Leaderboard" onClick={() => navigate('/leaderboard')} />
+          <SidebarItem icon={User}     label="Profile"    onClick={() => navigate('/profile')} />
         </nav>
 
-        <div className="mt-auto">
-          <SidebarItem icon={Settings} label="Settings" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
+        <div className="mt-auto space-y-1">
+          <div className="px-4 py-3 rounded-xl bg-cyan/10 border border-cyan/20 mb-3">
+            <p className="text-xs text-gray-400">Signed in as</p>
+            <p className="font-bold text-sm truncate">{user.username}</p>
+          </div>
           <button 
-            onClick={logout}
-            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-400/5 mt-2 transition-all"
+            onClick={() => { logout(); navigate('/'); }}
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-400/5 transition-all text-sm"
           >
-            <User className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <User className="w-4 h-4" />
+            <span className="font-medium">Log Out</span>
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 p-10">
-        <header className="flex justify-between items-center mb-12">
+      <main className="flex-1 ml-64 p-8 lg:p-10 overflow-y-auto">
+        {/* Header */}
+        <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
           <div>
-            <h1 className="text-4xl font-syne font-extrabold tracking-tight">Welcome back, <span className="text-gradient-cyan">{user.username}</span>!</h1>
-            <p className="text-gray-400">Ready to conquer your next coding challenge?</p>
+            <h1 className="text-3xl font-syne font-extrabold tracking-tight">
+              Welcome back, <span className="text-gradient-cyan">{user.username}</span>!
+            </h1>
+            <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>
           </div>
-          <StatsBar user={user} />
-        </header>
-
-        <div className="relative">
-          {/* Current Lesson Promo */}
-          <div className="relative mb-12">
-          {loading ? (
-            <div className="animate-pulse bg-white/5 h-64 rounded-3xl border border-white/10"></div>
-          ) : (
-            <GlassCard className="p-8 flex items-center justify-between border-cyan/30 bg-gradient-to-r from-cyan/10 to-transparent">
-              <div className="flex items-center gap-6">
-                <div className="w-20 h-20 rounded-2xl bg-cyan/20 flex items-center justify-center border border-cyan/30">
-                  <BookOpen className="w-10 h-10 text-cyan" />
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold mb-2">JavaScript Fundamentals</h2>
-                  <p className="text-gray-400">Mastering Functions • Exercise 1/5</p>
-                </div>
+          <div className="flex items-center gap-3">
+            {stats.map(s => (
+              <div key={s.label} className="flex items-center gap-1.5 glass px-3 py-2 rounded-full">
+                <s.icon className={`w-4 h-4 ${s.color}`} />
+                <span className="font-bold text-sm">{s.value}</span>
               </div>
-              <Button size="lg" className="w-48" onClick={() => navigate('/learn/js-fundamentals')}>
-                Continue <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
-            </GlassCard>
-          )}
-          </div>
-
-          {/* Skill Tree Background */}
-          <div className="glass rounded-[3rem] p-10 min-h-[900px] relative overflow-hidden bg-navy/40">
-            {/* SVG Lines */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
-              <path d="M 50% 100 L 30% 250" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 50% 100 L 70% 250" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 30% 250 L 50% 400" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 70% 250 L 50% 400" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 50% 400 L 30% 550" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 50% 400 L 70% 550" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 30% 550 L 50% 700" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-              <path d="M 70% 550 L 50% 700" stroke="white" strokeWidth="2" strokeDasharray="5,5" />
-            </svg>
-
-            {skillTree.map((node, i) => (
-              <SkillNode key={i} {...node} />
             ))}
           </div>
+        </header>
 
-          {/* Right Sidebar - Daily Quest */}
-          <div className="absolute top-0 -right-4 w-72 h-fit space-y-6 hidden xl:block">
-            <GlassCard className="p-6 border-cyan/20">
-              <h4 className="font-bold mb-4 flex items-center gap-2">
-                <Star className="w-5 h-5 text-cyan" />
-                Daily Quests
-              </h4>
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-cyan"></div>
-                  <p className="text-sm text-gray-400">Complete 1 lesson</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-2 h-2 rounded-full bg-gray-700"></div>
-                  <p className="text-sm text-gray-600">Solve 1 challenge</p>
-                </div>
+        {/* Continue Learning Card */}
+        {currentLesson && (
+          <GlassCard className="mb-8 p-6 flex items-center justify-between border-cyan/30 bg-gradient-to-r from-cyan/10 to-transparent">
+            <div className="flex items-center gap-5">
+              <div className="w-16 h-16 rounded-2xl bg-cyan/20 flex items-center justify-center border border-cyan/30">
+                <BookOpen className="w-8 h-8 text-cyan" />
               </div>
-            </GlassCard>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Continue Learning</p>
+                <h2 className="text-lg font-bold">{currentLesson.title}</h2>
+                <p className="text-gray-400 text-sm">Beginner Track • {completedCount}/{beginnerLessons.length} complete</p>
+              </div>
+            </div>
+            <Button size="lg" className="shrink-0" onClick={() => navigate(`/learn/${currentLesson.level}/${currentLesson.slug}/1`)}>
+              Continue <ChevronRight className="w-5 h-5 ml-1" />
+            </Button>
+          </GlassCard>
+        )}
 
-            <GlassCard className="p-6 border-yellow/20">
-              <h4 className="font-bold mb-2">Pro Track</h4>
-              <p className="text-xs text-gray-500 mb-4">Master React & Node.js</p>
-              <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
-                <div className="bg-yellow w-1/3 h-full rounded-full shadow-[0_0_10px_rgba(255,214,10,0.5)]"></div>
-              </div>
-              <p className="text-[10px] mt-2 text-right text-yellow font-bold">12/36 LESSONS</p>
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {stats.map(s => (
+            <GlassCard key={s.label} className="p-5 text-center border-white/5">
+              <s.icon className={`w-8 h-8 mx-auto mb-2 ${s.color}`} />
+              <p className="text-2xl font-black">{s.value}</p>
+              <p className="text-xs text-gray-500 uppercase tracking-widest font-bold">{s.label}</p>
             </GlassCard>
+          ))}
+        </div>
+
+        {/* Skill Tree */}
+        <div className="glass rounded-[2rem] p-8 min-h-[780px] relative overflow-hidden bg-navy/40">
+          <div className="flex items-center gap-2 mb-6">
+            <Star className="w-5 h-5 text-cyan" />
+            <h3 className="font-syne font-extrabold text-lg">Beginner Skill Tree</h3>
+            <span className="text-xs text-gray-500 ml-auto">{completedCount}/{beginnerLessons.length} lessons</span>
           </div>
+
+          {/* Connector lines */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-15">
+            <path d="M 50% 80 L 30% 220"  stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 50% 80 L 70% 220"  stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 30% 220 L 50% 360" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 70% 220 L 50% 360" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 50% 360 L 25% 500" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 50% 360 L 75% 500" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 25% 500 L 50% 640" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            <path d="M 75% 500 L 50% 640" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+          </svg>
+
+          {skillTree.map((node, i) => <SkillNode key={i} {...node} />)}
+        </div>
+
+        {/* Pro Track Teaser */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <GlassCard className="p-6 border-blue-500/20 bg-blue-500/5">
+            <p className="text-xs text-blue-400 font-black uppercase tracking-widest mb-2">🔵 Pro Track</p>
+            <h4 className="font-bold mb-1">React, Node.js & APIs</h4>
+            <p className="text-xs text-gray-500 mb-4">Complete Beginner track to unlock</p>
+            <div className="w-full bg-white/5 h-1.5 rounded-full">
+              <div className="bg-blue-500 w-0 h-full rounded-full" />
+            </div>
+          </GlassCard>
+          <GlassCard className="p-6 border-red-500/20 bg-red-500/5">
+            <p className="text-xs text-red-400 font-black uppercase tracking-widest mb-2">🔴 Master Track</p>
+            <h4 className="font-bold mb-1">Full Stack, DSA & System Design</h4>
+            <p className="text-xs text-gray-500 mb-4">Complete Pro track to unlock</p>
+            <div className="w-full bg-white/5 h-1.5 rounded-full">
+              <div className="bg-red-500 w-0 h-full rounded-full" />
+            </div>
+          </GlassCard>
         </div>
       </main>
     </div>

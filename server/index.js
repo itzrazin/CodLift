@@ -102,6 +102,7 @@ app.use('/api/ai', require('./routes/ai'));
 app.use('/api/execute', require('./routes/execute'));
 app.use('/api/lessons', require('./routes/lessons'));
 app.use('/api/progress', require('./routes/progress'));
+app.use('/api/leaderboard', require('./routes/leaderboard'));
 
 // Global error handler
 app.use((err, req, res, next) => {

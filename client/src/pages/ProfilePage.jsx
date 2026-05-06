@@ -5,7 +5,8 @@ import {
   User, Share2, 
   ExternalLink,
   Calendar, Zap, Flame, Award,
-  Code2, Layout, Database, Terminal, Rocket
+  Code2, Layout, Database, Terminal, Rocket,
+  CheckCircle2, Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';

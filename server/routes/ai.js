@@ -41,7 +41,7 @@ Does this code correctly solve the exercise? Reply with JSON only.`
     }, {
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://codelift.dev',
+        'HTTP-Referer': 'https://codlift.site',
         'X-Title': 'CodLift'
       }
     });
@@ -104,7 +104,7 @@ router.post('/hint', async (req, res) => {
     }, {
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://codelift.dev',
+        'HTTP-Referer': 'https://codlift.site',
         'X-Title': 'CodLift'
       }
     });
