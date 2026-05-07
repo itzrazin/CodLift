@@ -50,7 +50,7 @@ export const Footer = () => {
               <li><Link to="/faq" className="hover:text-cyan">FAQ</Link></li>
               <li><Link to="/arena" className="hover:text-cyan">Challenges</Link></li>
               <li><Link to="/leaderboard" className="hover:text-cyan">Leaderboard</Link></li>
-              <li><a href="mailto:hello@codlift.site" className="hover:text-cyan">Contact</a></li>
+              <li><Link to="/contact" className="hover:text-cyan">Contact</Link></li>
             </ul>
           </div>
         </div>
