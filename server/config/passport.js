@@ -23,18 +23,20 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
       
       if (result.rows.length > 0) {
-        // Link Google ID to existing account
-        await db.query('UPDATE users SET google_id = $1, avatar = COALESCE(avatar, $2) WHERE id = $3', 
-          [profile.id, profile.photos?.[0]?.value, result.rows[0].id]);
-        return done(null, { ...result.rows[0], is_new_user: false });
+        // Link Google ID and sync fresh avatar
+        const avatarUrl = profile.photos?.[0]?.value || result.rows[0].avatar;
+        await db.query('UPDATE users SET google_id = $1, avatar = $2 WHERE id = $3', 
+          [profile.id, avatarUrl, result.rows[0].id]);
+        return done(null, { ...result.rows[0], google_id: profile.id, avatar: avatarUrl, is_new_user: false });
       }
 
       // Create new user
       const username = profile.displayName?.replace(/\s+/g, '') || `user${profile.id.slice(0, 8)}`;
       const randomPass = require('crypto').randomBytes(16).toString('hex');
+      const avatarUrl = profile.photos?.[0]?.value || `https://ui-avatars.com/api/?name=${username}&background=00f5d4&color=080b10`;
       const newUser = await db.query(
         'INSERT INTO users (username, email, google_id, avatar, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [username, email, profile.id, profile.photos?.[0]?.value, randomPass]
+        [username, email, profile.id, avatarUrl, randomPass]
       );
       
       return done(null, { ...newUser.rows[0], is_new_user: true });
@@ -67,16 +69,18 @@ try {
         result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
         
         if (result.rows.length > 0) {
-          await db.query('UPDATE users SET github_id = $1, avatar = COALESCE(avatar, $2) WHERE id = $3', 
-            [profile.id.toString(), profile.photos?.[0]?.value, result.rows[0].id]);
-          return done(null, { ...result.rows[0], is_new_user: false });
+          const avatarUrl = profile.photos?.[0]?.value || result.rows[0].avatar;
+          await db.query('UPDATE users SET github_id = $1, avatar = $2 WHERE id = $3', 
+            [profile.id.toString(), avatarUrl, result.rows[0].id]);
+          return done(null, { ...result.rows[0], github_id: profile.id.toString(), avatar: avatarUrl, is_new_user: false });
         }
 
         const username = profile.username || `user${profile.id}`;
         const randomPass = require('crypto').randomBytes(16).toString('hex');
+        const avatarUrl = profile.photos?.[0]?.value || `https://ui-avatars.com/api/?name=${username}&background=00f5d4&color=080b10`;
         const newUser = await db.query(
           'INSERT INTO users (username, email, github_id, avatar, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-          [username, email, profile.id.toString(), profile.photos?.[0]?.value, randomPass]
+          [username, email, profile.id.toString(), avatarUrl, randomPass]
         );
         
         return done(null, { ...newUser.rows[0], is_new_user: true });
