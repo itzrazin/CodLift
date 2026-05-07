@@ -114,7 +114,7 @@ const Dashboard = () => {
           <div className="w-8 h-8 bg-cyan rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,245,212,0.3)]">
             <div className="w-4 h-4 bg-navy rounded-sm rotate-45" />
           </div>
-          <span className="text-xl font-syne font-extrabold tracking-tighter">CODELIFT</span>
+          <span className="text-xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
         </Link>
 
         <nav className="flex-1 space-y-1.5">

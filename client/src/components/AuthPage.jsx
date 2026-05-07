@@ -32,7 +32,7 @@ const AuthPage = () => {
     <div className="min-h-screen bg-gray-900 text-white flex flex-col justify-center items-center p-4">
       <div className="max-w-md w-full bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700">
         <h2 className="text-3xl font-extrabold text-center mb-6">
-          {isLogin ? 'Welcome Back' : 'Join CodeLift'}
+          {isLogin ? 'Welcome Back' : 'Join CodLift'}
         </h2>
         
         {error && (

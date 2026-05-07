@@ -19,7 +19,7 @@ export const Footer = () => {
               <div className="w-6 h-6 bg-cyan rounded flex items-center justify-center shadow-[0_0_10px_rgba(0,245,212,0.3)]">
                 <div className="w-3 h-3 bg-navy rounded-sm rotate-45"></div>
               </div>
-              <span className="text-xl font-syne font-extrabold">CODELIFT</span>
+              <span className="text-xl font-syne font-extrabold">CODLIFT</span>
             </div>
             <p className="text-gray-500 max-w-sm mb-8">
               The world's most engaging free platform for learning full-stack development.

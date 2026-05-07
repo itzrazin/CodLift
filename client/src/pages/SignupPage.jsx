@@ -83,7 +83,7 @@ const SignupPage = () => {
             <div className="w-9 h-9 bg-cyan rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,245,212,0.4)]">
               <div className="w-5 h-5 bg-navy rounded-sm rotate-45" />
             </div>
-            <span className="text-2xl font-syne font-extrabold tracking-tighter">CODELIFT</span>
+            <span className="text-2xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
           </Link>
           <h2 className="text-4xl font-syne font-extrabold mb-4 leading-tight">
             Start coding in <span className="text-gradient-cyan">60 seconds.</span>
@@ -118,7 +118,7 @@ const SignupPage = () => {
             <div className="w-9 h-9 bg-cyan rounded-xl flex items-center justify-center">
               <div className="w-5 h-5 bg-navy rounded-sm rotate-45" />
             </div>
-            <span className="text-2xl font-syne font-extrabold tracking-tighter">CODELIFT</span>
+            <span className="text-2xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
           </Link>
 
           <div className="glass rounded-3xl p-8 border border-white/10">
