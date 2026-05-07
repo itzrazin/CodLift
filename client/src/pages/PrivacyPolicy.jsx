@@ -2,7 +2,7 @@ import React from 'react';
 import { SEO } from '../utils/SEO';
 
 export const PrivacyPolicy = () => {
-  const lastUpdated = "May 5, 2026";
+  const lastUpdated = "May 7, 2026";
 
   return (
     <div className="min-h-screen bg-background text-white pt-24 pb-16 px-6">

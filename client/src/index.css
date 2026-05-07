@@ -5,8 +5,14 @@
 @layer base {
   :root {
     --bg-deep: #080b10;
+    --navy: #0a1118;
+    --navy-light: #161f2c;
     --cyan: #00f5d4;
+    --cyan-light: #33f7dd;
+    --cyan-dark: #00c4aa;
     --yellow: #ffd60a;
+    --yellow-light: #ffde33;
+    --yellow-dark: #ccab08;
   }
 
   html {
@@ -18,7 +24,12 @@
     overflow-x: hidden;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-syne font-extrabold;
   }
 }
@@ -93,12 +104,15 @@
     transform: translateY(100vh) scale(0);
     opacity: 0;
   }
+
   20% {
     opacity: 0.2;
   }
+
   80% {
     opacity: 0.2;
   }
+
   100% {
     transform: translateY(-10vh) scale(1);
     opacity: 0;

@@ -1,69 +1,69 @@
 const curriculum = [
-  // HTML - Tier 1
+  // HTML Basics
   {
     title: "HTML Elements",
     category: "HTML",
     tier: 1,
     order_index: 1,
-    content: "HTML elements are the building blocks of web pages. An element usually consists of a start tag, content, and an end tag.",
-    task: "Create a paragraph element containing the text 'Hello World'.",
-    test_cases: { expected_output: "<p>Hello World</p>" }
+    content: "HTML (HyperText Markup Language) is the backbone of every website. Elements are defined by 'tags' like <h1> for headings.",
+    task: "Update the h1 tag text to: Hello CodLift",
+    test_cases: { expected_output: "Hello CodLift" }
   },
   {
-    title: "Page Structure",
+    title: "Paragraphs & Text",
     category: "HTML",
     tier: 1,
     order_index: 2,
-    content: "A standard HTML document requires a specific structure, including <html>, <head>, and <body> tags.",
-    task: "Create an h1 heading with the text 'My Page' inside a body tag.",
-    test_cases: { expected_output: "<body><h1>My Page</h1></body>" }
+    content: "Paragraphs use the <p> tag. They separate blocks of text nicely.",
+    task: "Add a <p> tag with the text: Learning to code is fun!",
+    test_cases: { expected_output: "Learning to code is fun!" }
   },
   {
-    title: "HTML Attributes",
+    title: "Hyperlinks & Navigation",
     category: "HTML",
     tier: 1,
     order_index: 3,
-    content: "Attributes provide additional information about HTML elements, like the href attribute for links.",
-    task: "Create a link (a tag) with href='https://example.com' and text 'Click Here'.",
-    test_cases: { expected_output: "<a href=\"https://example.com\">Click Here</a>" }
+    content: "The <a> tag creates clickable links. The href attribute sets the destination.",
+    task: "Add: <a href=\"https://codlift.site\">Visit CodLift</a>",
+    test_cases: { expected_output: "<a href=\"https://codlift.site\">Visit CodLift</a>" }
   },
-  // CSS - Tier 2
+  // CSS Styling
   {
     title: "CSS Colors",
     category: "CSS",
     tier: 2,
     order_index: 4,
-    content: "CSS allows you to style your HTML. You can change text color using the 'color' property.",
-    task: "Write CSS to change the color of all paragraphs to red.",
-    test_cases: { expected_output: "p { color: red; }" }
+    content: "CSS controls how HTML looks. The color property changes text color.",
+    task: "Set h1 { color: cyan; }",
+    test_cases: { expected_output: "color: cyan" }
   },
   {
-    title: "CSS Layouts",
+    title: "CSS Padding",
     category: "CSS",
     tier: 2,
     order_index: 5,
-    content: "The display property in CSS controls how an element is displayed. Block elements take up full width, while inline elements only take up as much width as necessary.",
-    task: "Set the display of all spans to block.",
-    test_cases: { expected_output: "span { display: block; }" }
+    content: "Padding creates space inside an element's border.",
+    task: "Set padding: 20px on .box",
+    test_cases: { expected_output: "padding: 20px" }
   },
   {
-    title: "Flexbox",
+    title: "Flexbox Layout",
     category: "CSS",
     tier: 2,
     order_index: 6,
-    content: "Flexbox is a layout model that allows elements to align and distribute space within a container.",
-    task: "Create a class '.container' and set its display to flex.",
-    test_cases: { expected_output: ".container { display: flex; }" }
+    content: "Flexbox is a layout model that allows elements to align and distribute space.",
+    task: "Set display: flex on .container",
+    test_cases: { expected_output: "display: flex" }
   },
-  // JS - Tier 3
+  // JS Fundamentals
   {
     title: "JS Variables",
     category: "JS",
     tier: 3,
     order_index: 7,
-    content: "Variables are used to store data in JavaScript. You can use let or const to declare variables.",
-    task: "Declare a constant variable named 'greeting' and assign it the string 'Hello'. Print it.",
-    test_cases: { expected_output: "Hello" }
+    content: "Variables are used to store data in JavaScript. Use let or const to declare variables.",
+    task: "Declare a constant variable named 'name' and assign it your name. Log it.",
+    test_cases: { expected_output: "name" }
   },
   {
     title: "JS Functions",
@@ -71,17 +71,17 @@ const curriculum = [
     tier: 3,
     order_index: 8,
     content: "Functions are reusable blocks of code that perform a specific task.",
-    task: "Write a function 'add' that takes two arguments and returns their sum. Call console.log(add(2, 3)).",
-    test_cases: { expected_output: "5" }
+    task: "Define a function greetUser(name) that returns 'Hello, [name]!'",
+    test_cases: { expected_output: "Hello," }
   },
   {
     title: "JS Loops",
     category: "JS",
     tier: 3,
     order_index: 9,
-    content: "Loops are used to execute a block of code repeatedly until a certain condition is met.",
-    task: "Write a for loop that prints numbers from 1 to 3, each on a new line.",
-    test_cases: { expected_output: "1\n2\n3" }
+    content: "Loops repeat code until a condition is met.",
+    task: "Write a for loop that logs numbers 1 to 5.",
+    test_cases: { expected_output: "5" }
   }
 ];
 
