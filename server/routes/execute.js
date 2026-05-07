@@ -78,7 +78,7 @@ router.post('/verify', async (req, res) => {
 
   try {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: 'google/gemini-2.0-flash-001', // High-performance Gemini model
+      model: 'google/gemini-2.0-flash-lite-preview-02-05:free',
       messages: [
         { 
           role: 'system', 
