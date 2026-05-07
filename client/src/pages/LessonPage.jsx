@@ -300,11 +300,11 @@ const LessonPage = () => {
         </div>
       </header>
 
-      {/* 3-Panel Layout */}
-      <div className="flex-1 flex overflow-hidden">
+      {/* 3-Panel Layout (Stacks on mobile) */}
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
         
-        {/* Panel 1: Instructions */}
-        <div className="w-[300px] border-r border-white/5 flex flex-col bg-navy/30 shrink-0">
+        {/* Panel 1: Instructions (Top on mobile, Left on Desktop) */}
+        <div className="w-full md:w-[300px] border-b md:border-b-0 md:border-r border-white/5 flex flex-col bg-navy/30 shrink-0 max-h-[40vh] md:max-h-none overflow-y-auto">
           <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">
             <h1 className="text-xl font-syne font-extrabold mb-3">{exercise.title}</h1>
             <p className="text-gray-300 text-sm leading-relaxed mb-5 whitespace-pre-wrap">
@@ -379,8 +379,8 @@ const LessonPage = () => {
           </div>
         </div>
 
-        {/* Panel 2: Editor */}
-        <div className="flex-1 flex flex-col min-w-[400px] border-r border-white/5">
+        {/* Panel 2: Editor (Middle) */}
+        <div className="flex-1 flex flex-col min-w-0 md:min-w-[400px] border-b md:border-b-0 md:border-r border-white/5 h-[50vh] md:h-auto">
           <div className="h-10 bg-navy border-b border-white/5 flex items-center px-4 justify-between shrink-0">
             <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1.5">
               <Terminal className="w-3 h-3" />
@@ -431,8 +431,8 @@ const LessonPage = () => {
           </div>
         </div>
 
-        {/* Panel 3: Preview / Console */}
-        <div className="w-[320px] flex flex-col bg-navy shrink-0">
+        {/* Panel 3: Preview / Console (Bottom on mobile, Right on Desktop) */}
+        <div className="w-full md:w-[320px] flex flex-col bg-navy shrink-0 min-h-[30vh] md:min-h-0">
           <div className="h-10 border-b border-white/5 px-2 flex items-center gap-1 bg-navy/80 shrink-0">
             <button
               onClick={() => setActiveTab('preview')}

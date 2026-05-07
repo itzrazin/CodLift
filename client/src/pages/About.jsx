@@ -108,7 +108,7 @@ const About = () => {
           <GlassCard className="p-12 md:p-20 relative overflow-hidden bg-gradient-to-br from-navy/50 to-transparent border-white/5">
             <div className="md:flex items-center gap-16 relative z-10">
               <div className="w-48 h-48 rounded-3xl overflow-hidden shrink-0 mb-8 md:mb-0 grayscale hover:grayscale-0 transition-all duration-700 border border-white/10 rotate-3">
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rafeek" alt="Founder" className="w-full h-full object-cover" />
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rafeek" alt="Founder" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div>
                 <h2 className="text-4xl font-syne font-extrabold mb-6">Built for the <span className="text-cyan">Builders</span>.</h2>
