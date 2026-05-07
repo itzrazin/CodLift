@@ -13,6 +13,9 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for secure cookies and OAuth redirects on Render/Vercel
+app.set('trust proxy', 1);
+
 // Security HTTP headers
 app.use(helmet({
   contentSecurityPolicy: false,
