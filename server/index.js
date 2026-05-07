@@ -52,9 +52,17 @@ app.use(cors({
   credentials: true
 }));
 
-// Session configuration for Passport
+// Session configuration for Passport — PostgreSQL-backed store
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+const pool = require('./db'); // reuse existing pg pool
+
 app.use(session({
+  store: new pgSession({
+    pool,                   // use existing pg connection pool
+    tableName: 'sessions',  // auto-created by connect-pg-simple
+    createTableIfMissing: true
+  }),
   secret: process.env.SESSION_SECRET || 'codlift_default_secret_123',
   resave: false,
   saveUninitialized: false,
