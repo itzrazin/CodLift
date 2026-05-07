@@ -1,65 +1,80 @@
 import React from 'react';
 import { SEO } from '../utils/SEO';
+import { Navbar } from '../components/Navbar';
+import { Footer } from '../components/Footer';
 
 const PrivacyPolicy = () => {
   const lastUpdated = "May 7, 2026";
 
   return (
-    <div className="min-h-screen bg-background text-white pt-24 pb-16 px-6">
+    <div className="min-h-screen bg-background text-white pt-32 pb-16 px-6">
       <SEO 
         title="Privacy Policy | CodLift"
-        description="Privacy Policy for CodLift. Learn how we collect, use, and protect your data."
+        description="Privacy Policy for CodLift. Learn how we collect, use, and protect your data according to Google AdSense standards."
         url="/privacy-policy"
       />
+      <Navbar />
       
-      <div className="max-w-3xl mx-auto prose prose-invert prose-cyan">
-        <h1 className="text-4xl md:text-5xl font-syne font-extrabold mb-4">Privacy Policy</h1>
-        <p className="text-gray-400 mb-12">Last Updated: {lastUpdated}</p>
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-4xl md:text-6xl font-syne font-extrabold mb-4 tracking-tight">Privacy Policy</h1>
+        <p className="text-gray-500 mb-12 font-mono text-sm uppercase tracking-widest">Last Updated: {lastUpdated}</p>
 
-        <section className="mb-10">
-          <h2 className="text-2xl font-syne font-bold mb-4 text-cyan">1. Information We Collect</h2>
-          <p className="text-gray-300 leading-relaxed mb-4">
-            When you use CodLift, we collect information that you provide directly to us, including:
-          </p>
-          <ul className="list-disc pl-6 text-gray-300 space-y-2">
-            <li><strong>Account Information:</strong> Username, email address, and profile details provided during sign-up or via third-party OAuth providers (Google, GitHub).</li>
-            <li><strong>Learning Data:</strong> Your progress, completed exercises, code submissions, XP earned, and streak information.</li>
-            <li><strong>Usage Data:</strong> Information about how you interact with our platform, pages visited, and time spent on lessons.</li>
-          </ul>
-        </section>
+        <div className="prose prose-invert prose-cyan max-w-none prose-h2:font-syne prose-h2:text-2xl prose-h2:font-bold prose-p:text-gray-400 prose-p:leading-relaxed prose-li:text-gray-400">
+          <section>
+            <h2>1. Introduction</h2>
+            <p>
+              Welcome to CodLift ("we," "us," or "our"). We are committed to protecting your personal information and your right to privacy. This Privacy Policy explains how we collect, use, and safeguard your data when you visit our website at codlift.site and use our interactive coding platform.
+            </p>
+          </section>
 
-        <section className="mb-10">
-          <h2 className="text-2xl font-syne font-bold mb-4 text-cyan">2. How We Use Your Information</h2>
-          <p className="text-gray-300 leading-relaxed mb-4">
-            We use the information we collect to:
-          </p>
-          <ul className="list-disc pl-6 text-gray-300 space-y-2">
-            <li>Provide, maintain, and improve the CodLift platform and curriculum.</li>
-            <li>Personalize your learning experience and track your progress.</li>
-            <li>Communicate with you regarding account updates, security alerts, and support messages.</li>
-            <li>Analyze usage patterns to enhance platform performance and user experience.</li>
-          </ul>
-        </section>
+          <section>
+            <h2>2. Information We Collect</h2>
+            <h3>Directly Provided Information</h3>
+            <p>
+              We collect information that you voluntarily provide to us when you register on the platform. This includes your name, email address, and profile picture.
+            </p>
+            <h3>Third-Party Authentication (Google OAuth)</h3>
+            <p>
+              When you log in using Google OAuth, we receive your public profile information (name and email) from Google. We use this data strictly to create and manage your CodLift account. We do not have access to your Google password or any other private data within your Google account.
+            </p>
+          </section>
 
-        <section className="mb-10">
-          <h2 className="text-2xl font-syne font-bold mb-4 text-cyan">3. Google AdSense and Cookies</h2>
-          <p className="text-gray-300 leading-relaxed mb-4">
-            We use third-party advertising companies, including Google AdSense, to serve ads when you visit our website. These companies may use cookies to collect non-personally identifiable information.
-          </p>
-        </section>
+          <section>
+            <h2>3. Cookies and Tracking Technologies</h2>
+            <p>
+              We use "cookies" to collect information and improve our services.
+            </p>
+            <h3>Google Analytics</h3>
+            <p>
+              We use Google Analytics to monitor and analyze web traffic. Google Analytics is a web analysis service provided by Google Inc. ("Google"). Google utilizes the Data collected to track and examine the use of this Application, to prepare reports on its activities and share them with other Google services.
+            </p>
+            <h3>Google AdSense and DoubleClick Cookie</h3>
+            <p>
+              Google, as a third-party vendor, uses cookies to serve ads on our site. Google's use of the DoubleClick cookie enables it and its partners to serve ads to our users based on their visit to our site or other sites on the Internet. You may opt out of the use of the DoubleClick cookie for interest-based advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.
+            </p>
+          </section>
 
-        <section className="mb-10">
-          <h2 className="text-2xl font-syne font-bold mb-4 text-cyan">4. Contact Us</h2>
-          <p className="text-gray-300 leading-relaxed">
-            If you have any questions or concerns, please contact us at:<br/>
-            <a href="mailto:hello@codlift.site" className="text-cyan hover:underline font-bold mt-2 inline-block">hello@codlift.site</a>
-          </p>
-        </section>
+          <section>
+            <h2>4. Data Protection and Sharing</h2>
+            <p>
+              <strong>We do not sell, trade, or otherwise transfer your personally identifiable information to outside parties.</strong> This does not include trusted third parties who assist us in operating our website, so long as those parties agree to keep this information confidential.
+            </p>
+          </section>
 
+          <section>
+            <h2>5. Contact Us</h2>
+            <p>
+              If you have any questions regarding this Privacy Policy, you may contact us using the information below:
+            </p>
+            <p className="font-bold text-white">
+              Email: support@codlift.site
+            </p>
+          </section>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };
 
 export default PrivacyPolicy;
-

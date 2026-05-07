@@ -41,10 +41,24 @@ const About = () => {
               <h1 className="text-6xl md:text-8xl font-syne font-extrabold mb-8 tracking-tighter leading-none">
                 Engineering <span className="text-gradient-cyan italic">Future</span> Developers.
               </h1>
-              <p className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-medium">
-                At CodLift, we believe the best way to learn code isn't by watching 
-                it — it's by shipping it. We've built an ecosystem that turns 
-                frustrated beginners into confident software engineers.
+              <p className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed font-medium">
+                CodLift was born out of a single, frustrating observation: the modern path 
+                to learning software engineering is broken. Millions of aspiring developers 
+                are trapped in what the industry calls "Tutorial Hell"—a cycle of 
+                passively watching videos and feeling like you understand, only to face 
+                a paralyzing blank screen the moment you try to build something on your own.
+                <br /><br />
+                Our mission is to dismantle this passive learning model. We believe that 
+                true technical mastery isn't achieved through observation; it's forged through 
+                repetition, failure, and real-time correction. CodLift is the world's 
+                first truly "Hands-On First" platform that combines a structured, professional 
+                curriculum with a high-performance AI Gatekeeper.
+                <br /><br />
+                By gamifying the learning experience and enforcing strict, AI-powered 
+                code verification, we ensure that every student who uses CodLift is 
+                actually shipping code from day one. We aren't just teaching syntax; 
+                we are engineering the next generation of confident, job-ready software 
+                architects who know how to solve real problems in a production environment.
               </p>
             </motion.div>
             

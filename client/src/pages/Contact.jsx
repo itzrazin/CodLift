@@ -73,7 +73,7 @@ const Contact = () => {
                 <ContactInfo 
                   icon={MailIcon} 
                   title="Direct Support" 
-                  detail="hello@codlift.site" 
+                  detail="support@codlift.site" 
                   subdetail="Typically replies within 24 hours"
                 />
                 <ContactInfo 
