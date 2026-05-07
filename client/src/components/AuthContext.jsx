@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 
         // Silently re-validate token with backend
         try {
-          const res = await fetch(`${API_URL}/api/auth/me`, {
+        const res = await fetch(`${API_URL}/auth/me`, {
             headers: { Authorization: `Bearer ${savedToken}` }
           });
           if (res.ok) {
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const login = async (email, password) => {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const signup = async (username, email, password) => {
-    const res = await fetch(`${API_URL}/api/auth/signup`, {
+    const res = await fetch(`${API_URL}/auth/signup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, email, password }),
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
     setToken(tok);
     localStorage.setItem('codlift_token', tok);
     try {
-      const res = await fetch(`${API_URL}/api/auth/me`, {
+      const res = await fetch(`${API_URL}/auth/me`, {
         headers: { Authorization: `Bearer ${tok}` }
       });
       if (res.ok) {

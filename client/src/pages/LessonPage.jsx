@@ -70,7 +70,7 @@ export const LessonPage = () => {
 
     // Fallback: fetch from backend (slug only — no level prefix in API)
     try {
-      const res = await fetch(`${API_URL}/api/lessons/${slug}/exercise/${exerciseId}`);
+      const res = await fetch(`${API_URL}/lessons/${slug}/exercise/${exerciseId}`);
       if (!res.ok) { navigate('/dashboard'); return; }
       const data = await res.json();
       setLesson(data.lesson);
@@ -91,7 +91,7 @@ export const LessonPage = () => {
     setHintText('Thinking...');
     setShowHint(true);
     try {
-      const res = await fetch(`${API_URL}/api/ai/hint`, {
+      const res = await fetch(`${API_URL}/ai/hint`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -116,7 +116,7 @@ export const LessonPage = () => {
         setStatus('idle');
         return;
       }
-      const res = await fetch(`${API_URL}/api/execute`, {
+      const res = await fetch(`${API_URL}/execute`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ language: lesson.language, code })
@@ -136,7 +136,7 @@ export const LessonPage = () => {
   const handleSubmit = async () => {
     setStatus('running');
     try {
-      const res = await fetch(`${API_URL}/api/ai/verify`, {
+      const res = await fetch(`${API_URL}/ai/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -169,7 +169,7 @@ export const LessonPage = () => {
 
         // Sync to backend (non-blocking, with auth)
         if (token) {
-          fetch(`${API_URL}/api/progress`, {
+          fetch(`${API_URL}/progress`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

@@ -61,7 +61,7 @@ export const SignupPage = () => {
   };
 
   const handleGoogle = () => {
-    window.location.href = `${API_URL}/api/auth/google`;
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (

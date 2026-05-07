@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api/axios';
+
 
 const LessonPage = () => {
   const { id } = useParams();
@@ -14,7 +15,7 @@ const LessonPage = () => {
   useEffect(() => {
     const fetchLesson = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/lessons/${id}`);
+        const res = await api.get(`/lessons/${id}`);
         setLesson(res.data);
         setLoading(false);
         // Reset state on lesson change
@@ -32,10 +33,9 @@ const LessonPage = () => {
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem('codelift_token');
-      const res = await axios.post(
-        `http://localhost:5000/api/lessons/${id}/submit`,
-        { userCode: code, language: lesson.category.toLowerCase() },
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await api.post(
+        `/lessons/${id}/submit`,
+        { userCode: code, language: lesson.category.toLowerCase() }
       );
 
       if (res.data.success) {
@@ -43,10 +43,9 @@ const LessonPage = () => {
         setFeedback(`Success! You earned ${res.data.xp} XP.`);
         
         // Save progress
-        await axios.post(
-          'http://localhost:5000/api/progress',
-          { lesson_id: id },
-          { headers: { Authorization: `Bearer ${token}` } }
+        await api.post(
+          '/progress',
+          { lesson_id: id }
         );
       } else {
         setSuccess(false);

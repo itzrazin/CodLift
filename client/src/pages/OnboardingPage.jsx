@@ -24,7 +24,7 @@ export const OnboardingPage = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/api/auth/level`, {
+      const res = await fetch(`${API_URL}/auth/level`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

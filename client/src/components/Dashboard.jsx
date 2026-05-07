@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
-import axios from 'axios';
+import api from '../api/axios';
+
 
 const Dashboard = () => {
   const { user, token } = useAuth();
@@ -21,9 +22,7 @@ const Dashboard = () => {
 
     const fetchProgress = async () => {
       try {
-        const res = await axios.get('http://localhost:5000/api/progress', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        const res = await api.get('/progress');
         // progress is an array of completed lesson IDs
         setProgress(res.data || []);
       } catch (err) {

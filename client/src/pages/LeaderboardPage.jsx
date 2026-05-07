@@ -41,7 +41,7 @@ export const LeaderboardPage = () => {
     const fetchLeaderboard = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/api/leaderboard?period=${filter}`);
+        const res = await fetch(`${API_URL}/leaderboard?period=${filter}`);
         if (res.ok) {
           const json = await res.json();
           if (json.leaderboard?.length > 0) setData(json.leaderboard);
