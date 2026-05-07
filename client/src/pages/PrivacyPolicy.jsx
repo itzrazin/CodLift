@@ -48,9 +48,9 @@ const PrivacyPolicy = () => {
             <p>
               We use Google Analytics to monitor and analyze web traffic. Google Analytics is a web analysis service provided by Google Inc. ("Google"). Google utilizes the Data collected to track and examine the use of this Application, to prepare reports on its activities and share them with other Google services.
             </p>
-            <h3>Google AdSense and DoubleClick Cookie</h3>
+            <h3>Google AdSense and DoubleClick DART Cookie</h3>
             <p>
-              Google, as a third-party vendor, uses cookies to serve ads on our site. Google's use of the DoubleClick cookie enables it and its partners to serve ads to our users based on their visit to our site or other sites on the Internet. You may opt out of the use of the DoubleClick cookie for interest-based advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.
+              Google, as a third-party vendor, uses cookies to serve ads on our site. Google's use of the DoubleClick DART cookie enables it and its partners to serve ads to our users based on their visit to our site or other sites on the Internet. You may opt out of the use of the DART cookie for interest-based advertising by visiting <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.
             </p>
           </section>
 

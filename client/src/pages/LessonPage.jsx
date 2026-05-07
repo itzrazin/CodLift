@@ -13,6 +13,7 @@ import { XPAnimation } from '../components/ui/XPAnimation';
 import { SEO } from '../utils/SEO';
 import { API_URL } from '../utils/config';
 import { clientCurriculum } from '../data/curriculum';
+import { AdSenseBlock } from '../components/AdSenseBlock';
 
 const LessonPage = () => {
   const [lesson, setLesson] = useState(null);
@@ -376,6 +377,11 @@ const LessonPage = () => {
               </span>
               <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">AI</span>
             </Button>
+          </div>
+
+          {/* AdSense Sidebar Slot */}
+          <div className="px-4 pb-4">
+            <AdSenseBlock slot="lesson_sidebar" format="vertical" />
           </div>
         </div>
 

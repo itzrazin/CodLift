@@ -9,6 +9,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
+import { AdSenseBlock } from '../components/AdSenseBlock';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
@@ -266,6 +267,8 @@ const Dashboard = () => {
             </div>
           </GlassCard>
         </div>
+
+        <AdSenseBlock slot="dashboard_footer" format="horizontal" className="mt-8" />
       </main>
     </div>
   );
