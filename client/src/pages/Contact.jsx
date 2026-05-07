@@ -3,11 +3,19 @@ import { SEO } from '../utils/SEO';
 import { motion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { Mail, MessageSquare, MapPin, Send, CheckCircle2, Sparkles, Globe, Linkedin, Github, Twitter } from 'lucide-center';
 import { GlassCard, Button } from '../components/ui/Core';
-
-// Note: Lucide-react might not have 'lucide-center', checking standard icons
-import { Mail as MailIcon, MessageSquare as MessageIcon, MapPin as MapIcon, Send as SendIcon, CheckCircle2 as CheckIcon, Sparkles as SparkleIcon, Globe as GlobeIcon, Linkedin as LinkedinIcon, Github as GithubIcon, Twitter as TwitterIcon } from 'lucide-react';
+import { 
+  Mail as MailIcon, 
+  MessageSquare as MessageIcon, 
+  MapPin as MapIcon, 
+  Send as SendIcon, 
+  CheckCircle2 as CheckIcon, 
+  Sparkles as SparkleIcon, 
+  Globe as GlobeIcon, 
+  Linkedin as LinkedinIcon, 
+  Github as GithubIcon, 
+  Twitter as TwitterIcon 
+} from 'lucide-react';
 
 const ContactInfo = ({ icon: Icon, title, detail, subdetail }) => (
   <div className="flex gap-5">
