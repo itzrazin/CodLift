@@ -23,6 +23,35 @@
   <meta http-equiv="Content-Security-Policy"
     content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';">
   <meta name="theme-color" content="#080b10" />
+  
+  <!-- Schema.org JSON-LD -->
+  <script type="application/ld+json">
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "CodLift",
+        "url": "https://codlift.site/",
+        "description": "Master coding with CodLift's interactive lessons and AI-powered feedback.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://codlift.site/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "Course",
+        "name": "Full-Stack Web Development Track",
+        "description": "Learn HTML, CSS, JavaScript, and React through interactive coding exercises.",
+        "provider": {
+          "@type": "Organization",
+          "name": "CodLift",
+          "sameAs": "https://codlift.site/"
+        }
+      }
+    ]
+  </script>
   <title>CodLift | Master Coding Through Interactive Lessons</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
