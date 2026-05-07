@@ -1,17 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('pg');
+const db = require('../db');
 const axios = require('axios');
 const auth = require('../middleware/auth');
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
 
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const result = await pool.query('SELECT * FROM lessons WHERE id = $1', [id]);
+    const result = await db.query('SELECT * FROM lessons WHERE id = $1', [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Lesson not found' });
     }
@@ -28,7 +24,7 @@ router.post('/:id/submit', auth, async (req, res) => {
     const { userCode, language = 'javascript' } = req.body;
 
     // Fetch lesson
-    const result = await pool.query('SELECT * FROM lessons WHERE id = $1', [id]);
+    const result = await db.query('SELECT * FROM lessons WHERE id = $1', [id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Lesson not found' });
     }
@@ -67,11 +63,11 @@ router.post('/:id/submit', auth, async (req, res) => {
       const xpToAward = 10;
       
       // Award XP to user
-      await pool.query('UPDATE users SET xp_total = xp_total + $1, xp = xp + $1 WHERE id = $2', [xpToAward, req.user.id]);
+      await db.query('UPDATE users SET xp_total = xp_total + $1, xp = xp + $1 WHERE id = $2', [xpToAward, req.user.id]);
       
       // Record progress
       const exerciseId = req.body.exerciseId || '1';
-      await pool.query(`
+      await db.query(`
         INSERT INTO progress (user_id, lesson_id, exercise_id, xp_earned, is_completed)
         VALUES ($1, $2, $3, $4, true)
         ON CONFLICT (user_id, lesson_id, exercise_id) 

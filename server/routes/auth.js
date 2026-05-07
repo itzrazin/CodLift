@@ -1,15 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
-const jwt = require('jwt-simple'); // Wait, prompt said jwt + bcryptjs. Let me use jsonwebtoken.
-// Actually, package.json has jsonwebtoken.
-const jwt2 = require('jsonwebtoken');
-const { Pool } = require('pg');
-const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const db = require('../db');
+const nodemailer = require('nodemailer');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -23,7 +18,7 @@ router.post('/signup', async (req, res) => {
   try {
     const { email, password, username } = req.body;
     
-    const existingUser = await pool.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username]);
+    const existingUser = await db.query('SELECT * FROM users WHERE email = $1 OR username = $2', [email, username]);
     if (existingUser.rows.length > 0) {
       return res.status(400).json({ error: 'User already exists' });
     }
@@ -31,13 +26,13 @@ router.post('/signup', async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const result = await pool.query(
+    const result = await db.query(
       'INSERT INTO users (email, password, username, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, xp, streak',
       [email, hashedPassword, username]
     );
 
     const user = result.rows[0];
-    const token = jwt2.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     try {
       await transporter.sendMail({
@@ -61,7 +56,7 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
     if (result.rows.length === 0) {
       return res.status(400).json({ error: 'Invalid credentials' });
     }
@@ -92,13 +87,13 @@ router.post('/login', async (req, res) => {
       streak = 1; // First login since signup probably, but signup sets last_login now
     }
 
-    const updateResult = await pool.query(
+    const updateResult = await db.query(
       'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, xp, streak',
       [streak, user.id]
     );
     const updatedUser = updateResult.rows[0];
 
-    const token = jwt2.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     try {
       await transporter.sendMail({
@@ -123,7 +118,7 @@ const passport = require('../config/passport');
 
 router.get('/me', auth, async (req, res) => {
   try {
-    const result = await pool.query('SELECT id, email, username, avatar, level, xp, xp_total, streak, longest_streak, is_admin, goal, notifications FROM users WHERE id = $1', [req.user.id]);
+    const result = await db.query('SELECT id, email, username, avatar, level, xp, xp_total, streak, longest_streak, is_admin, goal, notifications FROM users WHERE id = $1', [req.user.id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
     res.json({ user: result.rows[0] });
   } catch (error) {
@@ -134,7 +129,7 @@ router.get('/me', auth, async (req, res) => {
 router.put('/level', auth, async (req, res) => {
   try {
     const { level } = req.body;
-    await pool.query('UPDATE users SET level = $1 WHERE id = $2', [level, req.user.id]);
+    await db.query('UPDATE users SET level = $1 WHERE id = $2', [level, req.user.id]);
     res.json({ success: true, level });
   } catch (error) {
     res.status(500).json({ error: 'Server error' });
@@ -145,7 +140,7 @@ router.put('/level', auth, async (req, res) => {
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-  const token = jwt2.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   const isNew = req.user.is_new_user ? 'true' : 'false';
   res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/oauth/callback?token=${token}&is_new=${isNew}`);
 });
@@ -154,7 +149,7 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
 
 router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-  const token = jwt2.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
   const isNew = req.user.is_new_user ? 'true' : 'false';
   res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/oauth/callback?token=${token}&is_new=${isNew}`);
 });

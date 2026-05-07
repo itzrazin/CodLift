@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
       query = `
         SELECT 
           u.id, u.username, u.avatar, u.level,
-          u.current_streak, u.longest_streak,
+          u.streak, u.longest_streak,
           COALESCE(SUM(p.xp_earned), 0) as weekly_xp,
           u.xp_total,
           COUNT(DISTINCT p.lesson_id || '-' || p.exercise_id) as lessons_completed
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
         LEFT JOIN progress p ON p.user_id = u.id 
           AND p.completed_at > NOW() - INTERVAL '7 days'
           AND p.is_completed = true
-        GROUP BY u.id, u.username, u.avatar, u.level, u.current_streak, u.longest_streak, u.xp_total
+        GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
         ORDER BY weekly_xp DESC, u.xp_total DESC
         LIMIT $1
       `;
@@ -29,11 +29,11 @@ router.get('/', async (req, res) => {
       query = `
         SELECT 
           u.id, u.username, u.avatar, u.level,
-          u.current_streak, u.longest_streak, u.xp_total,
+          u.streak, u.longest_streak, u.xp_total,
           COALESCE(COUNT(DISTINCT p.lesson_id || '-' || p.exercise_id), 0) as lessons_completed
         FROM users u
         LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true
-        GROUP BY u.id, u.username, u.avatar, u.level, u.current_streak, u.longest_streak, u.xp_total
+        GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
         ORDER BY u.xp_total DESC
         LIMIT $1
       `;
@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
       avatar: row.avatar,
       level: row.level || 'beginner',
       xp: period === 'weekly' ? parseInt(row.weekly_xp) : parseInt(row.xp_total),
-      streak: parseInt(row.current_streak) || 0,
+      streak: parseInt(row.streak) || 0,
       lessons_completed: parseInt(row.lessons_completed) || 0,
     }));
 

@@ -22,10 +22,12 @@ app.use(helmet({
 // CORS configuration
 const allowedOrigins = [
   process.env.CLIENT_URL, 
+  'https://codlift.onrender.com',
+  'https://codlift.site',
   'http://localhost:5173', 
   'http://127.0.0.1:5173', 
   'http://localhost:3000'
-].filter(Boolean).map(url => url.replace(/\/$/, '')); // Remove trailing slashes
+].filter(Boolean).map(url => url.replace(/\/$/, ''));
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -123,11 +125,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 CodLift API running on port ${PORT}`);
-    console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`🚀 CodLift API running on port ${PORT}`);
+  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`   CORS allowed origins: ${allowedOrigins.join(', ')}`);
+});
 
 module.exports = app;
