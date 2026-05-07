@@ -31,9 +31,10 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
       // Create new user
       const username = profile.displayName?.replace(/\s+/g, '') || `user${profile.id.slice(0, 8)}`;
+      const randomPass = require('crypto').randomBytes(16).toString('hex');
       const newUser = await db.query(
         'INSERT INTO users (username, email, google_id, avatar, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-        [username, email, profile.id, profile.photos?.[0]?.value, 'oauth']
+        [username, email, profile.id, profile.photos?.[0]?.value, randomPass]
       );
       
       return done(null, { ...newUser.rows[0], is_new_user: true });
@@ -72,9 +73,10 @@ try {
         }
 
         const username = profile.username || `user${profile.id}`;
+        const randomPass = require('crypto').randomBytes(16).toString('hex');
         const newUser = await db.query(
           'INSERT INTO users (username, email, github_id, avatar, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-          [username, email, profile.id.toString(), profile.photos?.[0]?.value, 'oauth']
+          [username, email, profile.id.toString(), profile.photos?.[0]?.value, randomPass]
         );
         
         return done(null, { ...newUser.rows[0], is_new_user: true });
