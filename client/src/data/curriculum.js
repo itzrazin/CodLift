@@ -11,18 +11,21 @@ export const clientCurriculum = [
         instruction: 'HTML (HyperText Markup Language) is the backbone of every website. Elements are defined by "tags" like <h1> for headings.\n\nChange the text inside the <h1> tag to say "Hello CodLift".',
         task: 'Update the h1 tag text to: Hello CodLift',
         initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n  </body>\n</html>',
+        test_cases: { expected_output: 'Hello CodLift' }
       },
       {
         title: 'Paragraphs & Text',
         instruction: 'Paragraphs use the <p> tag. They separate blocks of text nicely.\n\nAdd a paragraph below the heading with the text "Learning to code is fun!".',
         task: 'Add a <p> tag with the text: Learning to code is fun!',
         initial_code: '<h1>CodLift</h1>\n<!-- Add paragraph here -->',
+        test_cases: { expected_output: 'Learning to code is fun!' }
       },
       {
         title: 'Hyperlinks & Navigation',
         instruction: 'The <a> tag creates clickable links. The href attribute sets the destination.\n\nCreate a link that says "Visit CodLift" pointing to "https://codlift.site".',
         task: 'Add: <a href="https://codlift.site">Visit CodLift</a>',
         initial_code: '<p>Check out our site:</p>\n<!-- Add link here -->',
+        test_cases: { expected_output: 'https://codlift.site' }
       },
       {
         title: 'Images',
@@ -71,6 +74,7 @@ export const clientCurriculum = [
         instruction: 'CSS controls how HTML looks. The color property changes text color.\n\nChange the color of the h1 to "cyan".',
         task: 'Set h1 { color: cyan; }',
         initial_code: '<style>\n  h1 {\n    color: white;\n  }\n</style>\n<h1>Colorful World</h1>',
+        test_cases: { expected_output: 'color: cyan' }
       },
       {
         title: 'The Box Model: Padding',
@@ -143,6 +147,7 @@ export const clientCurriculum = [
         instruction: 'JavaScript stores data in variables. Use let for values that change, const for ones that don\'t.\n\nCreate a const called name with your name, and a let called age with your age. Then console.log both.',
         task: 'Declare name and age variables and log them.',
         initial_code: '// Declare your variables here\n\n// Log them\n',
+        test_cases: { expected_output: 'console.log' }
       },
       {
         title: 'Mastering Functions',

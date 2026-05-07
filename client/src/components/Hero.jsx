@@ -99,7 +99,7 @@ export const Hero = () => {
                 Experience the most gamified way to master full-stack development.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Button size="lg" className="w-full sm:w-auto" onClick={() => navigate('/signup')}>
+                <Button size="lg" className="w-full sm:w-auto" onClick={() => navigate(localStorage.getItem('codlift_token') ? '/dashboard' : '/signup')}>
                   Start Now <Play className="w-5 h-5" />
                 </Button>
                 <Button variant="ghost" size="lg" className="w-full sm:w-auto">

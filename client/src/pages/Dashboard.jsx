@@ -56,9 +56,43 @@ const Dashboard = () => {
   const [progress, setProgress] = useState([]);
 
   useEffect(() => {
-    const local = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
-    setProgress(local);
+    fetchProgress();
   }, []);
+
+  const fetchProgress = async () => {
+    try {
+      const res = await fetch(`${API_URL}/progress`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('codlift_token')}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProgress(data.map(p => `beginner-${p.lesson_id}-${p.exercise_id}`));
+      } else {
+        // Fallback to local
+        const local = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+        setProgress(local);
+      }
+    } catch {
+      const local = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+      setProgress(local);
+    }
+  };
+
+  const handleResume = async () => {
+    try {
+      const res = await fetch(`${API_URL}/progress/resume`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('codlift_token')}` }
+      });
+      const data = await res.json();
+      if (data.nextLesson) {
+        navigate(`/learn/${data.nextLesson.level}/${data.nextLesson.slug}/${data.nextLesson.exerciseId}`);
+      } else {
+        navigate('/learn/beginner/html-basics/1');
+      }
+    } catch {
+      navigate('/learn/beginner/html-basics/1');
+    }
+  };
 
   if (!user) return null;
 
@@ -173,7 +207,7 @@ const Dashboard = () => {
                 <p className="text-gray-400 text-sm">Beginner Track • {completedCount}/{beginnerLessons.length} complete</p>
               </div>
             </div>
-            <Button size="lg" className="shrink-0" onClick={() => navigate(`/learn/${currentLesson.level}/${currentLesson.slug}/1`)}>
+            <Button size="lg" className="shrink-0" onClick={handleResume}>
               Continue <ChevronRight className="w-5 h-5 ml-1" />
             </Button>
           </GlassCard>

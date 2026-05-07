@@ -39,7 +39,11 @@ const LessonPage = () => {
   const handleCodeChange = useCallback((val) => {
     setCode(val || '');
     if (!hasRun && val !== exercise?.initial_code) setHasRun(true);
-  }, [hasRun, exercise]);
+    // Save to localStorage
+    if (lesson && exercise) {
+      localStorage.setItem(`codlift_code_${level}_${slug}_${exerciseId}`, val || '');
+    }
+  }, [hasRun, exercise, lesson, level, slug, exerciseId]);
 
   const fetchExercise = async () => {
     // First try client-side curriculum (fast, no network)
@@ -60,12 +64,13 @@ const LessonPage = () => {
           number: exIdx + 1,
           total: localLesson.exercises.length,
         });
-        setCode(ex.initial_code || '');
+        const savedCode = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+        setCode(savedCode || ex.initial_code || '');
         setStatus('idle');
         setMessage('');
         setShowHint(false);
         setHintText('');
-        setHasRun(false);
+        setHasRun(!!savedCode);
         setActiveTab(localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console');
         return;
       }
@@ -78,12 +83,13 @@ const LessonPage = () => {
       const data = await res.json();
       setLesson(data.lesson);
       setExercise(data.exercise);
-      setCode(data.exercise.initial_code || '');
+      const savedCode = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+      setCode(savedCode || data.exercise.initial_code || '');
       setStatus('idle');
       setMessage('');
       setShowHint(false);
       setHintText('');
-      setHasRun(false);
+      setHasRun(!!savedCode);
       setActiveTab(data.lesson.language === 'html' || data.lesson.language === 'css' ? 'preview' : 'console');
     } catch {
       navigate('/dashboard');
@@ -141,19 +147,20 @@ const LessonPage = () => {
   const handleSubmit = async () => {
     setStatus('running');
     try {
-      const res = await fetch(`${API_URL}/ai/verify`, {
+      const res = await fetch(`${API_URL}/execute/verify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           code,
           topic: exercise.title,
           instruction: exercise.instruction,
-          language: lesson.language
+          language: lesson.language,
+          test_cases: exercise.test_cases
         })
       });
       const data = await res.json();
       
-      if (data.correct) {
+      if (data.success) {
         setStatus('success');
         setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
         
@@ -279,8 +286,12 @@ const LessonPage = () => {
             )}
             {exercise.number < exercise.total && (
               <button
-                onClick={() => navigate(`/learn/${level}/${slug}/${exercise.number + 1}`)}
-                className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-gray-500 hover:text-white"
+                onClick={() => status === 'success' && navigate(`/learn/${level}/${slug}/${exercise.number + 1}`)}
+                disabled={status !== 'success'}
+                className={`p-1.5 rounded-lg transition-colors ${
+                  status === 'success' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-800 cursor-not-allowed'
+                }`}
+                title={status === 'success' ? 'Next Challenge' : 'Complete the challenge to unlock'}
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

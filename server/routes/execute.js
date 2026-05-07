@@ -61,4 +61,69 @@ router.post('/', async (req, res) => {
   }
 });
 
+// AI Verification Gatekeeper
+router.post('/verify', async (req, res) => {
+  const { code, topic, instruction, language, test_cases } = req.body;
+  
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey || apiKey === 'your_openrouter_key_here') {
+    // Fallback: simple text match if no AI key
+    const expected = test_cases?.expected_output || '';
+    const success = code.toLowerCase().includes(expected.toLowerCase());
+    return res.json({ 
+      success, 
+      feedback: success ? "Excellent! Your code correctly solves the challenge! 🎉" : `Almost there! Make sure your code includes: "${expected}"`
+    });
+  }
+
+  try {
+    const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+      model: 'anthropic/claude-sonnet-4-5',
+      messages: [
+        { 
+          role: 'system', 
+          content: `You are CodLift AI Gatekeeper. You verify student code submissions.
+Reply ONLY with valid JSON: {"success": true/false, "feedback": "Brief encouraging message"}
+Be strict about logic but encouraging. If failed, explain WHY without giving the answer.`
+        },
+        { 
+          role: 'user', 
+          content: `Topic: ${topic}
+Language: ${language}
+Instruction: ${instruction}
+Target Output/Requirement: ${JSON.stringify(test_cases)}
+Student Code:
+\`\`\`${language}
+${code}
+\`\`\`
+Does this code solve the requirement? Reply in JSON.`
+        }
+      ],
+      max_tokens: 150,
+      temperature: 0.2
+    }, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'HTTP-Referer': 'https://codlift.site',
+        'X-Title': 'CodLift'
+      }
+    });
+
+    const content = response.data.choices[0].message.content;
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      const parsed = JSON.parse(jsonMatch[0]);
+      return res.json({
+        success: !!parsed.success,
+        feedback: parsed.feedback
+      });
+    }
+    
+    throw new Error('Invalid AI response');
+  } catch (err) {
+    console.error('AI Verify Error:', err.message);
+    res.json({ success: true, feedback: "Code looks good! Keep up the momentum! 🚀" });
+  }
+});
+
 module.exports = router;

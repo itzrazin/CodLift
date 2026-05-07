@@ -22,8 +22,8 @@ const CTA = () => {
             No credit card required. No setup needed. Just pure, gamified learning
             that helps you ship real software.
           </p>
-          <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate('/signup')}>
-            Get Started Free <ArrowRight className="w-6 h-6" />
+          <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate(localStorage.getItem('codlift_token') ? '/dashboard' : '/signup')}>
+            Start Now <ArrowRight className="w-6 h-6" />
           </Button>
         </div>
       </div>
