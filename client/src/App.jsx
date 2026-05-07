@@ -21,6 +21,7 @@ const BlogPost       = lazy(() => import('./pages/BlogPost'));
 const PrivacyPolicy  = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const About          = lazy(() => import('./pages/About'));
+const FAQ            = lazy(() => import('./pages/FAQ'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 // Loading spinner
@@ -76,6 +77,7 @@ function AppRoutes() {
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/about" element={<About />} />
+          <Route path="/faq" element={<FAQ />} />
 
           {/* Auth pages (redirect if already logged in) */}
           <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
