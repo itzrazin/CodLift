@@ -160,7 +160,7 @@ const LessonPage = () => {
       });
       const data = await res.json();
       
-      if (data.success) {
+      if (data.isCorrect) {
         setStatus('success');
         setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
         

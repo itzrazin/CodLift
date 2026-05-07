@@ -85,8 +85,8 @@ router.post('/verify', async (req, res) => {
           content: `You are the CodLift AI Gatekeeper. Your goal is to strictly verify student code submissions.
           
           Guidelines:
-          1. Return JSON ONLY: {"success": true/false, "feedback": "Brief pedagogical feedback"}
-          2. success: true ONLY if the student code fulfills the instruction and logic of the task.
+          1. Return JSON ONLY: {"isCorrect": true/false, "feedback": "Brief pedagogical feedback"}
+          2. isCorrect: true ONLY if the student code fulfills the instruction and logic of the task.
           3. feedback: If success is false, explain what is missing or incorrect WITHOUT providing the final answer. If success is true, give a quick celebratory message.`
         },
         { 
@@ -118,8 +118,9 @@ router.post('/verify', async (req, res) => {
     const jsonMatch = content.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
+      const isCorrect = !!(parsed.isCorrect ?? parsed.success);
       return res.json({
-        success: !!parsed.success,
+        isCorrect,
         feedback: parsed.feedback
       });
     }
