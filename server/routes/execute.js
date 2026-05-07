@@ -78,29 +78,34 @@ router.post('/verify', async (req, res) => {
 
   try {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: 'anthropic/claude-sonnet-4-5',
+      model: 'google/gemini-2.0-flash-001', // High-performance Gemini model
       messages: [
         { 
           role: 'system', 
-          content: `You are CodLift AI Gatekeeper. You verify student code submissions.
-Reply ONLY with valid JSON: {"success": true/false, "feedback": "Brief encouraging message"}
-Be strict about logic but encouraging. If failed, explain WHY without giving the answer.`
+          content: `You are the CodLift AI Gatekeeper. Your goal is to strictly verify student code submissions.
+          
+          Guidelines:
+          1. Return JSON ONLY: {"success": true/false, "feedback": "Brief pedagogical feedback"}
+          2. success: true ONLY if the student code fulfills the instruction and logic of the task.
+          3. feedback: If success is false, explain what is missing or incorrect WITHOUT providing the final answer. If success is true, give a quick celebratory message.`
         },
         { 
           role: 'user', 
           content: `Topic: ${topic}
-Language: ${language}
-Instruction: ${instruction}
-Target Output/Requirement: ${JSON.stringify(test_cases)}
-Student Code:
-\`\`\`${language}
-${code}
-\`\`\`
-Does this code solve the requirement? Reply in JSON.`
+          Language: ${language}
+          Instruction: ${instruction}
+          Task Requirements: ${JSON.stringify(test_cases)}
+          
+          Student Code to Verify:
+          \`\`\`${language}
+          ${code}
+          \`\`\`
+          
+          Analyze the code. Is it correct?`
         }
       ],
-      max_tokens: 150,
-      temperature: 0.2
+      max_tokens: 300,
+      temperature: 0.1
     }, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,

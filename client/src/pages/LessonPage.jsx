@@ -286,10 +286,10 @@ const LessonPage = () => {
             )}
             {exercise.number < exercise.total && (
               <button
-                onClick={() => status === 'success' && navigate(`/learn/${level}/${slug}/${exercise.number + 1}`)}
+                onClick={() => status === 'success' && goNext()}
                 disabled={status !== 'success'}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  status === 'success' ? 'text-gray-500 hover:text-white hover:bg-white/10' : 'text-gray-800 cursor-not-allowed'
+                  status === 'success' ? 'text-cyan bg-cyan/10 hover:bg-cyan/20' : 'text-gray-800 cursor-not-allowed opacity-50'
                 }`}
                 title={status === 'success' ? 'Next Challenge' : 'Complete the challenge to unlock'}
               >
