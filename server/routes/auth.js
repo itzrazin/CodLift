@@ -118,4 +118,46 @@ router.post('/login', async (req, res) => {
   }
 });
 
+const auth = require('../middleware/auth');
+const passport = require('../config/passport');
+
+router.get('/me', auth, async (req, res) => {
+  try {
+    const result = await pool.query('SELECT id, email, username, avatar, level, xp, xp_total, streak, longest_streak, is_admin, goal, notifications FROM users WHERE id = $1', [req.user.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
+    res.json({ user: result.rows[0] });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+router.put('/level', auth, async (req, res) => {
+  try {
+    const { level } = req.body;
+    await pool.query('UPDATE users SET level = $1 WHERE id = $2', [level, req.user.id]);
+    res.json({ success: true, level });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Google OAuth
+router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+  const token = jwt2.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const isNew = req.user.is_new_user ? 'true' : 'false';
+  res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/oauth/callback?token=${token}&is_new=${isNew}`);
+});
+
+// GitHub OAuth
+router.get('/github', passport.authenticate('github', { scope: ['user:email'] }));
+
+router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
+  const token = jwt2.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+  const isNew = req.user.is_new_user ? 'true' : 'false';
+  res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/oauth/callback?token=${token}&is_new=${isNew}`);
+});
+
 module.exports = router;
+

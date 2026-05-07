@@ -64,12 +64,25 @@ router.post('/:id/submit', auth, async (req, res) => {
     const isMatch = actualOutput.includes(expectedOutput) || userCode.replace(/\s+/g, '').includes(expectedOutput.replace(/\s+/g, ''));
 
     if (isMatch) {
-      // Award 10 XP
-      await pool.query('UPDATE users SET xp = xp + 10 WHERE id = $1', [req.user.id]);
-      res.json({ success: true, xp: 10 });
+      const xpToAward = 10;
+      
+      // Award XP to user
+      await pool.query('UPDATE users SET xp_total = xp_total + $1, xp = xp + $1 WHERE id = $2', [xpToAward, req.user.id]);
+      
+      // Record progress
+      const exerciseId = req.body.exerciseId || '1';
+      await pool.query(`
+        INSERT INTO progress (user_id, lesson_id, exercise_id, xp_earned, is_completed)
+        VALUES ($1, $2, $3, $4, true)
+        ON CONFLICT (user_id, lesson_id, exercise_id) 
+        DO UPDATE SET is_completed = true, completed_at = NOW()
+      `, [req.user.id, id, exerciseId, xpToAward]);
+
+      res.json({ success: true, xp: xpToAward });
     } else {
       res.json({ success: false, hint: `Output didn't match expected.` });
     }
+
 
   } catch (error) {
     console.error('Submit error:', error);
