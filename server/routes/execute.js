@@ -82,12 +82,12 @@ router.post('/verify', async (req, res) => {
       messages: [
         { 
           role: 'system', 
-          content: `You are the CodLift AI Gatekeeper. Your goal is to strictly verify student code submissions.
+          content: `You are the CodLift AI Gatekeeper. Your goal is to strictly verify student code submissions while being flexible about style.
           
           Guidelines:
-          1. Return JSON ONLY: {"isCorrect": true/false, "feedback": "Brief pedagogical feedback"}
-          2. isCorrect: true ONLY if the student code fulfills the instruction and logic of the task.
-          3. feedback: If success is false, explain what is missing or incorrect WITHOUT providing the final answer. If success is true, give a quick celebratory message.`
+          1. Return RAW JSON ONLY: {"isCorrect": true/false, "feedback": "Brief pedagogical feedback"}
+          2. isCorrect: true if the code fulfills the logic. Ignore extra whitespace, newlines, or case sensitivity unless critical to the task.
+          3. feedback: If isCorrect is false, explain what's missing without giving the final code.`
         },
         { 
           role: 'user', 
@@ -114,21 +114,39 @@ router.post('/verify', async (req, res) => {
       }
     });
 
-    const content = response.data.choices[0].message.content;
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      const parsed = JSON.parse(jsonMatch[0]);
+    const content = response.data.choices[0].message.content.trim();
+    
+    // Robust JSON Extraction: Strip markdown backticks if present
+    const cleanContent = content.replace(/^```json\s*|```\s*$/g, '').trim();
+    
+    try {
+      const parsed = JSON.parse(cleanContent);
       const isCorrect = !!(parsed.isCorrect ?? parsed.success);
       return res.json({
         isCorrect,
-        feedback: parsed.feedback
+        feedback: parsed.feedback || (isCorrect ? "Great job!" : "Not quite right.")
       });
+    } catch (parseErr) {
+      console.error('AI JSON Parse Error:', parseErr.message, 'Content:', content);
+      throw new Error('Invalid JSON format');
     }
     
-    throw new Error('Invalid AI response');
   } catch (err) {
     console.error('AI Verify Error:', err.message);
-    res.json({ success: true, feedback: "Code looks good! Keep up the momentum! 🚀" });
+    
+    // Fallback Logic: Simple Regex/Keyphrase check if AI fails
+    const expected = test_cases?.expected_output || '';
+    const codeClean = code.toLowerCase().replace(/\s+/g, '');
+    const expectedClean = expected.toLowerCase().replace(/\s+/g, '');
+    
+    const isCorrect = expected ? codeClean.includes(expectedClean) : true;
+    
+    res.json({ 
+      isCorrect, 
+      feedback: isCorrect 
+        ? "Code verified! Keep up the momentum! 🚀 (Verified via fallback)" 
+        : `Almost there! Your code doesn't seem to include the required part: "${expected}"`
+    });
   }
 });
 
