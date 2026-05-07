@@ -11,7 +11,11 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    // Highly visible logging for production debugging
+    console.error("CRITICAL ERROR DETECTED:");
+    console.error(error);
+    console.error("Error Info:", errorInfo);
+    
     this.setState({ error, errorInfo });
   }
 

@@ -33,9 +33,18 @@ app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true);
     const cleanOrigin = origin.replace(/\/$/, '');
-    if (allowedOrigins.indexOf(cleanOrigin) !== -1) return callback(null, true);
+    
+    // Check if origin is in allowed list or is a Vercel preview URL
+    const isVercelPreview = cleanOrigin.endsWith('.vercel.app') && cleanOrigin.includes('codlift-');
+    
+    if (allowedOrigins.indexOf(cleanOrigin) !== -1 || isVercelPreview) {
+      return callback(null, true);
+    }
+    
     console.log('CORS blocked origin:', origin);
-    return callback(null, true); // Allow all in development
+    // In production, you might want to block unknown origins, 
+    // but for now we'll allow but log for debugging.
+    return callback(null, true);
   },
   credentials: true
 }));
