@@ -48,6 +48,7 @@ export const Footer = () => {
             <ul className="space-y-4 text-gray-500 text-sm">
               <li><Link to="/about" className="hover:text-cyan">About Us</Link></li>
               <li><Link to="/faq" className="hover:text-cyan">FAQ</Link></li>
+              <li><Link to="/blog" className="hover:text-cyan">Blog</Link></li>
               <li><Link to="/arena" className="hover:text-cyan">Challenges</Link></li>
               <li><Link to="/leaderboard" className="hover:text-cyan">Leaderboard</Link></li>
               <li><Link to="/contact" className="hover:text-cyan">Contact</Link></li>

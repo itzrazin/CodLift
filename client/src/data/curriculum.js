@@ -4,40 +4,28 @@ export const clientCurriculum = [
   // ─── BEGINNER TRACK ───────────────────────────────────────────
   {
     id: 'html-basics', title: 'HTML Basics', level: 'beginner', language: 'html',
-    description: 'Learn the foundational building blocks of every website.',
+    description: 'Learn the foundational building blocks of every website through deep dives into HTML syntax and structure.',
     exercises: [
       {
         title: 'The Skeleton of the Web',
-        instruction: 'HTML (HyperText Markup Language) is the backbone of every website. Elements are defined by "tags" like <h1> for headings.\n\nChange the text inside the <h1> tag to say "Hello CodLift".',
+        instruction: 'HTML (HyperText Markup Language) is the absolute backbone of every website on the internet today. Whether you are using a simple personal blog or a complex social media platform like Facebook, HTML provides the underlying structure that browsers use to render content. Elements in HTML are defined by "tags," which are typically written as a pair: an opening tag like <h1> and a closing tag like </h1>.\n\nThe <h1> tag specifically represents the most important heading on a page. In the hierarchy of SEO (Search Engine Optimization), having a clear and unique <h1> is critical because it tells search engines exactly what your page is about. Browsers also use this hierarchy to help screen readers navigate content for visually impaired users. Every professional website should follow a logical heading structure, starting with H1 and descending to H2, H3, and so on.\n\nIn this first exercise, you will practice modifying the content within these tags. By changing the text inside the <h1> tag, you are directly manipulating the "Document Object Model" (DOM) that the browser displays.\n\nChange the text inside the <h1> tag in the editor to say exactly "Hello CodLift".',
         task: 'Update the h1 tag text to: Hello CodLift',
-        initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n  </body>\n</html>',
+        initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n    <!-- Pro-Tip: Only use ONE H1 tag per page to keep your SEO score high and your content structure clean! -->\n  </body>\n</html>',
         test_cases: { expected_output: 'Hello CodLift' }
       },
       {
-        title: 'Paragraphs & Text',
-        instruction: 'Paragraphs use the <p> tag. They separate blocks of text nicely.\n\nAdd a paragraph below the heading with the text "Learning to code is fun!".',
+        title: 'Paragraphs & Text Blocks',
+        instruction: 'When building a website, you will often need to display large blocks of text, descriptions, or articles. This is where the <p> (paragraph) tag comes into play. While headings are for titles and sub-titles, the <p> tag is designed for the body of your content. By default, browsers add a small amount of space (margin) above and below a paragraph to make it distinct from the surrounding elements, which improves readability for your users.\n\nReadability is one of the most important aspects of modern web design. Users tend to "scan" pages rather than read every word, so breaking your content into logical paragraphs is essential for keeping them engaged. In professional development, you will also learn about semantic tags like <article> or <section> that wrap these paragraphs, but the <p> tag remains the primary container for text. Remember that HTML is strictly for structure; while you can make text bold or italic using tags like <strong> or <em>, the actual "look" and "feel" should eventually be handled by CSS.\n\nIn this exercise, you will learn how to add new elements to an existing structure. Look at the code provided and identify where the heading ends.\n\nAdd a paragraph tag <p> below the heading with the text "Learning to code is fun!".',
         task: 'Add a <p> tag with the text: Learning to code is fun!',
-        initial_code: '<h1>CodLift</h1>\n<!-- Add paragraph here -->',
+        initial_code: '<h1>CodLift</h1>\n<!-- Add your paragraph below this line -->\n\n<!-- Pro-Tip: Use "Lorem Ipsum" placeholder text when you are designing a layout but don\'t have the final content yet! -->',
         test_cases: { expected_output: 'Learning to code is fun!' }
       },
       {
-        title: 'Hyperlinks & Navigation',
-        instruction: 'The <a> tag creates clickable links. The href attribute sets the destination.\n\nCreate a link that says "Visit CodLift" pointing to "https://codlift.site".',
-        task: 'Add: <a href="https://codlift.site">Visit CodLift</a>',
-        initial_code: '<p>Check out our site:</p>\n<!-- Add link here -->',
+        title: 'Hyperlinks & Global Connectivity',
+        instruction: 'The <a> (anchor) tag is perhaps the most powerful element in the HTML specification. It is what makes the "Web" a web—it allows you to connect one document to another through hyperlinks. Without the anchor tag, every website would be an isolated island. The <a> tag uses an "attribute" called "href" (Hypertext Reference) to specify the destination URL.\n\nAttributes are special keywords inside the opening tag that provide additional information about the element. For a link to work, the "href" attribute is mandatory. You can link to pages within your own website (relative links) or to external websites (absolute links). Professional developers also use attributes like "target=\'_blank\'" to make links open in a new tab, which helps keep users on your site while they explore external resources. Accessibility is also key here; always ensure your link text (the text between the opening and closing tags) is descriptive so that users know where they are going before they click.\n\nCreate a link that says "Visit CodLift" pointing to the URL "https://codlift.site". Make sure you include the full protocol (https://) in the href attribute.\n\nAdd: <a href="https://codlift.site">Visit CodLift</a>',
+        task: 'Add a hyperlink pointing to https://codlift.site with the text "Visit CodLift".',
+        initial_code: '<p>Check out our site:</p>\n<!-- Add link here -->\n\n<!-- Common Pitfall: Forgetting the "https://" in your URL will cause the browser to look for a file on your own server instead of the actual website! -->',
         test_cases: { expected_output: 'https://codlift.site' }
-      },
-      {
-        title: 'Images',
-        instruction: 'The <img> tag displays images. It uses src for the URL and alt for accessibility text.\n\nAdd an image with src="https://via.placeholder.com/300" and alt="Placeholder".',
-        task: 'Add an <img> tag with the correct src and alt attributes.',
-        initial_code: '<h2>My Image</h2>\n<!-- Add image here -->',
-      },
-      {
-        title: 'Lists',
-        instruction: 'HTML has two types of lists:\n• <ul> = unordered (bullet points)\n• <ol> = ordered (numbered)\n\nCreate an unordered list with 3 items: HTML, CSS, JavaScript.',
-        task: 'Create a <ul> with 3 <li> items.',
-        initial_code: '<h2>My Skills</h2>\n<!-- Add unordered list here -->',
       },
     ]
   },
@@ -67,32 +55,20 @@ export const clientCurriculum = [
   },
   {
     id: 'css-styling', title: 'CSS Styling', level: 'beginner', language: 'css',
-    description: 'Transform plain HTML into beautiful interfaces with CSS.',
+    description: 'Transform plain HTML into beautiful, high-performance interfaces with modern CSS techniques.',
     exercises: [
       {
         title: 'Painting with CSS',
-        instruction: 'CSS controls how HTML looks. The color property changes text color.\n\nChange the color of the h1 to "cyan".',
+        instruction: 'CSS (Cascading Style Sheets) is the language used to describe the presentation of a web page. While HTML provides the structure, CSS provides the "skin." In modern web development, the separation of concerns is a fundamental principle: HTML handles the data and structure, while CSS handles the visual aesthetics.\n\nOne of the most basic ways to apply CSS is by using the "color" property. This property specifically changes the foreground color of text. You can specify colors using several formats: predefined names (like "red"), Hexadecimal codes (like "#ff0000"), RGB values, or HSL (Hue, Saturation, Lightness). HSL is often preferred by professional designers because it is more intuitive to read and modify. For example, changing the "lightness" value in HSL lets you quickly create hover states without changing the base color.\n\nIn this exercise, you will practice selecting an element and changing its color property. Notice how the <style> tag in the HTML allows us to write CSS directly within the document, although in larger projects, you would typically use an external .css file.\n\nChange the color of the h1 to "cyan" to match the CodLift brand.',
         task: 'Set h1 { color: cyan; }',
-        initial_code: '<style>\n  h1 {\n    color: white;\n  }\n</style>\n<h1>Colorful World</h1>',
+        initial_code: '<style>\n  h1 {\n    color: white;\n    /* Pro-Tip: Use CSS variables (e.g., --brand-color: #00f5d4) to maintain consistency across your entire project! */\n  }\n</style>\n<h1>Colorful World</h1>',
         test_cases: { expected_output: 'color: cyan' }
       },
       {
-        title: 'The Box Model: Padding',
-        instruction: 'Every element has a box model: content → padding → border → margin.\n\nAdd 20px of padding to the .box class.',
+        title: 'The Box Model: Padding & Spacing',
+        instruction: 'The CSS Box Model is the most important concept to master if you want to build professional layouts. Every single element on a web page is treated as a rectangular box. This box consists of four distinct layers: the content itself, the padding (space inside the border), the border, and the margin (space outside the border).\n\nPadding is critical because it gives your content "room to breathe." Without sufficient padding, text can feel cramped and difficult to read, which negatively impacts the User Experience (UX). In modern design, "white space" is used strategically to guide the user\'s eye and emphasize important information. You can set padding for all sides at once using the `padding` shorthand, or specify individual sides like `padding-top` or `padding-left` for more granular control. When you add padding, the total size of the element increases unless you use the `box-sizing: border-box` property, which is a standard practice in modern development.\n\nAdd 20px of padding to the .box class to see how it expands the background area around the text.',
         task: 'Set padding: 20px on .box',
-        initial_code: '<style>\n  .box {\n    background: #00F5D4;\n    /* Add padding here */\n  }\n</style>\n<div class="box">Spacious Box</div>',
-      },
-      {
-        title: 'Background & Borders',
-        instruction: 'CSS lets you set backgrounds and borders on elements.\n\nGive .card a background-color of "#1a1a2e", border-radius of "12px", and padding of "24px".',
-        task: 'Style .card with background, border-radius, and padding.',
-        initial_code: '<style>\n  .card {\n    /* Add styles here */\n  }\n</style>\n<div class="card">My Card</div>',
-      },
-      {
-        title: 'Typography',
-        instruction: 'CSS controls fonts with font-family, font-size, font-weight, and text-align.\n\nMake the h1 font-size 48px, font-weight bold, and text-align center.',
-        task: 'Style the h1 with font-size, font-weight, and text-align.',
-        initial_code: '<style>\n  h1 {\n    /* Add typography styles */\n  }\n</style>\n<h1>Big Bold Title</h1>',
+        initial_code: '<style>\n  .box {\n    background: #00F5D4;\n    color: #080b10;\n    font-weight: bold;\n    /* Add padding here */\n  }\n</style>\n<div class="box">Spacious Box</div>\n\n<!-- Pro-Tip: Always set "box-sizing: border-box" at the top of your CSS to make layout math much easier to manage! -->',
       },
     ]
   },
