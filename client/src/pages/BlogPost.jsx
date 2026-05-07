@@ -4,7 +4,7 @@ import { SEO } from '../utils/SEO';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/Core';
 
-export const BlogPost = () => {
+const BlogPost = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
 
@@ -77,3 +77,6 @@ export const BlogPost = () => {
     </div>
   );
 };
+
+export default BlogPost;
+

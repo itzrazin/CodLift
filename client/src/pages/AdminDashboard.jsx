@@ -24,7 +24,7 @@ const AdminStat = ({ title, value, change, icon: Icon, color }) => (
   </GlassCard>
 );
 
-export const AdminDashboard = () => {
+const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-background flex">
       {/* Admin Sidebar */}
@@ -133,3 +133,6 @@ export const AdminDashboard = () => {
     </div>
   );
 };
+
+export default AdminDashboard;
+

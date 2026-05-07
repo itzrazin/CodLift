@@ -14,7 +14,7 @@ import { SEO } from '../utils/SEO';
 import { API_URL } from '../utils/config';
 import { clientCurriculum } from '../data/curriculum';
 
-export const LessonPage = () => {
+const LessonPage = () => {
   const [lesson, setLesson] = useState(null);
   const [exercise, setExercise] = useState(null);
   const [code, setCode] = useState('');
@@ -466,3 +466,4 @@ export const LessonPage = () => {
     </div>
   );
 };
+export default LessonPage;

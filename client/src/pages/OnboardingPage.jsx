@@ -13,7 +13,7 @@ const levels = [
   { id: 'master', title: 'MASTER', icon: Terminal, color: 'text-purple-400', bg: 'bg-purple-400/10', border: 'border-purple-400/30', desc: 'Ready for backend? Build full-stack apps with Node and DBs.' }
 ];
 
-export const OnboardingPage = () => {
+const OnboardingPage = () => {
   const [selected, setSelected] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -92,3 +92,4 @@ export const OnboardingPage = () => {
     </div>
   );
 };
+export default OnboardingPage;

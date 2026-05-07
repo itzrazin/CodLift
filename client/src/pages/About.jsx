@@ -2,7 +2,7 @@ import React from 'react';
 import { SEO } from '../utils/SEO';
 import { Rocket, Target, BookOpen, Code2 } from 'lucide-react';
 
-export const About = () => {
+const About = () => {
   return (
     <div className="min-h-screen bg-background text-white pt-24 pb-16 px-6 overflow-hidden relative">
       <SEO 
@@ -53,3 +53,6 @@ export const About = () => {
     </div>
   );
 };
+
+export default About;
+

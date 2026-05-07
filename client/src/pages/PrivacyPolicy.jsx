@@ -1,7 +1,7 @@
 import React from 'react';
 import { SEO } from '../utils/SEO';
 
-export const PrivacyPolicy = () => {
+const PrivacyPolicy = () => {
   const lastUpdated = "May 7, 2026";
 
   return (
@@ -60,3 +60,6 @@ export const PrivacyPolicy = () => {
     </div>
   );
 };
+
+export default PrivacyPolicy;
+

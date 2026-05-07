@@ -35,7 +35,7 @@ const ChallengeCard = ({ title, type, difficulty, xp, icon: Icon, color }) => (
   </GlassCard>
 );
 
-export const Arena = () => {
+const Arena = () => {
   const challenges = [
     {
       title: "Fix the Counter",
@@ -173,3 +173,4 @@ export const Arena = () => {
     </div>
   );
 };
+export default Arena;

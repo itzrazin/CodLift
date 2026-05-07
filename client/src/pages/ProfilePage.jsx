@@ -46,7 +46,7 @@ const ProjectCard = ({ title, tech, image, date }) => (
   </GlassCard>
 );
 
-export const ProfilePage = () => {
+const ProfilePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -183,3 +183,6 @@ export const ProfilePage = () => {
     </div>
   );
 };
+
+export default ProfilePage;
+

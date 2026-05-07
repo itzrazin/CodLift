@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { SEO } from '../utils/SEO';
 import { GlassCard } from '../components/ui/Core';
 
-export const BlogPage = () => {
+const BlogPage = () => {
   const navigate = useNavigate();
   
   const posts = [
@@ -72,3 +72,6 @@ export const BlogPage = () => {
     </div>
   );
 };
+
+export default BlogPage;
+

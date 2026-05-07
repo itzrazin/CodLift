@@ -30,7 +30,7 @@ const RankBadge = ({ rank }) => {
   return <span className="text-gray-600 font-black text-sm">{String(rank).padStart(2, '0')}</span>;
 };
 
-export const LeaderboardPage = () => {
+const LeaderboardPage = () => {
   const [filter, setFilter] = useState('all-time');
   const [data, setData] = useState(PLACEHOLDER);
   const [loading, setLoading] = useState(true);
@@ -196,3 +196,4 @@ export const LeaderboardPage = () => {
     </div>
   );
 };
+export default LeaderboardPage;

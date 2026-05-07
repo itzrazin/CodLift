@@ -50,7 +50,7 @@ const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
   );
 };
 
-export const Dashboard = () => {
+const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [progress, setProgress] = useState([]);
@@ -236,3 +236,4 @@ export const Dashboard = () => {
     </div>
   );
 };
+export default Dashboard;

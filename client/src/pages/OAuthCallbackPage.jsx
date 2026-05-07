@@ -4,7 +4,7 @@ import { useAuth } from '../components/AuthContext';
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
 
-export const OAuthCallbackPage = () => {
+const OAuthCallbackPage = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState('loading'); // loading | success | error
   const [message, setMessage] = useState('');
@@ -85,3 +85,6 @@ export const OAuthCallbackPage = () => {
     </div>
   );
 };
+
+export default OAuthCallbackPage;
+

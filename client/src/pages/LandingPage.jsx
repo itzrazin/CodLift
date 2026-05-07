@@ -31,7 +31,7 @@ const CTA = () => {
   );
 };
 
-export const LandingPage = () => {
+const LandingPage = () => {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -84,3 +84,4 @@ export const LandingPage = () => {
 };
 
 
+export default LandingPage;

@@ -23,7 +23,7 @@ const perks = [
   'XP, streaks & leaderboard'
 ];
 
-export const SignupPage = () => {
+const SignupPage = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -230,3 +230,4 @@ export const SignupPage = () => {
     </div>
   );
 };
+export default SignupPage;

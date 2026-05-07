@@ -1,7 +1,7 @@
 import React from 'react';
 import { SEO } from '../utils/SEO';
 
-export const TermsOfService = () => {
+const TermsOfService = () => {
   const lastUpdated = "May 7, 2026";
 
   return (
@@ -42,3 +42,6 @@ export const TermsOfService = () => {
     </div>
   );
 };
+
+export default TermsOfService;
+
