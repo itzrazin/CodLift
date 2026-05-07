@@ -25,7 +25,7 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="hidden sm:flex">Log In</Button>
-          <Button size="sm" onClick={() => navigate('/signup')}>Start Free</Button>
+          <Button size="sm" onClick={() => navigate('/signup')}>Start Now</Button>
         </div>
       </div>
     </nav>

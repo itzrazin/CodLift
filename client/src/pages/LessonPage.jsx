@@ -18,6 +18,7 @@ const LessonPage = () => {
   const [lesson, setLesson] = useState(null);
   const [exercise, setExercise] = useState(null);
   const [code, setCode] = useState('');
+  const [hasRun, setHasRun] = useState(false);
   const [output, setOutput] = useState('');
   const [activeTab, setActiveTab] = useState('preview');
   const [showHint, setShowHint] = useState(false);
@@ -37,7 +38,8 @@ const LessonPage = () => {
 
   const handleCodeChange = useCallback((val) => {
     setCode(val || '');
-  }, []);
+    if (!hasRun && val !== exercise?.initial_code) setHasRun(true);
+  }, [hasRun, exercise]);
 
   const fetchExercise = async () => {
     // First try client-side curriculum (fast, no network)
@@ -63,6 +65,7 @@ const LessonPage = () => {
         setMessage('');
         setShowHint(false);
         setHintText('');
+        setHasRun(false);
         setActiveTab(localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console');
         return;
       }
@@ -80,6 +83,7 @@ const LessonPage = () => {
       setMessage('');
       setShowHint(false);
       setHintText('');
+      setHasRun(false);
       setActiveTab(data.lesson.language === 'html' || data.lesson.language === 'css' ? 'preview' : 'console');
     } catch {
       navigate('/dashboard');
@@ -108,6 +112,7 @@ const LessonPage = () => {
   };
 
   const handleRun = async () => {
+    setHasRun(true);
     setStatus('running');
     try {
       // For HTML/CSS: just render in preview, no server call needed
@@ -444,12 +449,21 @@ const LessonPage = () => {
             ) : (
               <div className="w-full h-full">
                 {lesson.language === 'html' || lesson.language === 'css' ? (
-                  <iframe
-                    title="preview"
-                    srcDoc={code}
-                    className="w-full h-full border-none bg-white"
-                    sandbox="allow-scripts allow-same-origin"
-                  />
+                  hasRun ? (
+                    <iframe
+                      title="preview"
+                      srcDoc={code}
+                      className="w-full h-full border-none bg-white"
+                      sandbox="allow-scripts allow-same-origin"
+                    />
+                  ) : (
+                    <div className="flex items-center justify-center h-full bg-navy/80 text-gray-500 p-6 text-center">
+                      <div>
+                        <Globe className="w-8 h-8 mx-auto mb-3 opacity-30" />
+                        <p className="text-sm italic">Click "Run" or type to see the preview.</p>
+                      </div>
+                    </div>
+                  )
                 ) : (
                   <div className="flex items-center justify-center h-full bg-navy/50 text-gray-500 p-6 text-center">
                     <div>

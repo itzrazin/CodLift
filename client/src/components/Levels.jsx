@@ -43,9 +43,9 @@ export const LevelProgression = () => {
                 <div className="absolute left-6 top-8 bottom-8 w-1 bg-white/5"></div>
                 
                 {[
-                  { title: "HTML Fundamentals", status: "completed" },
-                  { title: "CSS Flexbox & Grid", status: "completed" },
-                  { title: "JavaScript Logic", status: "current" },
+                  { title: "HTML Fundamentals", status: "current" },
+                  { title: "CSS Flexbox & Grid", status: "locked" },
+                  { title: "JavaScript Logic", status: "locked" },
                   { title: "React Components", status: "locked" },
                   { title: "Backend Systems", status: "locked" }
                 ].map((node, i) => (

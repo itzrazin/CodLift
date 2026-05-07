@@ -32,7 +32,7 @@ const CodeMockup = () => {
   return (
     <div className="relative group">
       <div className="absolute -inset-1 bg-gradient-to-r from-cyan to-blue-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-      <div className="relative glass-cyan rounded-xl p-1 overflow-hidden">
+      <div className="relative glass-cyan rounded-xl p-1">
         <div className="bg-navy p-4 rounded-lg font-mono text-sm h-64 overflow-hidden">
           <div className="flex gap-2 mb-4">
             <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
@@ -100,7 +100,7 @@ export const Hero = () => {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 <Button size="lg" className="w-full sm:w-auto" onClick={() => navigate('/signup')}>
-                  Start for Free <Play className="w-5 h-5" />
+                  Start Now <Play className="w-5 h-5" />
                 </Button>
                 <Button variant="ghost" size="lg" className="w-full sm:w-auto">
                   See How It Works <Code className="w-5 h-5" />
