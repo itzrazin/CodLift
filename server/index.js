@@ -116,8 +116,10 @@ app.get('/sitemap.xml', (req, res) => {
 
   // Dynamic lesson pages from curriculum
   const lessonPages = [];
-  curriculum.forEach((lesson, index) => {
-    lessonPages.push(`/lessons/${index + 1}`);
+  curriculum.forEach((module) => {
+    module.exercises.forEach((exercise, index) => {
+      lessonPages.push(`/learn/${module.level}/${module.id}/${index + 1}`);
+    });
   });
 
   const allUrls = [...staticPages, ...lessonPages];
