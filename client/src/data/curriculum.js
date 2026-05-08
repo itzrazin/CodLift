@@ -187,34 +187,6 @@ export const clientCurriculum = [
       },
     ]
   },
-  initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <h1 id="title">Click the button!</h1>\n  <button onclick="changeText()">Click Me</button>\n  <script>\n    function changeText() {\n      // Change the h1 text here\n    }\n  </script>\n</body>\n</html>',
-      },
-{
-  title: 'Changing Styles',
-    instruction: 'element.style lets you change CSS from JavaScript.\n\nClick the button to change the box background color to "cyan".',
-      task: 'Change the .box background color to cyan on button click.',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <div id="box" style="width:100px;height:100px;background:red;border-radius:8px;"></div>\n  <br>\n  <button onclick="changeColor()">Change Color</button>\n  <script>\n    function changeColor() {\n      // Change the background color here\n    }\n  </script>\n</body>\n</html>',
-      },
-    ]
-  },
-{
-  id: 'js-events', title: 'JS Events & Forms', level: 'beginner', language: 'html',
-    description: 'Handle user interactions with JavaScript event listeners.',
-      exercises: [
-        {
-          title: 'Event Listeners',
-          instruction: 'addEventListener attaches event handlers to elements without using inline onclick.\n\nAdd a click event listener to the button that logs "Button clicked!" to the console.',
-          task: 'Use addEventListener("click", ...) on the button.',
-          initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <button id="btn">Click Me</button>\n  <script>\n    const btn = document.getElementById("btn");\n    // Add event listener here\n  </script>\n</body>\n</html>',
-        },
-        {
-          title: 'Form Validation',
-          instruction: 'Prevent form submission with event.preventDefault() and validate input.\n\nPrevent the form from submitting and show an alert if the name field is empty.',
-          task: 'Validate the form: show alert if name is empty.',
-          initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <form id="myForm">\n    <input type="text" id="name" placeholder="Your name" />\n    <button type="submit">Submit</button>\n  </form>\n  <script>\n    document.getElementById("myForm").addEventListener("submit", function(e) {\n      // Validate here\n    });\n  </script>\n</body>\n</html>',
-        },
-      ]
-},
 
 // ─── PRO TRACK ────────────────────────────────────────────────
 {
