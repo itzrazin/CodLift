@@ -187,152 +187,152 @@ export const clientCurriculum = [
       },
     ]
   },
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <h1 id="title">Click the button!</h1>\n  <button onclick="changeText()">Click Me</button>\n  <script>\n    function changeText() {\n      // Change the h1 text here\n    }\n  </script>\n</body>\n</html>',
+  initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <h1 id="title">Click the button!</h1>\n  <button onclick="changeText()">Click Me</button>\n  <script>\n    function changeText() {\n      // Change the h1 text here\n    }\n  </script>\n</body>\n</html>',
       },
-      {
-        title: 'Changing Styles',
-        instruction: 'element.style lets you change CSS from JavaScript.\n\nClick the button to change the box background color to "cyan".',
-        task: 'Change the .box background color to cyan on button click.',
+{
+  title: 'Changing Styles',
+    instruction: 'element.style lets you change CSS from JavaScript.\n\nClick the button to change the box background color to "cyan".',
+      task: 'Change the .box background color to cyan on button click.',
         initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <div id="box" style="width:100px;height:100px;background:red;border-radius:8px;"></div>\n  <br>\n  <button onclick="changeColor()">Change Color</button>\n  <script>\n    function changeColor() {\n      // Change the background color here\n    }\n  </script>\n</body>\n</html>',
       },
     ]
   },
-  {
-    id: 'js-events', title: 'JS Events & Forms', level: 'beginner', language: 'html',
+{
+  id: 'js-events', title: 'JS Events & Forms', level: 'beginner', language: 'html',
     description: 'Handle user interactions with JavaScript event listeners.',
-    exercises: [
-      {
-        title: 'Event Listeners',
-        instruction: 'addEventListener attaches event handlers to elements without using inline onclick.\n\nAdd a click event listener to the button that logs "Button clicked!" to the console.',
-        task: 'Use addEventListener("click", ...) on the button.',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <button id="btn">Click Me</button>\n  <script>\n    const btn = document.getElementById("btn");\n    // Add event listener here\n  </script>\n</body>\n</html>',
-      },
-      {
-        title: 'Form Validation',
-        instruction: 'Prevent form submission with event.preventDefault() and validate input.\n\nPrevent the form from submitting and show an alert if the name field is empty.',
-        task: 'Validate the form: show alert if name is empty.',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <form id="myForm">\n    <input type="text" id="name" placeholder="Your name" />\n    <button type="submit">Submit</button>\n  </form>\n  <script>\n    document.getElementById("myForm").addEventListener("submit", function(e) {\n      // Validate here\n    });\n  </script>\n</body>\n</html>',
-      },
-    ]
-  },
+      exercises: [
+        {
+          title: 'Event Listeners',
+          instruction: 'addEventListener attaches event handlers to elements without using inline onclick.\n\nAdd a click event listener to the button that logs "Button clicked!" to the console.',
+          task: 'Use addEventListener("click", ...) on the button.',
+          initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <button id="btn">Click Me</button>\n  <script>\n    const btn = document.getElementById("btn");\n    // Add event listener here\n  </script>\n</body>\n</html>',
+        },
+        {
+          title: 'Form Validation',
+          instruction: 'Prevent form submission with event.preventDefault() and validate input.\n\nPrevent the form from submitting and show an alert if the name field is empty.',
+          task: 'Validate the form: show alert if name is empty.',
+          initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <form id="myForm">\n    <input type="text" id="name" placeholder="Your name" />\n    <button type="submit">Submit</button>\n  </form>\n  <script>\n    document.getElementById("myForm").addEventListener("submit", function(e) {\n      // Validate here\n    });\n  </script>\n</body>\n</html>',
+        },
+      ]
+},
 
-  // ─── PRO TRACK ────────────────────────────────────────────────
-  {
-    id: 'react-components', title: 'React Components', level: 'pro', language: 'javascript',
+// ─── PRO TRACK ────────────────────────────────────────────────
+{
+  id: 'react-components', title: 'React Components', level: 'pro', language: 'javascript',
     description: 'Build reusable UI components with React and JSX.',
-    exercises: [
-      {
-        title: 'Your First Component',
-        instruction: 'React components are JavaScript functions that return JSX (HTML-like syntax).\n\nCreate a functional component called Greeting that returns <h1>Hello, React!</h1>. Then render it.',
-        task: 'Create and render a Greeting component.',
-        initial_code: '// Write your Greeting component\nfunction Greeting() {\n  // Return JSX here\n}\n\n// Render it\nconsole.log("Greeting component created!");\n',
-      },
-      {
-        title: 'Props',
-        instruction: 'Props let you pass data into components, making them reusable.\n\nCreate a Card component that accepts a title prop and displays it in an <h2>.',
-        task: 'Create Card({ title }) that renders <h2>{title}</h2>',
-        initial_code: '// Create Card component with title prop\nfunction Card(props) {\n  // Return h2 with props.title\n}\n\nconsole.log("Card component ready!");\n',
-      },
-      {
-        title: 'State with useState',
-        instruction: 'useState lets components remember and update values.\n\nCreate a counter that starts at 0. Clicking "+" increases it, "-" decreases it.',
-        task: 'Use useState to build a counter with + and - buttons.',
-        initial_code: '// Counter component using useState\n// import React, { useState } from "react";\n\nfunction Counter() {\n  // Add state here\n  return (\n    <div>\n      <button>-</button>\n      <span>0</span>\n      <button>+</button>\n    </div>\n  );\n}\n',
-      },
-    ]
-  },
-  {
-    id: 'react-hooks', title: 'React Hooks', level: 'pro', language: 'javascript',
+      exercises: [
+        {
+          title: 'Your First Component',
+          instruction: 'React components are JavaScript functions that return JSX (HTML-like syntax).\n\nCreate a functional component called Greeting that returns <h1>Hello, React!</h1>. Then render it.',
+          task: 'Create and render a Greeting component.',
+          initial_code: '// Write your Greeting component\nfunction Greeting() {\n  // Return JSX here\n}\n\n// Render it\nconsole.log("Greeting component created!");\n',
+        },
+        {
+          title: 'Props',
+          instruction: 'Props let you pass data into components, making them reusable.\n\nCreate a Card component that accepts a title prop and displays it in an <h2>.',
+          task: 'Create Card({ title }) that renders <h2>{title}</h2>',
+          initial_code: '// Create Card component with title prop\nfunction Card(props) {\n  // Return h2 with props.title\n}\n\nconsole.log("Card component ready!");\n',
+        },
+        {
+          title: 'State with useState',
+          instruction: 'useState lets components remember and update values.\n\nCreate a counter that starts at 0. Clicking "+" increases it, "-" decreases it.',
+          task: 'Use useState to build a counter with + and - buttons.',
+          initial_code: '// Counter component using useState\n// import React, { useState } from "react";\n\nfunction Counter() {\n  // Add state here\n  return (\n    <div>\n      <button>-</button>\n      <span>0</span>\n      <button>+</button>\n    </div>\n  );\n}\n',
+        },
+      ]
+},
+{
+  id: 'react-hooks', title: 'React Hooks', level: 'pro', language: 'javascript',
     description: 'Master useEffect, useCallback, and custom hooks.',
-    exercises: [
-      {
-        title: 'useEffect Basics',
-        instruction: 'useEffect runs code after the component renders. The dependency array controls when it re-runs.\n\nLog "Component mounted!" when the component first renders (empty dependency array).',
-        task: 'Use useEffect with [] to log on mount.',
-        initial_code: '// import { useEffect } from "react";\n\nfunction MyComponent() {\n  // Add useEffect here\n  \n  return <div>Check the console!</div>;\n}\n',
-      },
-      {
-        title: 'Fetching Data',
-        instruction: 'useEffect is perfect for fetching data when a component loads.\n\nFetch users from https://jsonplaceholder.typicode.com/users and log the first user\'s name.',
-        task: 'Fetch from the API in useEffect and log data.',
-        initial_code: '// Fetch data with useEffect\nasync function loadUsers() {\n  const res = await fetch("https://jsonplaceholder.typicode.com/users");\n  const data = await res.json();\n  // Log the first user\'s name here\n}\n\nloadUsers();\n',
-      },
-    ]
-  },
-  {
-    id: 'node-express', title: 'Node.js & Express', level: 'pro', language: 'javascript',
+      exercises: [
+        {
+          title: 'useEffect Basics',
+          instruction: 'useEffect runs code after the component renders. The dependency array controls when it re-runs.\n\nLog "Component mounted!" when the component first renders (empty dependency array).',
+          task: 'Use useEffect with [] to log on mount.',
+          initial_code: '// import { useEffect } from "react";\n\nfunction MyComponent() {\n  // Add useEffect here\n  \n  return <div>Check the console!</div>;\n}\n',
+        },
+        {
+          title: 'Fetching Data',
+          instruction: 'useEffect is perfect for fetching data when a component loads.\n\nFetch users from https://jsonplaceholder.typicode.com/users and log the first user\'s name.',
+          task: 'Fetch from the API in useEffect and log data.',
+          initial_code: '// Fetch data with useEffect\nasync function loadUsers() {\n  const res = await fetch("https://jsonplaceholder.typicode.com/users");\n  const data = await res.json();\n  // Log the first user\'s name here\n}\n\nloadUsers();\n',
+        },
+      ]
+},
+{
+  id: 'node-express', title: 'Node.js & Express', level: 'pro', language: 'javascript',
     description: 'Build backend APIs with Node.js and the Express framework.',
-    exercises: [
-      {
-        title: 'Express Hello World',
-        instruction: 'Express is a minimal Node.js framework for building APIs.\n\nWrite an Express route GET /hello that responds with { message: "Hello World" }.',
-        task: 'Create a GET /hello route that returns JSON.',
-        initial_code: 'const express = require("express");\nconst app = express();\n\n// Add your GET /hello route here\n\napp.listen(3000, () => console.log("Server running on port 3000"));\n',
-      },
-      {
-        title: 'Route Parameters',
-        instruction: 'Express uses :paramName for dynamic URL segments.\n\nCreate a GET /user/:id route that responds with { userId: id }.',
-        task: 'Create GET /user/:id route returning the id as JSON.',
-        initial_code: 'const express = require("express");\nconst app = express();\n\n// Add your /user/:id route here\n\napp.listen(3000);\n',
-      },
-    ]
-  },
-  {
-    id: 'api-fetching', title: 'Fetch API & Async', level: 'pro', language: 'javascript',
+      exercises: [
+        {
+          title: 'Express Hello World',
+          instruction: 'Express is a minimal Node.js framework for building APIs.\n\nWrite an Express route GET /hello that responds with { message: "Hello World" }.',
+          task: 'Create a GET /hello route that returns JSON.',
+          initial_code: 'const express = require("express");\nconst app = express();\n\n// Add your GET /hello route here\n\napp.listen(3000, () => console.log("Server running on port 3000"));\n',
+        },
+        {
+          title: 'Route Parameters',
+          instruction: 'Express uses :paramName for dynamic URL segments.\n\nCreate a GET /user/:id route that responds with { userId: id }.',
+          task: 'Create GET /user/:id route returning the id as JSON.',
+          initial_code: 'const express = require("express");\nconst app = express();\n\n// Add your /user/:id route here\n\napp.listen(3000);\n',
+        },
+      ]
+},
+{
+  id: 'api-fetching', title: 'Fetch API & Async', level: 'pro', language: 'javascript',
     description: 'Master async/await and the Fetch API for real-world data.',
-    exercises: [
-      {
-        title: 'Async/Await',
-        instruction: 'async/await makes asynchronous code read like synchronous code.\n\nWrite an async function fetchData that fetches https://jsonplaceholder.typicode.com/posts/1 and returns the title.',
-        task: 'Create async fetchData() that returns the post title.',
-        initial_code: '// Write your async function\nasync function fetchData() {\n  // Fetch and return the title\n}\n\nfetchData().then(title => console.log(title));\n',
-      },
-      {
-        title: 'Error Handling',
-        instruction: 'Always wrap fetch calls in try/catch to handle network errors gracefully.\n\nWrap your fetch in try/catch and log a friendly error message if it fails.',
-        task: 'Add try/catch with a friendly error message.',
-        initial_code: 'async function fetchData(url) {\n  // Add try/catch around the fetch\n  const res = await fetch(url);\n  const data = await res.json();\n  return data;\n}\n\nfetchData("https://invalid-url-xyz.com").then(console.log);\n',
-      },
-    ]
-  },
+      exercises: [
+        {
+          title: 'Async/Await',
+          instruction: 'async/await makes asynchronous code read like synchronous code.\n\nWrite an async function fetchData that fetches https://jsonplaceholder.typicode.com/posts/1 and returns the title.',
+          task: 'Create async fetchData() that returns the post title.',
+          initial_code: '// Write your async function\nasync function fetchData() {\n  // Fetch and return the title\n}\n\nfetchData().then(title => console.log(title));\n',
+        },
+        {
+          title: 'Error Handling',
+          instruction: 'Always wrap fetch calls in try/catch to handle network errors gracefully.\n\nWrap your fetch in try/catch and log a friendly error message if it fails.',
+          task: 'Add try/catch with a friendly error message.',
+          initial_code: 'async function fetchData(url) {\n  // Add try/catch around the fetch\n  const res = await fetch(url);\n  const data = await res.json();\n  return data;\n}\n\nfetchData("https://invalid-url-xyz.com").then(console.log);\n',
+        },
+      ]
+},
 
-  // ─── MASTER TRACK ─────────────────────────────────────────────
-  {
-    id: 'system-design', title: 'System Design Basics', level: 'master', language: 'javascript',
+// ─── MASTER TRACK ─────────────────────────────────────────────
+{
+  id: 'system-design', title: 'System Design Basics', level: 'master', language: 'javascript',
     description: 'Learn to design scalable, production-ready systems.',
-    exercises: [
-      {
-        title: 'REST API Design',
-        instruction: 'Good REST APIs follow conventions: GET for reading, POST for creating, PUT for updating, DELETE for removing.\n\nWrite comments describing what endpoints a "todo app" REST API would need.',
-        task: 'Document 4 REST endpoints for a todo app (comments only).',
-        initial_code: '// REST API for a Todo App\n// Document your endpoints here:\n\n// GET   /todos       → \n// POST  /todos       → \n// PUT   /todos/:id   → \n// DELETE /todos/:id  → \n\nconsole.log("API design documented!");\n',
-      },
-    ]
-  },
-  {
-    id: 'data-structures', title: 'Data Structures', level: 'master', language: 'javascript',
+      exercises: [
+        {
+          title: 'REST API Design',
+          instruction: 'Good REST APIs follow conventions: GET for reading, POST for creating, PUT for updating, DELETE for removing.\n\nWrite comments describing what endpoints a "todo app" REST API would need.',
+          task: 'Document 4 REST endpoints for a todo app (comments only).',
+          initial_code: '// REST API for a Todo App\n// Document your endpoints here:\n\n// GET   /todos       → \n// POST  /todos       → \n// PUT   /todos/:id   → \n// DELETE /todos/:id  → \n\nconsole.log("API design documented!");\n',
+        },
+      ]
+},
+{
+  id: 'data-structures', title: 'Data Structures', level: 'master', language: 'javascript',
     description: 'Master the data structures used in technical interviews.',
-    exercises: [
-      {
-        title: 'Linked List',
-        instruction: 'A linked list is a chain of nodes where each node holds a value and a pointer to the next node.\n\nCreate a Node class with value and next properties. Create 3 nodes and link them.',
-        task: 'Create 3 linked Node objects.',
-        initial_code: '// Create a Node class\nclass Node {\n  // Add constructor with value and next\n}\n\n// Create and link 3 nodes\nconst node1 = new Node(1);\nconst node2 = new Node(2);\nconst node3 = new Node(3);\n// Link them here\n\nconsole.log(node1.next.value); // Should log 2\n',
-      },
-      {
-        title: 'Stack (LIFO)',
-        instruction: 'A stack is a Last-In-First-Out structure. Like a stack of plates.\n\nImplement a Stack class with push(), pop(), and peek() methods.',
-        task: 'Build a Stack with push, pop, and peek methods.',
-        initial_code: 'class Stack {\n  constructor() {\n    this.items = [];\n  }\n  \n  // Add push(item), pop(), peek() methods\n}\n\nconst s = new Stack();\ns.push(1); s.push(2); s.push(3);\nconsole.log(s.peek()); // 3\nconsole.log(s.pop());  // 3\nconsole.log(s.peek()); // 2\n',
-      },
-      {
-        title: 'Binary Search',
-        instruction: 'Binary search finds an item in a sorted array in O(log n) time by repeatedly halving the search space.\n\nImplement binarySearch(arr, target) that returns the index of target, or -1 if not found.',
-        task: 'Implement binary search returning the index or -1.',
-        initial_code: 'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  \n  // Implement binary search here\n}\n\nconst arr = [1, 3, 5, 7, 9, 11, 13];\nconsole.log(binarySearch(arr, 7));  // 3\nconsole.log(binarySearch(arr, 6));  // -1\n',
-      },
-    ]
-  },
+      exercises: [
+        {
+          title: 'Linked List',
+          instruction: 'A linked list is a chain of nodes where each node holds a value and a pointer to the next node.\n\nCreate a Node class with value and next properties. Create 3 nodes and link them.',
+          task: 'Create 3 linked Node objects.',
+          initial_code: '// Create a Node class\nclass Node {\n  // Add constructor with value and next\n}\n\n// Create and link 3 nodes\nconst node1 = new Node(1);\nconst node2 = new Node(2);\nconst node3 = new Node(3);\n// Link them here\n\nconsole.log(node1.next.value); // Should log 2\n',
+        },
+        {
+          title: 'Stack (LIFO)',
+          instruction: 'A stack is a Last-In-First-Out structure. Like a stack of plates.\n\nImplement a Stack class with push(), pop(), and peek() methods.',
+          task: 'Build a Stack with push, pop, and peek methods.',
+          initial_code: 'class Stack {\n  constructor() {\n    this.items = [];\n  }\n  \n  // Add push(item), pop(), peek() methods\n}\n\nconst s = new Stack();\ns.push(1); s.push(2); s.push(3);\nconsole.log(s.peek()); // 3\nconsole.log(s.pop());  // 3\nconsole.log(s.peek()); // 2\n',
+        },
+        {
+          title: 'Binary Search',
+          instruction: 'Binary search finds an item in a sorted array in O(log n) time by repeatedly halving the search space.\n\nImplement binarySearch(arr, target) that returns the index of target, or -1 if not found.',
+          task: 'Implement binary search returning the index or -1.',
+          initial_code: 'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  \n  // Implement binary search here\n}\n\nconst arr = [1, 3, 5, 7, 9, 11, 13];\nconsole.log(binarySearch(arr, 7));  // 3\nconsole.log(binarySearch(arr, 6));  // -1\n',
+        },
+      ]
+},
 ];
 
 // Helper: get lessons grouped by level
