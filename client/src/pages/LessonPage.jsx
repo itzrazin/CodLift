@@ -308,9 +308,10 @@ const LessonPage = () => {
         <div className="w-full md:w-[300px] border-b md:border-b-0 md:border-r border-white/5 flex flex-col bg-navy/30 shrink-0 max-h-[40vh] md:max-h-none overflow-y-auto">
           <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">
             <h1 className="text-xl font-syne font-extrabold mb-3">{exercise.title}</h1>
-            <p className="text-gray-300 text-sm leading-relaxed mb-5 whitespace-pre-wrap">
-              {exercise.instruction}
-            </p>
+            <div 
+              className="text-gray-300 text-sm leading-relaxed mb-5 whitespace-pre-wrap instruction-content"
+              dangerouslySetInnerHTML={{ __html: exercise.instruction }}
+            />
             
             {exercise.task && (
               <div className="p-4 bg-cyan/5 rounded-xl border border-cyan/15 mb-5">
