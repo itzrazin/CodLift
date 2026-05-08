@@ -72,7 +72,7 @@ const AdminDashboard = () => {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <AdminStat title="Total Learners" value="12,402" change="14%" icon={Users} color="text-cyan" />
+          <AdminStat title="Total Learners" value="12,402" change="14%" icon={Users} color="text-purple" />
           <AdminStat title="Active Lessons" value="482" change="5%" icon={BookOpen} color="text-yellow" />
           <AdminStat title="Daily Ad Revenue" value="$242.50" change="22%" icon={DollarSign} color="text-green-400" />
           <AdminStat title="Server Load" value="14%" icon={Activity} color="text-red-400" />
@@ -82,7 +82,7 @@ const AdminDashboard = () => {
           <GlassCard className="p-8">
             <div className="flex justify-between items-center mb-8">
               <h3 className="text-xl font-bold flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-cyan" /> Traffic Growth
+                <TrendingUp className="w-5 h-5 text-purple" /> Traffic Growth
               </h3>
               <select className="bg-navy border border-white/10 text-xs rounded-lg px-3 py-1 outline-none">
                 <option>Last 7 Days</option>
@@ -91,7 +91,7 @@ const AdminDashboard = () => {
             </div>
             <div className="h-64 flex items-end gap-2 px-2">
               {[40, 60, 45, 80, 55, 90, 75].map((h, i) => (
-                <div key={i} className="flex-1 bg-cyan/20 rounded-t-lg relative group transition-all hover:bg-cyan/40" style={{ height: `${h}%` }}>
+                <div key={i} className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" style={{ height: `${h}%` }}>
                   <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                     {h * 10} Users
                   </div>

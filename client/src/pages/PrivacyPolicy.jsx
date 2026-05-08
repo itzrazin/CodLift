@@ -19,7 +19,7 @@ const PrivacyPolicy = () => {
         <h1 className="text-4xl md:text-6xl font-syne font-extrabold mb-4 tracking-tight">Privacy Policy</h1>
         <p className="text-gray-500 mb-12 font-mono text-sm uppercase tracking-widest">Last Updated: {lastUpdated}</p>
 
-        <div className="prose prose-invert prose-cyan max-w-none prose-h2:font-syne prose-h2:text-2xl prose-h2:font-bold prose-p:text-gray-400 prose-p:leading-relaxed prose-li:text-gray-400">
+        <div className="prose prose-invert prose-purple max-w-none prose-h2:font-syne prose-h2:text-2xl prose-h2:font-bold prose-p:text-gray-400 prose-p:leading-relaxed prose-li:text-gray-400">
           <section>
             <h2>1. Introduction</h2>
             <p>

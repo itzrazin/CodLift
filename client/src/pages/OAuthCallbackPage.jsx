@@ -55,7 +55,7 @@ const OAuthCallbackPage = () => {
       >
         {status === 'loading' && (
           <>
-            <div className="w-16 h-16 border-4 border-cyan border-t-transparent rounded-full animate-spin mx-auto mb-6" />
+            <div className="w-16 h-16 border-4 border-purple border-t-transparent rounded-full animate-spin mx-auto mb-6" />
             <h2 className="text-xl font-bold mb-2">Signing you in...</h2>
             <p className="text-gray-400 text-sm">Just a moment!</p>
           </>
@@ -67,7 +67,7 @@ const OAuthCallbackPage = () => {
               animate={{ scale: 1 }}
               transition={{ type: 'spring' }}
             >
-              <CheckCircle2 className="w-16 h-16 text-cyan mx-auto mb-6" />
+              <CheckCircle2 className="w-16 h-16 text-purple mx-auto mb-6" />
             </motion.div>
             <h2 className="text-xl font-bold mb-2">Success!</h2>
             <p className="text-gray-400 text-sm">{message}</p>

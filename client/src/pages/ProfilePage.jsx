@@ -25,9 +25,9 @@ const ProjectCard = ({ title, tech, image, date }) => (
   <GlassCard className="p-0 overflow-hidden group border-white/5">
     <div className="h-40 bg-navy relative overflow-hidden">
       {/* Mock Image/Preview */}
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan/20 to-blue-500/20 group-hover:scale-110 transition-transform duration-500"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple/20 to-blue-500/20 group-hover:scale-110 transition-transform duration-500"></div>
       <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-navy/60 backdrop-blur-sm">
-        <Button size="sm" variant="cyanGhost">
+        <Button size="sm" variant="purpleGhost">
           View Project <ExternalLink className="w-3 h-3 ml-1" />
         </Button>
       </div>
@@ -61,7 +61,7 @@ const ProfilePage = () => {
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row gap-12 items-start mb-20">
           <div className="relative">
-            <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-cyan to-blue-500 p-1">
+            <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-purple to-blue-500 p-1">
               <div className="w-full h-full rounded-[1.4rem] bg-navy flex items-center justify-center overflow-hidden">
                 <User className="w-16 h-16 text-gray-700" />
               </div>
@@ -94,8 +94,8 @@ const ProfilePage = () => {
                 <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">{user?.current_streak || 0} Days</span></span>
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-cyan" />
-                <span className="text-gray-400">Total XP <span className="text-cyan font-bold">{user?.xp_total || 0}</span></span>
+                <Zap className="w-4 h-4 text-purple" />
+                <span className="text-gray-400">Total XP <span className="text-purple font-bold">{user?.xp_total || 0}</span></span>
               </div>
             </div>
           </div>
@@ -110,7 +110,7 @@ const ProfilePage = () => {
               </h3>
               <div className="grid grid-cols-3 gap-y-8">
                 <Badge icon={Flame} title="HOT STREAK" color="text-yellow" />
-                <Badge icon={Code2} title="CLEAN CODER" color="text-cyan" />
+                <Badge icon={Code2} title="CLEAN CODER" color="text-purple" />
                 <Badge icon={Rocket} title="FAST SHIP" color="text-purple-400" />
                 <Badge icon={Terminal} title="SHELL MASTER" color="text-green-400" />
                 <Badge icon={Layout} title="UI WIZARD" color="text-pink-400" />
@@ -122,7 +122,7 @@ const ProfilePage = () => {
               <h3 className="text-xl font-bold mb-6">Skills Radar</h3>
               <div className="space-y-4">
                 {[
-                  { name: "Frontend", level: "85%", color: "bg-cyan" },
+                  { name: "Frontend", level: "85%", color: "bg-purple" },
                   { name: "Backend", level: "60%", color: "bg-blue-500" },
                   { name: "Design", level: "75%", color: "bg-pink-500" },
                   { name: "Algorithms", level: "45%", color: "bg-yellow" }
@@ -144,9 +144,9 @@ const ProfilePage = () => {
           {/* Right Column: Projects */}
           <div className="lg:col-span-2 space-y-8">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-2xl font-syne font-extrabold">Public <span className="text-gradient-cyan">Projects</span></h3>
+              <h3 className="text-2xl font-syne font-extrabold">Public <span className="text-gradient-purple">Projects</span></h3>
               <div className="flex gap-2">
-                <button className="text-xs font-bold text-cyan border-b border-cyan pb-1">All Projects</button>
+                <button className="text-xs font-bold text-purple border-b border-purple pb-1">All Projects</button>
                 <button className="text-xs font-bold text-gray-500 hover:text-white transition-colors pb-1">Mini Games</button>
               </div>
             </div>

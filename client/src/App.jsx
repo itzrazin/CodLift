@@ -29,7 +29,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
     <div className="flex flex-col items-center gap-4">
-      <div className="w-10 h-10 border-2 border-cyan border-t-transparent rounded-full animate-spin" />
+      <div className="w-10 h-10 border-2 border-purple border-t-transparent rounded-full animate-spin" />
       <p className="text-sm text-gray-500 animate-pulse">Loading...</p>
     </div>
   </div>

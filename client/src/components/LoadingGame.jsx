@@ -68,9 +68,9 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
       }
 
       // Draw player (Emoji box)
-      ctx.fillStyle = '#00F5D4'; // Cyan
+      ctx.fillStyle = '#a855f7'; // purple
       ctx.shadowBlur = 15;
-      ctx.shadowColor = '#00F5D4';
+      ctx.shadowColor = '#a855f7';
       ctx.beginPath();
       ctx.roundRect(gameData.current.player.x, gameData.current.player.y, PLAYER_SIZE, PLAYER_SIZE, 8);
       ctx.fill();
@@ -162,7 +162,7 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
           <div className="p-8 border-b border-white/5 flex items-center justify-between">
             <div className="flex flex-col">
               <h2 className="text-2xl font-syne font-extrabold tracking-tight flex items-center gap-2">
-                <Shield className="w-6 h-6 text-cyan" /> CODE RUSH
+                <Shield className="w-6 h-6 text-purple" /> CODE RUSH
               </h2>
               <p className="text-gray-500 text-sm">{message}</p>
             </div>
@@ -184,7 +184,7 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
           <div className="p-4 relative">
             <div className="absolute top-8 left-8 z-10 flex gap-4">
               <div className="glass px-4 py-2 rounded-xl flex items-center gap-2 border-white/5">
-                <Trophy className="w-4 h-4 text-cyan" />
+                <Trophy className="w-4 h-4 text-purple" />
                 <span className="font-mono font-bold text-xl">{score}</span>
               </div>
               <div className="glass px-4 py-2 rounded-xl flex items-center gap-2 border-white/5">
@@ -201,8 +201,8 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
               
               {gameState === 'gameover' && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-[1.5rem] m-4">
-                  <div className="text-center p-8 glass border-cyan/20">
-                    <h3 className="text-3xl font-syne font-extrabold mb-2 text-gradient-cyan">GAME OVER</h3>
+                  <div className="text-center p-8 glass border-purple/20">
+                    <h3 className="text-3xl font-syne font-extrabold mb-2 text-gradient-purple">GAME OVER</h3>
                     <p className="text-gray-400 mb-6 text-sm">Score: {score}</p>
                     <Button onClick={() => setGameState('playing')} size="sm">Try Again</Button>
                   </div>
@@ -223,8 +223,8 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
           </div>
 
           {/* Footer Info */}
-          <div className="p-6 bg-cyan/5 border-t border-white/5 text-center">
-            <div className="flex items-center justify-center gap-4 text-[11px] font-bold text-cyan uppercase tracking-widest">
+          <div className="p-6 bg-purple/5 border-t border-white/5 text-center">
+            <div className="flex items-center justify-center gap-4 text-[11px] font-bold text-purple uppercase tracking-widest">
               <span className="animate-pulse">● System Booting</span>
               <span className="text-white/10">|</span>
               <span>Loading Modules</span>
@@ -242,7 +242,7 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
 const Button = ({ children, onClick, size = "md" }) => (
   <button 
     onClick={onClick}
-    className={`bg-cyan text-black font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(0,245,212,0.3)]
+    className={`bg-purple text-black font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(168,85,247,0.3)]
       ${size === 'sm' ? 'px-6 py-2 text-xs' : 'px-8 py-3 text-sm'}`}
   >
     {children}

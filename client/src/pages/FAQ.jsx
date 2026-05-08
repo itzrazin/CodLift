@@ -14,7 +14,7 @@ const FAQItem = ({ question, answer }) => (
     className="mb-8"
   >
     <h3 className="text-xl md:text-2xl font-syne font-extrabold mb-3 flex items-center gap-3">
-      <HelpCircle className="w-6 h-6 text-cyan shrink-0" />
+      <HelpCircle className="w-6 h-6 text-purple shrink-0" />
       {question}
     </h3>
     <div className="pl-9">
@@ -75,7 +75,7 @@ const FAQ = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-cyan/30">
+    <div className="min-h-screen bg-background text-white selection:bg-purple/30">
       <SEO 
         title="Frequently Asked Questions | CodLift"
         description="Find answers to common questions about CodLift, our interactive coding lessons, AI feedback system, and how to start your coding journey."
@@ -90,12 +90,12 @@ const FAQ = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan/10 border border-cyan/20 text-cyan text-xs font-bold mb-6"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple/10 border border-purple/20 text-purple text-xs font-bold mb-6"
             >
               <Sparkles className="w-3 h-3" /> HELP CENTER
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-syne font-extrabold tracking-tight mb-8">
-              Common <span className="text-gradient-cyan">Questions</span>
+              Common <span className="text-gradient-purple">Questions</span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl leading-relaxed">
               Everything you need to know about the CodLift platform, our pedagogical 
@@ -109,14 +109,14 @@ const FAQ = () => {
             ))}
           </section>
 
-          <GlassCard className="mt-20 p-10 md:p-16 text-center bg-gradient-to-br from-cyan/10 to-transparent border-cyan/20">
+          <GlassCard className="mt-20 p-10 md:p-16 text-center bg-gradient-to-br from-purple/10 to-transparent border-purple/20">
             <h2 className="text-3xl font-syne font-extrabold mb-6">Still have questions?</h2>
             <p className="text-gray-400 mb-10 max-w-xl mx-auto">
               Our community is here to help. Join our Discord or reach out to us 
               directly for 1-on-1 support.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="px-8 py-4 bg-cyan text-black font-bold rounded-2xl hover:shadow-[0_0_20px_rgba(0,245,212,0.4)] transition-all">
+              <button className="px-8 py-4 bg-purple text-black font-bold rounded-2xl hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all">
                 Join Discord
               </button>
               <button className="px-8 py-4 border border-white/10 font-bold rounded-2xl hover:bg-white/5 transition-all">

@@ -5,6 +5,7 @@ import { useAuth } from '../components/AuthContext';
 import { Button } from '../components/ui/Core';
 import { API_URL } from '../utils/config';
 import { Mail, Lock, User, Eye, EyeOff, Zap, Flame, CheckCircle2 } from 'lucide-react';
+import { Logo } from '../components/ui/Logo';
 import { SEO } from '../utils/SEO';
 
 const GoogleIcon = () => (
@@ -68,7 +69,7 @@ const SignupPage = () => {
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-12 relative overflow-hidden">
       <SEO title="Sign Up Free | CodLift" description="Create a free CodLift account and start learning to code today." url="/signup" />
 
-      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-cyan/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-purple/10 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-1/4 -right-32 w-96 h-96 bg-yellow/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -80,13 +81,11 @@ const SignupPage = () => {
           className="hidden lg:block"
         >
           <Link to="/" className="flex items-center gap-2 mb-10">
-            <div className="w-9 h-9 bg-cyan rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(0,245,212,0.4)]">
-              <div className="w-5 h-5 bg-navy rounded-sm rotate-45" />
-            </div>
+            <Logo className="w-10 h-10" />
             <span className="text-2xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
           </Link>
           <h2 className="text-4xl font-syne font-extrabold mb-4 leading-tight">
-            Start coding in <span className="text-gradient-cyan">60 seconds.</span>
+            Start coding in <span className="text-gradient-purple">60 seconds.</span>
           </h2>
           <p className="text-gray-400 mb-10 leading-relaxed">
             No setup. No confusion. No cost. Join thousands of developers who are building real things every day.
@@ -100,7 +99,7 @@ const SignupPage = () => {
                 transition={{ delay: 0.2 + i * 0.1 }}
                 className="flex items-center gap-3 text-sm text-gray-300"
               >
-                <CheckCircle2 className="w-5 h-5 text-cyan shrink-0" />
+                <CheckCircle2 className="w-5 h-5 text-purple shrink-0" />
                 {perk}
               </motion.li>
             ))}
@@ -115,9 +114,7 @@ const SignupPage = () => {
         >
           {/* Mobile logo */}
           <Link to="/" className="flex items-center gap-2 justify-center mb-8 lg:hidden">
-            <div className="w-9 h-9 bg-cyan rounded-xl flex items-center justify-center">
-              <div className="w-5 h-5 bg-navy rounded-sm rotate-45" />
-            </div>
+            <Logo className="w-10 h-10" />
             <span className="text-2xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
           </Link>
 
@@ -161,7 +158,7 @@ const SignupPage = () => {
                   placeholder="Username"
                   value={username}
                   onChange={e => setUsername(e.target.value)}
-                  className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-cyan/50 transition-colors placeholder:text-gray-600"
+                  className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-purple/50 transition-colors placeholder:text-gray-600"
                   autoComplete="username"
                 />
               </div>
@@ -174,7 +171,7 @@ const SignupPage = () => {
                   placeholder="Email address"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-cyan/50 transition-colors placeholder:text-gray-600"
+                  className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-purple/50 transition-colors placeholder:text-gray-600"
                   autoComplete="email"
                 />
               </div>
@@ -187,7 +184,7 @@ const SignupPage = () => {
                   placeholder="Password (min 6 chars)"
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-12 text-sm focus:outline-none focus:border-cyan/50 transition-colors placeholder:text-gray-600"
+                  className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-12 text-sm focus:outline-none focus:border-purple/50 transition-colors placeholder:text-gray-600"
                   autoComplete="new-password"
                 />
                 <button
@@ -214,15 +211,15 @@ const SignupPage = () => {
 
               <p className="text-center text-gray-600 text-xs">
                 By signing up you agree to our{' '}
-                <Link to="/terms-of-service" className="text-gray-400 hover:text-cyan transition-colors">Terms</Link>
+                <Link to="/terms-of-service" className="text-gray-400 hover:text-purple transition-colors">Terms</Link>
                 {' '}and{' '}
-                <Link to="/privacy-policy" className="text-gray-400 hover:text-cyan transition-colors">Privacy Policy</Link>.
+                <Link to="/privacy-policy" className="text-gray-400 hover:text-purple transition-colors">Privacy Policy</Link>.
               </p>
             </form>
 
             <p className="text-center text-gray-500 text-sm mt-6">
               Already have an account?{' '}
-              <Link to="/login" className="text-cyan font-semibold hover:underline">Log in</Link>
+              <Link to="/login" className="text-purple font-semibold hover:underline">Log in</Link>
             </p>
           </div>
         </motion.div>

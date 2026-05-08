@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { Logo } from './ui/Logo';
 
 export const Footer = () => {
   const location = useLocation();
@@ -16,9 +17,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-6 h-6 bg-cyan rounded flex items-center justify-center shadow-[0_0_10px_rgba(0,245,212,0.3)]">
-                <div className="w-3 h-3 bg-navy rounded-sm rotate-45"></div>
-              </div>
+              <Logo className="w-7 h-7" />
               <span className="text-xl font-syne font-extrabold">CODLIFT</span>
             </div>
             <p className="text-gray-500 max-w-sm mb-8">
@@ -36,22 +35,22 @@ export const Footer = () => {
           <div>
             <h4 className="font-bold mb-6">Learning</h4>
             <ul className="space-y-4 text-gray-500 text-sm">
-              <li><Link to="/#curriculum" className="hover:text-cyan">HTML & CSS</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-cyan">JavaScript</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-cyan">React & Frontend</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-cyan">Node & Backend</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-purple">HTML & CSS</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-purple">JavaScript</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-purple">React & Frontend</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-purple">Node & Backend</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-bold mb-6">Platform</h4>
             <ul className="space-y-4 text-gray-500 text-sm">
-              <li><Link to="/about" className="hover:text-cyan">About Us</Link></li>
-              <li><Link to="/faq" className="hover:text-cyan">FAQ</Link></li>
-              <li><Link to="/blog" className="hover:text-cyan">Blog</Link></li>
-              <li><Link to="/arena" className="hover:text-cyan">Challenges</Link></li>
-              <li><Link to="/leaderboard" className="hover:text-cyan">Leaderboard</Link></li>
-              <li><Link to="/contact" className="hover:text-cyan">Contact</Link></li>
+              <li><Link to="/about" className="hover:text-purple">About Us</Link></li>
+              <li><Link to="/faq" className="hover:text-purple">FAQ</Link></li>
+              <li><Link to="/blog" className="hover:text-purple">Blog</Link></li>
+              <li><Link to="/arena" className="hover:text-purple">Challenges</Link></li>
+              <li><Link to="/leaderboard" className="hover:text-purple">Leaderboard</Link></li>
+              <li><Link to="/contact" className="hover:text-purple">Contact</Link></li>
             </ul>
           </div>
         </div>
@@ -76,7 +75,7 @@ const SocialIcon = ({ href, icon }) => {
     linkedin: <><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></>
   };
   return (
-    <a href={href} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:text-cyan transition-colors cursor-pointer">
+    <a href={href} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:text-purple transition-colors cursor-pointer">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         {icons[icon]}
       </svg>

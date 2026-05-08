@@ -14,10 +14,10 @@ const CTA = () => {
     <section className="py-24">
       <div className="container mx-auto px-6">
         <div className="glass p-12 lg:p-20 rounded-[3rem] text-center relative overflow-hidden">
-          <div className="absolute -top-24 -left-24 w-64 h-64 bg-cyan/10 blur-[100px] rounded-full"></div>
+          <div className="absolute -top-24 -left-24 w-64 h-64 bg-purple/10 blur-[100px] rounded-full"></div>
           <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-yellow/10 blur-[100px] rounded-full"></div>
 
-          <h2 className="text-4xl lg:text-6xl mb-8 font-syne font-extrabold">Write your first line of code in <span className="text-gradient-cyan">60 seconds.</span></h2>
+          <h2 className="text-4xl lg:text-6xl mb-8 font-syne font-extrabold">Write your first line of code in <span className="text-gradient-purple">60 seconds.</span></h2>
           <p className="text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
             No credit card required. No setup needed. Just pure, gamified learning
             that helps you ship real software.
@@ -46,7 +46,7 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background overflow-hidden selection:bg-cyan/30">
+    <div className="min-h-screen bg-background overflow-hidden selection:bg-purple/30">
       <SEO 
         title="CodLift — Free Coding Website for Beginners"
         description="Learn to code for free with interactive lessons, real projects, and gamified challenges. Master HTML, CSS, and JavaScript directly in your browser."

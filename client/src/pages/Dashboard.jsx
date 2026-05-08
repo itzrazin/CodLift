@@ -10,12 +10,13 @@ import { useAuth } from '../components/AuthContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
 import { AdSenseBlock } from '../components/AdSenseBlock';
+import { Logo } from '../components/ui/Logo';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
     onClick={onClick}
     className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 ${
-      active ? 'bg-cyan text-black shadow-[0_0_15px_rgba(0,245,212,0.3)]' : 'text-gray-400 hover:text-white hover:bg-white/5'
+      active ? 'bg-purple text-black shadow-[0_0_15px_rgba(168,85,247,0.3)]' : 'text-gray-400 hover:text-white hover:bg-white/5'
     }`}
   >
     <Icon className="w-5 h-5 shrink-0" />
@@ -35,17 +36,17 @@ const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
       onClick={() => status !== 'locked' && slug && navigate(`/learn/${nodeLevel}/${slug}/1`)}
     >
       <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${
-        status === 'completed' ? 'bg-cyan shadow-[0_0_20px_rgba(0,245,212,0.4)]' :
-        status === 'current'   ? 'bg-navy border-2 border-cyan animate-pulse shadow-[0_0_15px_rgba(0,245,212,0.2)]' :
+        status === 'completed' ? 'bg-purple shadow-[0_0_20px_rgba(168,85,247,0.4)]' :
+        status === 'current'   ? 'bg-navy border-2 border-purple animate-pulse shadow-[0_0_15px_rgba(168,85,247,0.2)]' :
         'bg-gray-800 border-2 border-white/10 opacity-50 grayscale'
       }`}>
         {status === 'completed' ? <CheckCircle2 className="w-8 h-8 text-black" /> : 
          status === 'locked'    ? <Lock className="w-6 h-6 text-gray-500" /> :
-         <Star className="w-8 h-8 text-cyan" />}
+         <Star className="w-8 h-8 text-purple" />}
       </div>
       <div className="absolute top-[72px] left-1/2 -translate-x-1/2 whitespace-nowrap text-center">
         <p className={`font-bold text-xs ${status === 'locked' ? 'text-gray-600' : 'text-white'}`}>{title}</p>
-        {status === 'current' && <p className="text-[9px] text-cyan font-black tracking-widest mt-0.5">START HERE</p>}
+        {status === 'current' && <p className="text-[9px] text-purple font-black tracking-widest mt-0.5">START HERE</p>}
       </div>
     </motion.div>
   );
@@ -134,7 +135,7 @@ const Dashboard = () => {
   const completedCount = skillTree.filter(n => n.status === 'completed').length;
 
   const stats = [
-    { label: 'Total XP', value: (user.xp_total || 0).toLocaleString(), icon: Zap, color: 'text-cyan' },
+    { label: 'Total XP', value: (user.xp_total || 0).toLocaleString(), icon: Zap, color: 'text-purple' },
     { label: 'Day Streak', value: user.current_streak || 0, icon: Flame, color: 'text-yellow' },
     { label: 'Lessons Done', value: completedCount, icon: Trophy, color: 'text-purple-400' },
   ];
@@ -146,9 +147,7 @@ const Dashboard = () => {
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full z-20 bg-navy/70 backdrop-blur-md">
         <Link to="/" className="flex items-center gap-2 mb-10">
-          <div className="w-8 h-8 bg-cyan rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,245,212,0.3)]">
-            <div className="w-4 h-4 bg-navy rounded-sm rotate-45" />
-          </div>
+          <Logo className="w-9 h-9" />
           <span className="text-xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
         </Link>
 
@@ -161,7 +160,7 @@ const Dashboard = () => {
         </nav>
 
         <div className="mt-auto space-y-1">
-          <div className="px-4 py-3 rounded-xl bg-cyan/10 border border-cyan/20 mb-3">
+          <div className="px-4 py-3 rounded-xl bg-purple/10 border border-purple/20 mb-3">
             <p className="text-xs text-gray-400">Signed in as</p>
             <p className="font-bold text-sm truncate">{user.username}</p>
           </div>
@@ -181,7 +180,7 @@ const Dashboard = () => {
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
           <div>
             <h1 className="text-3xl font-syne font-extrabold tracking-tight">
-              Welcome back, <span className="text-gradient-cyan">{user.username}</span>!
+              Welcome back, <span className="text-gradient-purple">{user.username}</span>!
             </h1>
             <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>
           </div>
@@ -197,10 +196,10 @@ const Dashboard = () => {
 
         {/* Continue Learning Card */}
         {currentLesson && (
-          <GlassCard className="mb-8 p-6 flex items-center justify-between border-cyan/30 bg-gradient-to-r from-cyan/10 to-transparent">
+          <GlassCard className="mb-8 p-6 flex items-center justify-between border-purple/30 bg-gradient-to-r from-purple/10 to-transparent">
             <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-2xl bg-cyan/20 flex items-center justify-center border border-cyan/30">
-                <BookOpen className="w-8 h-8 text-cyan" />
+              <div className="w-16 h-16 rounded-2xl bg-purple/20 flex items-center justify-center border border-purple/30">
+                <BookOpen className="w-8 h-8 text-purple" />
               </div>
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-1">Continue Learning</p>
@@ -228,7 +227,7 @@ const Dashboard = () => {
         {/* Skill Tree */}
         <div className="glass rounded-[2rem] p-8 min-h-[780px] relative overflow-hidden bg-navy/40">
           <div className="flex items-center gap-2 mb-6">
-            <Star className="w-5 h-5 text-cyan" />
+            <Star className="w-5 h-5 text-purple" />
             <h3 className="font-syne font-extrabold text-lg">Beginner Skill Tree</h3>
             <span className="text-xs text-gray-500 ml-auto">{completedCount}/{beginnerLessons.length} lessons</span>
           </div>

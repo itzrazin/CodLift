@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from './ui/Core';
 import { useNavigate, Link } from 'react-router-dom';
+import { Logo } from './ui/Logo';
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -9,9 +10,7 @@ export const Navbar = () => {
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-cyan rounded-lg flex items-center justify-center shadow-[0_0_15px_rgba(0,245,212,0.3)]">
-              <div className="w-4 h-4 bg-navy rounded-sm rotate-45"></div>
-            </div>
+            <Logo className="w-9 h-9" />
             <span className="text-2xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
           </Link>
         </div>

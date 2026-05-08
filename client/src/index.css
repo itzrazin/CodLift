@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    --bg-deep: #080b10;
-    --navy: #0a1118;
-    --navy-light: #161f2c;
-    --cyan: #00f5d4;
-    --cyan-light: #33f7dd;
-    --cyan-dark: #00c4aa;
+    --bg-deep: #000000;
+    --navy: #000000;
+    --navy-light: #080b10;
+    --purple: #a855f7;
+    --purple-light: #c084fc;
+    --purple-dark: #9333ea;
     --yellow: #ffd60a;
     --yellow-light: #ffde33;
     --yellow-dark: #ccab08;
@@ -20,7 +20,7 @@
   }
 
   body {
-    @apply bg-background text-white font-sans antialiased selection:bg-cyan selection:text-black;
+    @apply bg-background text-white font-sans antialiased selection:bg-purple selection:text-black;
     overflow-x: hidden;
   }
 
@@ -39,8 +39,8 @@
     @apply bg-white/5 backdrop-blur-xl border border-white/10;
   }
 
-  .glass-cyan {
-    @apply bg-cyan/5 backdrop-blur-xl border border-cyan/20;
+  .glass-purple {
+    @apply bg-purple/5 backdrop-blur-xl border border-purple/20;
   }
 
   .btn-glow {
@@ -56,8 +56,8 @@
     @apply opacity-100;
   }
 
-  .text-gradient-cyan {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan to-blue-400;
+  .text-gradient-purple {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple to-fuchsia-500;
   }
 
   .text-gradient-yellow {

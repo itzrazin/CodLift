@@ -16,7 +16,7 @@ export const AdComponent = ({ type = 'horizontal', className }) => {
       {/* Mock Ad Content */}
       <div className="text-center space-y-2 opacity-50 group-hover:opacity-100 transition-opacity">
         <div className="w-12 h-12 bg-gray-800 rounded-lg mx-auto flex items-center justify-center">
-          <div className="w-6 h-6 bg-cyan/20 rounded rotate-45"></div>
+          <div className="w-6 h-6 bg-purple/20 rounded rotate-45"></div>
         </div>
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Build Apps Faster</p>
         <p className="text-[8px] text-gray-600">The #1 Platform for Scale</p>

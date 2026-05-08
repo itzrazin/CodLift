@@ -15,10 +15,10 @@ export const Button = ({
   ...props 
 }) => {
   const variants = {
-    primary: 'bg-cyan text-black hover:bg-cyan-light shadow-[0_0_20px_rgba(0,245,212,0.3)] hover:shadow-[0_0_30px_rgba(0,245,212,0.5)]',
+    primary: 'bg-purple text-black hover:bg-purple-light shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]',
     secondary: 'bg-yellow text-black hover:bg-yellow-light shadow-[0_0_20px_rgba(255,214,10,0.3)] hover:shadow-[0_0_30px_rgba(255,214,10,0.5)]',
     ghost: 'bg-transparent border border-white/20 hover:bg-white/10 text-white',
-    cyanGhost: 'bg-transparent border border-cyan/30 hover:bg-cyan/10 text-cyan',
+    purpleGhost: 'bg-transparent border border-purple/30 hover:bg-purple/10 text-purple',
   };
 
   const sizes = {
@@ -50,7 +50,7 @@ export const Button = ({
 export const GlassCard = ({ children, className, hover = true }) => {
   return (
     <motion.div
-      whileHover={hover ? { y: -5, borderColor: 'rgba(0,245,212,0.3)' } : {}}
+      whileHover={hover ? { y: -5, borderColor: 'rgba(168,85,247,0.3)' } : {}}
       className={cn(
         'glass rounded-2xl p-6 transition-all duration-300',
         className

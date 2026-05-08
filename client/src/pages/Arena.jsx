@@ -9,7 +9,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const ChallengeCard = ({ title, type, difficulty, xp, icon: Icon, color }) => (
-  <GlassCard className="p-6 group cursor-pointer border-white/5 hover:border-cyan/30">
+  <GlassCard className="p-6 group cursor-pointer border-white/5 hover:border-purple/30">
     <div className="flex justify-between items-start mb-6">
       <div className={`p-4 rounded-2xl ${color} bg-opacity-10 text-opacity-100 group-hover:scale-110 transition-transform`}>
         <Icon className="w-8 h-8" />
@@ -20,15 +20,15 @@ const ChallengeCard = ({ title, type, difficulty, xp, icon: Icon, color }) => (
       </div>
     </div>
     
-    <h3 className="text-xl font-bold mb-2 group-hover:text-cyan transition-colors">{title}</h3>
+    <h3 className="text-xl font-bold mb-2 group-hover:text-purple transition-colors">{title}</h3>
     <p className="text-sm text-gray-500 mb-6 uppercase tracking-widest font-bold">{type}</p>
     
     <div className="flex items-center justify-between pt-6 border-t border-white/5">
       <div className="flex items-center gap-2">
-        <Zap className="w-4 h-4 text-cyan" />
-        <span className="text-sm font-bold text-cyan">+{xp} XP</span>
+        <Zap className="w-4 h-4 text-purple" />
+        <span className="text-sm font-bold text-purple">+{xp} XP</span>
       </div>
-      <Button size="sm" variant="ghost" className="group-hover:bg-cyan group-hover:text-black group-hover:border-cyan">
+      <Button size="sm" variant="ghost" className="group-hover:bg-purple group-hover:text-black group-hover:border-purple">
         Battle <ChevronRight className="w-4 h-4 ml-1" />
       </Button>
     </div>
@@ -59,7 +59,7 @@ const Arena = () => {
       difficulty: "MASTER",
       xp: 750,
       icon: Rocket,
-      color: "text-cyan bg-cyan"
+      color: "text-purple bg-purple"
     },
     {
       title: "Algorithm Duel",
@@ -130,7 +130,7 @@ const Arena = () => {
         {/* Global Leaderboard Snapshot */}
         <section className="mt-20">
           <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-syne font-extrabold">Top <span className="text-cyan">Gladiators</span></h2>
+            <h2 className="text-2xl font-syne font-extrabold">Top <span className="text-purple">Gladiators</span></h2>
             <Button variant="ghost" size="sm">View Full Leaderboard</Button>
           </div>
           
@@ -157,7 +157,7 @@ const Arena = () => {
                     <td className="px-8 py-6">
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-gray-800"></div>
-                        <span className="font-bold group-hover:text-cyan transition-colors">{row.user}</span>
+                        <span className="font-bold group-hover:text-purple transition-colors">{row.user}</span>
                       </div>
                     </td>
                     <td className="px-8 py-6 text-gray-400">{row.won}</td>

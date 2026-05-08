@@ -71,7 +71,7 @@ const LeaderboardPage = () => {
           <ArrowLeft className="w-5 h-5 text-gray-400" />
         </button>
         <div className="flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-cyan" />
+          <Trophy className="w-5 h-5 text-purple" />
           <span className="font-syne font-extrabold">Global Leaderboard</span>
         </div>
         <div className="ml-auto flex bg-navy p-1 rounded-xl border border-white/5 gap-1">
@@ -117,7 +117,7 @@ const LeaderboardPage = () => {
                 <h3 className="font-bold mb-1 truncate">{p?.username}</h3>
                 <p className={`text-[10px] uppercase font-black tracking-widest mb-3 ${levelColors[p?.level] || 'text-gray-500'}`}>{p?.level}</p>
                 <div className="flex justify-center gap-4 text-xs">
-                  <span className="flex items-center gap-1 text-cyan font-bold"><Zap className="w-3 h-3" />{(p?.xp || 0).toLocaleString()}</span>
+                  <span className="flex items-center gap-1 text-purple font-bold"><Zap className="w-3 h-3" />{(p?.xp || 0).toLocaleString()}</span>
                   <span className="flex items-center gap-1 text-yellow font-bold"><Flame className="w-3 h-3" />{p?.streak}d</span>
                 </div>
               </GlassCard>
@@ -129,7 +129,7 @@ const LeaderboardPage = () => {
         <GlassCard className="p-0 overflow-hidden border-white/5">
           {loading ? (
             <div className="p-12 text-center">
-              <div className="w-8 h-8 border-2 border-cyan border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <div className="w-8 h-8 border-2 border-purple border-t-transparent rounded-full animate-spin mx-auto mb-3" />
               <p className="text-gray-500 text-sm">Loading rankings...</p>
             </div>
           ) : (
@@ -151,7 +151,7 @@ const LeaderboardPage = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                     className={`border-t border-white/5 hover:bg-white/5 transition-all group ${
-                      user?.username === row.username ? 'bg-cyan/5 border-cyan/20' : ''
+                      user?.username === row.username ? 'bg-purple/5 border-purple/20' : ''
                     }`}
                   >
                     <td className="px-6 py-5">
@@ -165,9 +165,9 @@ const LeaderboardPage = () => {
                           <User className="w-4 h-4 text-gray-600" />
                         </div>
                         <div>
-                          <p className="font-bold text-sm group-hover:text-cyan transition-colors">
+                          <p className="font-bold text-sm group-hover:text-purple transition-colors">
                             {row.username}
-                            {user?.username === row.username && <span className="ml-2 text-[9px] text-cyan font-black uppercase tracking-widest">You</span>}
+                            {user?.username === row.username && <span className="ml-2 text-[9px] text-purple font-black uppercase tracking-widest">You</span>}
                           </p>
                           <p className={`text-[10px] uppercase font-black tracking-wider ${levelColors[row.level] || 'text-gray-500'}`}>{row.level}</p>
                         </div>
@@ -175,7 +175,7 @@ const LeaderboardPage = () => {
                     </td>
                     <td className="px-6 py-5">
                       <span className="font-bold text-white flex items-center gap-1">
-                        <Zap className="w-3 h-3 text-cyan" />{(row.xp || 0).toLocaleString()}
+                        <Zap className="w-3 h-3 text-purple" />{(row.xp || 0).toLocaleString()}
                       </span>
                     </td>
                     <td className="px-6 py-5 hidden md:table-cell">

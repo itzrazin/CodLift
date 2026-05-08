@@ -9,7 +9,7 @@ export const Marquee = () => {
     <div className="py-10 border-y border-white/5 overflow-hidden bg-navy/50">
       <div className="flex whitespace-nowrap animate-marquee">
         {[...techs, ...techs].map((tech, i) => (
-          <span key={i} className="mx-12 text-2xl font-syne font-bold text-gray-600 hover:text-cyan transition-colors cursor-default">
+          <span key={i} className="mx-12 text-2xl font-syne font-bold text-gray-600 hover:text-purple transition-colors cursor-default">
             {tech}
           </span>
         ))}
@@ -30,7 +30,7 @@ export const Marquee = () => {
 export const Features = () => {
   const features = [
     {
-      icon: <Terminal className="w-8 h-8 text-cyan" />,
+      icon: <Terminal className="w-8 h-8 text-purple" />,
       title: "In-browser IDE",
       desc: "Zero install, code instantly. Monaco editor power right in your browser."
     },
@@ -40,7 +40,7 @@ export const Features = () => {
       desc: "Stay motivated like Duolingo. Earn XP and keep your streak alive."
     },
     {
-      icon: <Rocket className="w-8 h-8 text-cyan" />,
+      icon: <Rocket className="w-8 h-8 text-purple" />,
       title: "Real Projects",
       desc: "Build something every single lesson. Practical skills, no theory walls."
     },
@@ -54,7 +54,7 @@ export const Features = () => {
   return (
     <section className="py-24">
       <div className="container mx-auto px-6 text-center">
-        <h2 className="text-4xl lg:text-5xl mb-16">Everything you need to <span className="text-gradient-cyan">Level Up.</span></h2>
+        <h2 className="text-4xl lg:text-5xl mb-16">Everything you need to <span className="text-gradient-purple">Level Up.</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((f, i) => (
             <GlassCard key={i} className="text-left group">

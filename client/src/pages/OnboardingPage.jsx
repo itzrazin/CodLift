@@ -46,7 +46,7 @@ const OnboardingPage = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan/5 blur-[120px] rounded-full"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple/5 blur-[120px] rounded-full"></div>
       
       <div className="text-center mb-12 z-10">
         <h1 className="text-4xl md:text-5xl font-syne font-extrabold mb-4">Choose Your Path</h1>

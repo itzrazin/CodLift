@@ -14,7 +14,7 @@ export const LevelProgression = () => {
       <div className="container mx-auto px-6">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
           <div className="flex-1">
-            <h2 className="text-4xl lg:text-5xl mb-8">From Zero to <span className="text-gradient-cyan">Hero.</span></h2>
+            <h2 className="text-4xl lg:text-5xl mb-8">From Zero to <span className="text-gradient-purple">Hero.</span></h2>
             <p className="text-xl text-gray-400 mb-12">
               Our curriculum is designed to take you through three major career milestones. 
               Each tier unlocks new potential and complex challenges.
@@ -35,7 +35,7 @@ export const LevelProgression = () => {
           <div className="flex-1 w-full max-w-xl">
             <div className="glass p-8 rounded-3xl relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-10">
-                <CheckCircle2 className="w-32 h-32 text-cyan" />
+                <CheckCircle2 className="w-32 h-32 text-purple" />
               </div>
               <h3 className="text-2xl mb-8">Skill Tree Preview</h3>
               <div className="space-y-8 relative">
@@ -51,19 +51,19 @@ export const LevelProgression = () => {
                 ].map((node, i) => (
                   <div key={i} className="flex items-center gap-6 group">
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center z-10 transition-all duration-500 ${
-                      node.status === 'completed' ? 'bg-cyan shadow-[0_0_15px_rgba(0,245,212,0.5)]' :
-                      node.status === 'current' ? 'bg-navy border-2 border-cyan animate-pulse' :
+                      node.status === 'completed' ? 'bg-purple shadow-[0_0_15px_rgba(168,85,247,0.5)]' :
+                      node.status === 'current' ? 'bg-navy border-2 border-purple animate-pulse' :
                       'bg-gray-800 border-2 border-white/10'
                     }`}>
                       {node.status === 'completed' ? <CheckCircle2 className="w-6 h-6 text-black" /> : 
                        node.status === 'locked' ? <Lock className="w-5 h-5 text-gray-500" /> :
-                       <div className="w-3 h-3 bg-cyan rounded-full"></div>}
+                       <div className="w-3 h-3 bg-purple rounded-full"></div>}
                     </div>
                     <div className={`transition-colors duration-300 ${
                       node.status === 'locked' ? 'text-gray-600' : 'text-white'
                     }`}>
                       <p className="font-bold">{node.title}</p>
-                      {node.status === 'current' && <p className="text-xs text-cyan">IN PROGRESS</p>}
+                      {node.status === 'current' && <p className="text-xs text-purple">IN PROGRESS</p>}
                     </div>
                   </div>
                 ))}

@@ -7,11 +7,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        background: "#080b10",
-        cyan: {
-          DEFAULT: "#00f5d4",
-          light: "#33f7dd",
-          dark: "#00c4aa",
+        background: "#000000",
+        purple: {
+          DEFAULT: "#a855f7",
+          light: "#c084fc",
+          dark: "#9333ea",
         },
         yellow: {
           DEFAULT: "#ffd60a",
@@ -19,9 +19,9 @@ export default {
           dark: "#ccab00",
         },
         navy: {
-          DEFAULT: "#080b10",
-          light: "#0d131a",
-          lighter: "#141d26",
+          DEFAULT: "#000000",
+          light: "#080b10",
+          lighter: "#101010",
         },
       },
       fontFamily: {

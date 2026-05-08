@@ -8,8 +8,8 @@ import { GlassCard, Button } from '../components/ui/Core';
 
 const StatCard = ({ icon: Icon, label, value }) => (
   <GlassCard className="p-8 text-center" hover={true}>
-    <div className="w-12 h-12 bg-cyan/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-cyan/20">
-      <Icon className="w-6 h-6 text-cyan" />
+    <div className="w-12 h-12 bg-purple/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-purple/20">
+      <Icon className="w-6 h-6 text-purple" />
     </div>
     <div className="text-3xl font-syne font-extrabold mb-1 tracking-tight">{value}</div>
     <div className="text-gray-500 text-xs font-bold uppercase tracking-widest">{label}</div>
@@ -18,7 +18,7 @@ const StatCard = ({ icon: Icon, label, value }) => (
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-background text-white selection:bg-cyan/30">
+    <div className="min-h-screen bg-background text-white selection:bg-purple/30">
       <SEO 
         title="Our Story | CodLift"
         description="Learn about the mission behind CodLift — the world's most engaging platform to master full-stack development through hands-on practice."
@@ -35,11 +35,11 @@ const About = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan/10 border border-cyan/20 text-cyan text-xs font-bold mb-6">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple/10 border border-purple/20 text-purple text-xs font-bold mb-6">
                 <Sparkles className="w-3 h-3" /> OUR MISSION
               </div>
               <h1 className="text-6xl md:text-8xl font-syne font-extrabold mb-8 tracking-tighter leading-none">
-                Engineering <span className="text-gradient-cyan italic">Future</span> Developers.
+                Engineering <span className="text-gradient-purple italic">Future</span> Developers.
               </h1>
               <p className="text-xl text-gray-400 max-w-4xl mx-auto leading-relaxed font-medium">
                 CodLift was born out of a single, frustrating observation: the modern path 
@@ -63,13 +63,13 @@ const About = () => {
             </motion.div>
             
             {/* Background decorations */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-cyan/5 blur-[120px] -z-10 rounded-full" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-purple/5 blur-[120px] -z-10 rounded-full" />
           </header>
 
           {/* Core Values */}
           <section className="grid md:grid-cols-3 gap-8 mb-32">
-            <GlassCard className="p-10 border-cyan/10">
-              <Target className="w-12 h-12 text-cyan mb-8" />
+            <GlassCard className="p-10 border-purple/10">
+              <Target className="w-12 h-12 text-purple mb-8" />
               <h3 className="text-2xl font-syne font-extrabold mb-4">Hands-On First</h3>
               <p className="text-gray-400 leading-relaxed">
                 Passive learning is a trap. Every lesson on CodLift is a mission 
@@ -111,7 +111,7 @@ const About = () => {
                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Rafeek" alt="Founder" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div>
-                <h2 className="text-4xl font-syne font-extrabold mb-6">Built for the <span className="text-cyan">Builders</span>.</h2>
+                <h2 className="text-4xl font-syne font-extrabold mb-6">Built for the <span className="text-purple">Builders</span>.</h2>
                 <p className="text-lg text-gray-400 leading-relaxed mb-8 italic">
                   "I started CodLift because I was tired of overpriced bootcamps and 
                   surface-level tutorials. I wanted to build a platform that felt like 
@@ -123,13 +123,13 @@ const About = () => {
             </div>
             
             {/* Aesthetic circle */}
-            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-cyan/5 rounded-full blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-purple/5 rounded-full blur-3xl" />
           </GlassCard>
 
           {/* CTA */}
           <section className="mt-32 text-center">
             <h2 className="text-4xl md:text-5xl font-syne font-extrabold mb-8 tracking-tight">
-              Ready to start your <span className="text-gradient-cyan">evolution</span>?
+              Ready to start your <span className="text-gradient-purple">evolution</span>?
             </h2>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" className="px-12 py-5 rounded-2xl" onClick={() => window.location.href='/signup'}>

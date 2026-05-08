@@ -217,7 +217,7 @@ const LessonPage = () => {
   if (!lesson || !exercise) {
     return (
       <div className="h-screen bg-background flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-2 border-cyan border-t-transparent rounded-full animate-spin" />
+        <div className="w-10 h-10 border-2 border-purple border-t-transparent rounded-full animate-spin" />
         <p className="text-gray-400 text-sm animate-pulse">Loading lesson...</p>
       </div>
     );
@@ -246,7 +246,7 @@ const LessonPage = () => {
           </Link>
           <div className="h-6 w-px bg-white/10" />
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-cyan rounded flex items-center justify-center">
+            <div className="w-6 h-6 bg-purple rounded flex items-center justify-center">
               <BookOpen className="w-3 h-3 text-black" />
             </div>
             <div>
@@ -264,8 +264,8 @@ const LessonPage = () => {
             <div
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-all ${
-                i + 1 < exercise.number ? 'bg-cyan' 
-                : i + 1 === exercise.number ? 'bg-cyan animate-pulse' 
+                i + 1 < exercise.number ? 'bg-purple' 
+                : i + 1 === exercise.number ? 'bg-purple animate-pulse' 
                 : 'bg-white/10'
               }`}
             />
@@ -290,7 +290,7 @@ const LessonPage = () => {
                 onClick={() => status === 'success' && goNext()}
                 disabled={status !== 'success'}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  status === 'success' ? 'text-cyan bg-cyan/10 hover:bg-cyan/20' : 'text-gray-800 cursor-not-allowed opacity-50'
+                  status === 'success' ? 'text-purple bg-purple/10 hover:bg-purple/20' : 'text-gray-800 cursor-not-allowed opacity-50'
                 }`}
                 title={status === 'success' ? 'Next Challenge' : 'Complete the challenge to unlock'}
               >
@@ -314,8 +314,8 @@ const LessonPage = () => {
             />
             
             {exercise.task && (
-              <div className="p-4 bg-cyan/5 rounded-xl border border-cyan/15 mb-5">
-                <h4 className="text-[10px] font-black text-cyan uppercase tracking-widest mb-2">Your Task</h4>
+              <div className="p-4 bg-purple/5 rounded-xl border border-purple/15 mb-5">
+                <h4 className="text-[10px] font-black text-purple uppercase tracking-widest mb-2">Your Task</h4>
                 <p className="text-sm text-gray-200 leading-relaxed">{exercise.task}</p>
               </div>
             )}
@@ -412,8 +412,8 @@ const LessonPage = () => {
             {status === 'running' && (
               <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center backdrop-blur-sm">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-8 h-8 border-2 border-cyan border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm text-cyan font-mono animate-pulse">Processing...</span>
+                  <div className="w-8 h-8 border-2 border-purple border-t-transparent rounded-full animate-spin" />
+                  <span className="text-sm text-purple font-mono animate-pulse">Processing...</span>
                 </div>
               </div>
             )}
@@ -444,7 +444,7 @@ const LessonPage = () => {
             <button
               onClick={() => setActiveTab('preview')}
               className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase flex items-center gap-1.5 transition-all ${
-                activeTab === 'preview' ? 'bg-white/10 text-cyan' : 'text-gray-500 hover:text-white'
+                activeTab === 'preview' ? 'bg-white/10 text-purple' : 'text-gray-500 hover:text-white'
               }`}
             >
               <Globe className="w-3 h-3" /> Preview
@@ -452,7 +452,7 @@ const LessonPage = () => {
             <button
               onClick={() => setActiveTab('console')}
               className={`px-3 py-1.5 rounded-md text-[10px] font-bold uppercase flex items-center gap-1.5 transition-all ${
-                activeTab === 'console' ? 'bg-white/10 text-cyan' : 'text-gray-500 hover:text-white'
+                activeTab === 'console' ? 'bg-white/10 text-purple' : 'text-gray-500 hover:text-white'
               }`}
             >
               <Terminal className="w-3 h-3" /> Console
