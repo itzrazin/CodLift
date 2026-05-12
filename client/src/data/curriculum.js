@@ -1,310 +1,846 @@
-// Client-side curriculum — mirrors server/data/curriculum.js
-// Used as instant fallback so lessons load without waiting for backend
 export const clientCurriculum = [
   // ─── BEGINNER TRACK ───────────────────────────────────────────
   {
-    id: 'html-basics', title: 'HTML Basics', level: 'beginner', language: 'html',
+    id: 'html-basics',
+    title: 'HTML Basics',
+    level: 'beginner',
+    language: 'html',
     description: 'Learn the foundational building blocks of every website through deep dives into HTML syntax and structure.',
     exercises: [
       {
         title: 'The Skeleton of the Web',
-        instruction: '<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4"><h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4><p class="text-sm">Imagine your body without any skin, muscles, or clothes — just the bare <strong>Human Skeleton</strong>. It provides the fundamental structure that holds everything else up. Without bones, you would just be a puddle on the floor! Similarly, <strong>HTML (HyperText Markup Language)</strong> is the strict structural skeleton of every single website. It defines where the head, body, and limbs of your page go.</p></div>\n\nHTML is the absolute backbone of every single website on the internet today. Whether you are using a simple personal blog or a complex, highly interactive social media platform like Facebook, HTML provides the underlying structure that browsers use to render the content. Without HTML, the web as we know it simply would not exist.\n\nElements in HTML are defined by **tags**, which are typically written as a pair. You start with an **opening tag** like <h1>, place your content in the middle, and finish with a **closing tag** like </h1> (notice the forward slash).\n\nThe <h1> tag specifically represents the most important heading on a page. In the hierarchy of SEO (Search Engine Optimization), having a clear and unique <h1> is absolutely critical. It acts as a giant signpost that tells search engines like Google exactly what your page is about, helping you rank higher in search results. Browsers also use this strict structural hierarchy to help screen readers navigate content efficiently for visually impaired users. Every professional website should follow a logical heading structure, starting with H1 and logically descending to H2, H3, and so on without skipping levels.\n\nIn this first exercise, you will practice modifying the content within these essential tags. By changing the text inside the <h1> tag, you are directly manipulating the **Document Object Model (DOM)** that the browser displays to the user.\n\n**Pro-Tip:** Never use more than one <h1> tag on a single page! Having multiple <h1> tags can confuse search engine crawlers and negatively impact your SEO ranking.\n\n**Your Task:**\nUpdate the text inside the existing <h1> tag in the editor to exactly read: "Hello CodLift".',
+        instruction: `
+<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
+  <h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine your body without any skin, muscles, or clothes — just the bare <strong>Human Skeleton</strong>. It provides the fundamental structure that holds everything else up. Without bones, you would just be a puddle on the floor! Similarly, <strong>HTML (HyperText Markup Language)</strong> is the strict structural skeleton of every single website. It defines where the head, body, and limbs of your page go.</p>
+</div>
+
+### Step 1: What is HTML?
+
+HTML stands for HyperText Markup Language. 
+Think of it as a set of instructions that tells the browser (like Chrome or Safari) exactly how to arrange things on a screen.
+We call it a "Markup Language" because we "mark up" plain text with special symbols to give it meaning.
+Without HTML, a website would just be a giant, messy pile of words with no headers, no buttons, and no structure.
+
+### Step 2: The Logic of Tags
+
+To build this skeleton, we use things called **tags**.
+A tag is like a pair of bookends that you wrap around a piece of text.
+If you want a title to be big and bold, you don't just type the title; you wrap it in a "Heading" tag.
+This tells the computer: "Everything inside these two symbols is the most important title on the page!"
+
+### Step 3: The Simplest Code Example
+
+Look at this tiny snippet:
+
+\`\`\`html
+<h1>Hello CodLift</h1>
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`<\`**: This is the "Less Than" symbol. In coding, it acts like the start of a whisper. It tells the computer, "Pay attention, a command is coming!"
+2. **\`h1\`**: This is the command itself. "h" stands for Heading, and "1" means it is the most important one.
+3. **\`>\`**: This is the "Greater Than" symbol. It closes the command, like saying "Over" on a walkie-talkie.
+4. **\`Hello CodLift\`**: This is the actual text that the human user will see on their screen.
+5. **\`</h1\`**: Notice the **\`/\`** (Forward Slash). This is the "End" signal. It tells the computer, "The heading is finished now. Stop making the text big."
+
+### Wait! Don't Make This Mistake:
+
+A common mistake for beginners is forgetting the **\`/\`** in the closing tag. 
+If you write \`<h1>Welcome<h1>\`, the computer will think you never finished the first heading!
+It might try to make your *entire* website look like one giant title. 
+Always remember: every "Open" command needs a "Close" command with a slash.
+
+**Your Task:**
+Update the text inside the existing <h1> tag in the editor to exactly read: "Hello CodLift".`,
         task: 'Update the h1 tag text to exactly: Hello CodLift',
-        initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n    <!-- Pro-Tip: Only use ONE H1 tag per page to keep your SEO score high and your content structure clean! -->\n  </body>\n</html>',
+        initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n  </body>\n</html>',
         test_cases: { expected_output: 'Hello CodLift' }
       },
       {
         title: 'Paragraphs & Text Blocks',
-        instruction: 'Think of a paragraph tag like a fresh sheet of paper in a notebook. When you want to start a new thought or write a new paragraph in a letter, you skip a line to give the text room to breathe. The <p> tag does exactly this for your web page content.\n\nWhen building a functional website, you will constantly need to display large blocks of text, detailed descriptions, or full articles. This is where the **<p> (paragraph) tag** comes into play. While heading tags like <h1> and <h2> are strictly for titles and sub-titles, the <p> tag is intentionally designed to hold the main body of your content. By default, web browsers automatically add a small amount of vertical space (called margin) above and below a paragraph element. This built-in spacing makes the paragraph distinct from the surrounding elements, which drastically improves readability for your site visitors.\n\nReadability is undeniably one of the most important aspects of modern web design. Users on the internet tend to "scan" web pages rather than read every single word from top to bottom. Breaking your dense content into logical, bite-sized paragraphs is essential for keeping users engaged and reducing bounce rates. In professional front-end development, you will eventually learn about advanced semantic tags like <article> or <section> that wrap these paragraphs, but the <p> tag will always remain your primary workhorse container for basic text.\n\nRemember that HTML is strictly meant for defining structure, not appearance. While you can make text bold or italic using tags like <strong> or <em>, the actual "look" and "feel" (like colors and fonts) should eventually be handled entirely by CSS.\n\n**Pro-Tip:** Avoid writing massive "walls of text" inside a single <p> tag. Break long explanations into multiple <p> tags to make your content much more scannable, especially on mobile devices where screens are small!\n\n**Your Task:**\nLook at the code editor. Below the existing <h1> heading tag, add a new <p> tag and set its text content to exactly: "Learning to code is fun!".',
+        instruction: `
+<div class="p-4 bg-blue/10 border border-blue/20 rounded-xl my-4">
+  <h4 class="text-blue font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you are writing a letter on a fresh sheet of paper. When you finish one thought and want to start another, you skip a line. This gives your writing "room to breathe" so the reader doesn't get overwhelmed. The <strong>&lt;p&gt; (Paragraph) tag</strong> does exactly this for your website.</p>
+</div>
+
+### Step 1: The Logic of Blocks
+
+Websites are mostly made of text. 
+But if you just pile all your words into one giant block, nobody will want to read it.
+It looks like a "wall of text" which is very scary for users!
+To fix this, we use the Paragraph tag to break our thoughts into smaller, bite-sized pieces.
+
+### Step 2: Why do we need it?
+
+The computer uses the Paragraph tag to know where one block of text ends and the next begins.
+When the browser sees this tag, it automatically adds a little bit of invisible "cushion" (empty space) above and below the text.
+This empty space makes your website look professional and clean.
+Without this tag, your sentences would all squish together like one long, never-ending line.
+
+### Step 3: The Simplest Code Example
+
+Here is how you write a simple paragraph in HTML:
+
+\`\`\`html
+<p>Learning to code is fun!</p>
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`<\`**: The start symbol. It tells the browser, "I am about to give you a structural instruction."
+2. **\`p\`**: This stands for **Paragraph**. It is the shortest way to tell the computer to start a new block of text.
+3. **\`>\`**: The closing symbol for the start tag. It means, "The instruction is ready, now here comes the text!"
+4. **\`Learning to code is fun!\`**: This is your content. You can type anything here—sentences, stories, or jokes.
+5. **\`</p>\`**: The end tag. The **\`/\`** (slash) is the most important part here. It tells the computer, "Stop the paragraph here and add the cushion space now."
+
+### Wait! Don't Make This Mistake:
+
+A common mistake is putting a Heading tag (\`<h1>\`) *inside* a Paragraph tag (\`<p>\`). 
+This is like trying to put a giant billboard inside a small cardboard box. 
+It confuses the computer and can make your layout break!
+Always keep your paragraphs for regular text, and use headings only for titles.
+
+**Your Task:**
+Below the existing heading, add a new \`<p>\` tag and set its text content to exactly: "Learning to code is fun!".`,
         task: 'Add a <p> tag with the text exactly: Learning to code is fun!',
-        initial_code: '<h1>CodLift</h1>\n<!-- Add your paragraph below this line -->\n\n<!-- Pro-Tip: Use "Lorem Ipsum" placeholder text when you are designing a layout but don\'t have the final content yet! -->',
+        initial_code: '<h1>CodLift</h1>\n<!-- Add your paragraph below this line -->',
         test_cases: { expected_output: 'Learning to code is fun!' }
       },
       {
         title: 'Hyperlinks & Global Connectivity',
-        instruction: 'Think of a hyperlink like a magical doorway connecting different rooms in a massive library. You can be reading a book in one room, step through a doorway, and instantly find yourself in another completely different section of the library. The <a> tag creates these doorways on the internet.\n\nThe **<a> (anchor) tag** is perhaps the most powerful and defining element in the entire HTML specification. It is the very feature that makes the "Web" an interconnected web. Without the anchor tag, every single website would just be an isolated island of information. The <a> tag allows you to connect one document to another through functional hyperlinks.\n\nHowever, an anchor tag alone doesn\'t do much. It relies heavily on an **attribute** called **href** (which stands for Hypertext Reference) to specify the exact destination URL. Attributes are special keywords placed inside the opening tag that provide crucial additional information about the element. For a link to actually work and take a user somewhere, the href attribute is mandatory.\n\nYou can use these tags to link to pages within your own website (known as relative links) or to entirely different external websites (known as absolute links). Professional developers also frequently use extra attributes like target="_blank" to force links to open in a new browser tab. This is a crucial strategy because it helps keep users on your site while they simultaneously explore external resources. Accessibility is also key here; always ensure your link text (the visible text placed between the opening and closing tags) is descriptive enough so that users and screen readers know exactly where they are going before they even click.\n\n**Pro-Tip:** Never use vague link text like "Click Here". Always use descriptive text like "Read our Privacy Policy" so screen readers can properly explain the link\'s destination to visually impaired users!\n\n**Your Task:**\nCreate a new anchor tag that says "Visit CodLift". You must set the href attribute to point to the exact URL "https://codlift.site". Ensure you include the full "https://" protocol in the URL.',
+        instruction: `
+<div class="p-4 bg-green/10 border border-green/20 rounded-xl my-4">
+  <h4 class="text-green font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine your website is a house. But what if you want to visit your neighbor's house? You need a <strong>Magic Doorway</strong>. In the world of websites, these doorways are called <strong>Hyperlinks</strong>. They allow you to hop from one website to another in a single click.</p>
+</div>
+
+### Step 1: The Logic of the Doorway
+
+A link is more than just text. It is a "portal."
+When you see a link like "Visit Google," there are two parts:
+1. The part you see: The words "Visit Google."
+2. The secret part: The actual address (URL) where the portal leads.
+To make this work, we use the **Anchor tag** (which looks like \`<a>\`).
+
+### Step 2: What is an Attribute?
+
+A regular box is just a box. But a box with a "Fragile" sticker has extra information.
+In coding, we use **Attributes** to give our tags extra information.
+The Anchor tag needs a special attribute called **\`href\`** to know where to go.
+Without \`href\`, the link is like a door that leads to nowhere—it won't do anything when you click it!
+
+### Step 3: The Simplest Code Example
+
+Here is how you create a working link:
+
+\`\`\`html
+<a href="https://codlift.site">Visit CodLift</a>
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`<\`**: The start of the instruction.
+2. **\`a\`**: This stands for **Anchor**. Think of it like dropping an anchor at a specific spot on the web.
+3. **The Space**: Very important! It separates the tag name (\`a\`) from the extra information (\`href\`).
+4. **\`href\`**: This stands for **Hypertext Reference**. It is the "Address Label" for the link.
+5. **\`=\`**: The assignment symbol. It tells the computer: "The address is equal to the following text."
+6. **\`"https://codlift.site"\`**: The destination. We put it in **quotes** so the computer knows it is a specific web address.
+7. **\`>\`**: This closes the opening tag.
+8. **\`Visit CodLift\`**: These are the words the user will actually see and click on.
+9. **\`</a>\`**: The end tag. It tells the computer, "This is the end of the clickable area."
+
+### Wait! Don't Make This Mistake:
+
+If you forget the \`https://\` at the start of your address, the link might break!
+The computer will look for a file on *your* own computer instead of searching the whole internet. 
+Always include the full address to make sure your magic doorway works.
+
+**Your Task:**
+Create a new anchor tag that says "Visit CodLift". You must set the href attribute to point to the exact URL "https://codlift.site".`,
         task: 'Add a hyperlink pointing to https://codlift.site with the text "Visit CodLift".',
-        initial_code: '<p>Check out our site:</p>\n<!-- Add link here -->\n\n<!-- Common Pitfall: Forgetting the "https://" in your URL will cause the browser to look for a file on your own server instead of the actual website! -->',
+        initial_code: '<p>Check out our site:</p>\n<!-- Add link here -->',
         test_cases: { expected_output: 'https://codlift.site' }
       },
     ]
   },
   {
-    id: 'html-structure', title: 'HTML Structure & Semantics', level: 'beginner', language: 'html',
+    id: 'html-structure',
+    title: 'HTML Structure & Semantics',
+    level: 'beginner',
+    language: 'html',
     description: 'Build accessible, structured web pages using semantic HTML5 elements that search engines and screen readers understand.',
     exercises: [
       {
         title: 'Semantic Layout',
-        instruction: 'Imagine you are moving into a brand new house and organizing all your belongings. You wouldn\'t just throw everything into a massive, unlabelled pile in the center of the living room. Instead, you would use specific rooms, dedicated shelves, and clear labels so you and your guests can easily find what is needed. **Semantic HTML** works exactly the same way for organizing your web pages.\n\nBefore the introduction of HTML5, developers had to rely almost entirely on generic **<div>** tags to build everything — from the top headers and sidebars down to the footers. The main problem? A simple <div> tells the web browser and search engines absolutely nothing about the actual meaning or purpose of the content it contains. It is just a featureless, empty container box.\n\nHTML5 completely revolutionized web design by introducing **semantic elements** such as **<header>**, **<main>**, **<footer>**, **<article>**, and **<section>**. These powerful tags explicitly describe the *purpose* of the content they wrap.\n\nWhy does this matter so much? There are two critical reasons. First is **accessibility**: screen readers used by visually impaired individuals heavily rely on semantic tags to navigate your page logically. A screen reader can jump directly to the <main> content, skip over the <nav> links, or read out the <footer> details — but only if you actually use the correct tags. Second is **SEO (Search Engine Optimization)**: Google\'s automated web crawlers use your semantic structure to truly understand your page hierarchy. Using the right tags can significantly boost your ranking in search results.\n\nThe **<header>** element typically contains your site logo and navigation bar. The **<main>** element wraps the primary, unique content of that specific page (and there should only be one <main> per page). The **<footer>** holds copyright notices and legal links at the bottom.\n\n**Pro-Tip:** Never use a generic <div> when a semantic tag exists for that specific purpose. Replacing a <div class="header"> with a proper <header> tag makes your code shorter, cleaner, and far more accessible to everyone!\n\n**Your Task:**\nLook at the editor. Wrap the existing <h1> heading exactly inside a proper <header> element. Then, wrap the existing <p> paragraph exactly inside a <main> element.',
+        instruction: `
+<div class="p-4 bg-orange/10 border border-orange/20 rounded-xl my-4">
+  <h4 class="text-orange font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you are moving into a brand new house. You wouldn't just throw everything into a massive, unlabelled pile in the living room. Instead, you use specific <strong>Rooms</strong>. You have a Kitchen for cooking, a Bedroom for sleeping, and a Garage for the car. <strong>Semantic HTML</strong> is just like naming the rooms in your website so the computer knows what happens in each one.</p>
+</div>
+
+### Step 1: The Logic of "Meaning"
+
+In the early days of the internet, developers used plain "Boxes" (called \`<div>\` tags) for everything.
+The problem was that the computer couldn't tell which box was the menu, which box was the footer, and which box was the actual story.
+It was like a house where every room was just called "Room." 
+To fix this, we use **Semantic Tags**. "Semantic" is just a fancy word for "Meaningful."
+
+### Step 2: Why do we need it?
+
+When you use meaningful tags like \`<header>\` and \`<main>\`, you are helping two types of "visitors":
+1. **Search Engines (like Google):** Google's robots read your site to decide if it's good. If they see a \`<main>\` tag, they know: "Aha! This is the most important part of the page!"
+2. **Screen Readers:** People who cannot see use special software that reads the website out loud. If you use semantic tags, the software can tell them: "You are now entering the Header section."
+
+### Step 3: The Simplest Code Example
+
+Here is how you wrap your content in meaningful rooms:
+
+\`\`\`html
+<header>
+  <h1>My Website</h1>
+</header>
+<main>
+  <p>Welcome to the main content!</p>
+</main>
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`<header>\`**: The start tag for the top of your page. It usually holds your logo or menu.
+2. **\`<h1>My Website</h1>\`**: The content inside the header.
+3. **\`</header>\`**: The end of the top section.
+4. **\`<main>\`**: The start tag for the primary "room" of your page. There should only ever be ONE of these per page!
+5. **\`<p>...</p>\`**: The content inside the main room.
+6. **\`</main>\`**: The end of the primary section.
+
+### Wait! Don't Make This Mistake:
+
+Don't use more than one \`<main>\` tag on a page. 
+A house usually only has one "Main Hall." 
+If you have two, the computer won't know which one is the real main section.
+Always keep it simple: one header for the top, and one main for the middle.
+
+**Your Task:**
+Wrap the existing \`<h1>\` heading exactly inside a proper \`<header>\` element. Then, wrap the existing \`<p>\` paragraph exactly inside a \`<main>\` element.`,
         task: 'Wrap the <h1> inside a <header> element, and the <p> inside a <main> element.',
-        initial_code: '<h1>My Blog</h1>\n<p>Welcome to my blog!</p>\n\n<!-- Pro-Tip: There should only be ONE <main> element per page! -->',
-      },
-      {
-        title: 'Forms & Inputs',
-        instruction: 'Think of an HTML form exactly like a physical, printed job application clipboard. The clipboard itself holds everything together, the application has specific blank fields for you to fill out (like your name or phone number), there are clear text labels next to each blank line explaining what goes where, and finally, there is a signature box at the bottom to submit it. Without forms, the internet would be a one-way street — you could read information, but you could never send any data back to the server.\n\nThe **<form>** element acts as the outer container clipboard that groups all your related input fields together. Inside this main container, you utilize **<input>** elements to create the actual blank fields where users can type their data. The crucial **type** attribute placed on an input tag determines exactly what kind of data the field will accept and how it behaves. For example, type="text" is used for standard names, type="email" provides built-in browser validation for email addresses, and type="password" visually obscures characters for security.\n\nThe **<label>** element is critically important for both usability and **accessibility**. It explicitly tells the user and assistive screen readers which input field a particular text label belongs to. You establish this connection by using the **for** attribute on the <label>, which must perfectly match the **id** attribute placed on the corresponding <input>. Without this explicit connection, visually impaired users will have no idea what each blank field is asking them to enter.\n\nFinally, the **<button>** element equipped with **type="submit"** is used to actually trigger the form submission process. When this button is clicked by the user, the browser automatically collects all the values entered into the input fields and sends them off to the backend server or your custom JavaScript handler.\n\n**Pro-Tip:** Always use <label> elements with matching for and id attributes. Skipping labels is one of the most common accessibility violations on the web, and it can actively hurt your site\'s SEO ranking!\n\n**Your Task:**\nBuild a completely new <form> from scratch. Inside it, create a <label> with the exact text "Name", an <input> of type "text" (make sure to link the label and input with matching for and id attributes), and a <button> of type "submit" that explicitly says "Submit".',
-        task: 'Build a <form> containing a <label> for "Name", an <input> of type "text", and a <button> of type "submit".',
-        initial_code: '<!-- Build your form here -->\n\n<!-- Common Pitfall: Forgetting the "for" attribute on labels means screen readers cannot associate the label with its input field! -->',
-      },
-      {
-        title: 'Tables',
-        instruction: 'Imagine you are looking at a detailed spreadsheet like Microsoft Excel or Google Sheets. It neatly organizes complex information into a rigid grid of **rows** and **columns** so you can easily compare different pieces of data at a single glance. The HTML **<table>** element does exactly the same thing for structuring data on web pages.\n\nA fully functional table is built from several different nested elements working closely together. The **<table>** tag serves as the main outer container holding everything. Inside it, you use the **<tr>** (table row) tag to create each distinct horizontal row. Within each of these rows, you use **<th>** (table header) tags for the top column titles, and **<td>** (table data) tags for the regular data cells below them. The <th> element automatically makes its text bold and centered by default, which clearly signals to both users and search engine bots that this specific cell acts as a categorical label rather than standard data.\n\nHistorically, before modern layout systems like CSS Flexbox and Grid existed, developers notoriously misused tables to hack together entire page layouts. However, modern web design best practices dictate that you must use tables strictly for displaying **tabular data** — things like pricing tier comparisons, sports statistics, weekly schedules, or user leaderboards. Using tables for general page layout is now considered a severe anti-pattern because it entirely breaks accessibility and makes your HTML code incredibly rigid and difficult to maintain.\n\nFor enhanced accessibility, you should also add a **<caption>** element immediately inside the opening <table> tag to provide a descriptive title. Screen readers will announce this caption before reading the actual table data, giving visually impaired users critical context about what the table contains.\n\n**Pro-Tip:** Always include <th> elements in your top header row. Without these headers, assistive technologies cannot properly distinguish between the header cells and the data cells, making your table nearly unusable for visually impaired users!\n\n**Your Task:**\nCreate a comprehensive <table>. Inside it, create a top <tr> row that contains two <th> headers with the exact text "Name" and "Score". Below that, create at least 2 more <tr> data rows, each containing two <td> cells with whatever dummy data you like.',
-        task: 'Create a <table> with <tr> rows, <th> headers for "Name" and "Score", and 2 data rows using <td> cells.',
-        initial_code: '<!-- Create table here -->\n\n<!-- Pro-Tip: Add a <caption> element inside your table for better accessibility and SEO! -->',
-      },
+        initial_code: '<h1>My Blog</h1>\n<p>Welcome to my blog!</p>',
+      }
     ]
   },
   {
-    id: 'css-styling', title: 'CSS Styling', level: 'beginner', language: 'css',
+    id: 'css-styling',
+    title: 'CSS Styling',
+    level: 'beginner',
+    language: 'css',
     description: 'Transform plain HTML into beautiful, high-performance interfaces with modern CSS techniques.',
     exercises: [
       {
         title: 'Painting with CSS',
-        instruction: '<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4"><h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4><p class="text-sm">Imagine opening your <strong>Wardrobe/Closet</strong> in the morning. You have your physical body (HTML), but now you get to choose your style: a sleek black suit, a neon graphic tee, or comfortable sweatpants. <strong>CSS (Cascading Style Sheets)</strong> is exactly like dressing up your website. HTML provides the raw structure, but CSS controls the entire visual aesthetic experience — the colors, fonts, layouts, and animations.</p></div>\n\nIn modern web development, the separation of concerns is a fundamental principle that you must learn. You should never mix your styles directly into your structural HTML code. Instead, you keep them separated. One of the absolute most basic ways to apply CSS is by using the **color** property. This specific property strictly changes the foreground color of your text elements.\n\nYou can specify these colors using several different standard formats: predefined color names (like "red" or "blue"), Hexadecimal codes (like "#ff0000"), RGB values (Red, Green, Blue), or HSL (Hue, Saturation, Lightness). HSL is very often preferred by professional front-end designers because it is much more intuitive to read and mathematically modify. For example, simply changing the "lightness" percentage value in an HSL color code lets you quickly create perfectly matching hover states without ever changing the base color hue.\n\nIn this first CSS exercise, you will practice securely selecting an element and dynamically changing its text color property. Notice how the <style> tag placed in the HTML allows us to write CSS code directly within the current document. While this is great for quick learning, in larger production projects, you would typically use an entirely separate, external .css file to keep things perfectly organized.\n\n**Pro-Tip:** Use CSS custom variables (like --brand-color: #a855f7) at the top of your stylesheet to maintain perfect color consistency across your entire project!\n\n**Your Task:**\nUpdate the CSS rule for the h1 selector. Change the value of the color property to exactly "purple" to match the CodLift brand aesthetic.',
+        instruction: `
+<div class="p-4 bg-pink/10 border border-pink/20 rounded-xl my-4">
+  <h4 class="text-pink font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine opening your <strong>Wardrobe/Closet</strong> in the morning. You have your physical body (that's the HTML), but now you get to choose your style. Do you want to wear a red shirt? Blue pants? A hat? <strong>CSS (Cascading Style Sheets)</strong> is exactly like dressing up your website. HTML provides the body, but CSS controls the colors and clothes.</p>
+</div>
+
+### Step 1: The Logic of "Separation"
+
+In coding, we like to keep things organized.
+We use HTML to build the "Bones" of the site, but we use a different language called CSS to choose the "Colors."
+This is great because if you want to change your site from Blue to Purple, you only have to change one small piece of CSS code, rather than changing every single page of your website.
+
+### Step 2: What is a Selector?
+
+To change the color of a title, the computer needs to know *which* title you are talking about.
+A **Selector** is like a finger pointing at an element. 
+If you write \`h1\`, you are pointing at all the big titles and saying, "Hey you! Change your color!"
+
+### Step 3: The Simplest Code Example
+
+Here is a simple CSS rule that changes the color of a heading:
+
+\`\`\`css
+h1 {
+  color: purple;
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`h1\`**: The **Selector**. It points to the HTML tag we want to style.
+2. **\`{\`**: The **Opening Curly Brace**. It tells the computer, "The styling instructions start here."
+3. **The Space/Indent**: We usually put a few spaces before the next word to make it easier for humans to read.
+4. **\`color\`**: This is the **Property**. It tells the computer *what* we want to change (in this case, the text color).
+5. **\`:\`**: The **Colon**. It separates the property from the value. It means "set the color TO..."
+6. **\`purple\`**: This is the **Value**. It is the actual color we want to use.
+7. **\`;\`**: The **Semicolon**. It means "This instruction is finished."
+8. **\`}\`**: The **Closing Curly Brace**. It means "No more styles for this element."
+
+### Wait! Don't Make This Mistake:
+
+A very common mistake is using the wrong symbols. 
+Beginners often use an equals sign \`=\` instead of a colon \`:\`, or they forget the semicolon \`;\`.
+If you write \`color = purple\`, the computer will simply ignore you!
+Always remember: **Property : Value ;**
+
+**Your Task:**
+Update the CSS rule for the h1 selector. Change the value of the color property to exactly "purple" to match the CodLift brand aesthetic.`,
         task: 'Set h1 { color: purple; }',
-        initial_code: '<style>\n  h1 {\n    color: white;\n    /* Pro-Tip: Use CSS variables (e.g., --brand-color: #a855f7) to maintain consistency across your entire project! */\n  }\n</style>\n<h1>Colorful World</h1>',
+        initial_code: '<style>\n  h1 {\n    color: white;\n  }\n</style>\n<h1>Colorful World</h1>',
         test_cases: { expected_output: 'color: purple' }
-      },
-      {
-        title: 'The Box Model: Padding & Spacing',
-        instruction: 'Think of every element on your web page as a physical picture frame hanging on a wall. The photo inside is the content, the protective matting around the photo is the padding, the wooden frame itself is the border, and the empty wall space between this picture and the next one is the margin. This exact concept is known as the **CSS Box Model**, and it is arguably the most important concept to master if you ever want to build professional, pixel-perfect layouts.\n\nEvery single element on a web page is treated by the browser as a rectangular box. This invisible box consists of four distinct, controllable layers: the core content itself, the **padding** (the internal space between the content and the border), the **border**, and the **margin** (the external space outside the border that pushes other elements away).\n\nPadding is absolutely critical for web design because it gives your dense text content "room to breathe". Without sufficient, consistent padding, text can feel incredibly cramped and difficult to read, which negatively impacts the overall User Experience (UX). In modern UI/UX design, empty "white space" is not wasted space — it is used strategically to guide the user\'s eye and emphasize important information seamlessly.\n\nYou can set the padding for all four sides simultaneously using the padding shorthand property, or you can specify individual sides using properties like padding-top or padding-left for far more granular control. When you add padding, the total mathematical size of the element naturally increases unless you explicitly use the box-sizing: border-box property, which is a universally standard practice in modern web development to keep math simple.\n\n**Pro-Tip:** Always set box-sizing: border-box on the universal * selector at the very top of your CSS file. It makes layout math infinitely easier to manage!\n\n**Your Task:**\nLook at the .box CSS class. Add a new property called padding and set its value to exactly 20px to expand the internal space.',
-        task: 'Set padding: 20px on .box',
-        initial_code: '<style>\n  .box {\n    background: #a855f7;\n    color: #080b10;\n    font-weight: bold;\n    /* Add padding here */\n  }\n</style>\n<div class="box">Spacious Box</div>\n\n<!-- Pro-Tip: Always set "box-sizing: border-box" at the top of your CSS to make layout math much easier to manage! -->',
-      },
+      }
     ]
   },
   {
-    id: 'css-flexbox', title: 'CSS Flexbox', level: 'beginner', language: 'css',
+    id: 'css-flexbox',
+    title: 'CSS Flexbox',
+    level: 'beginner',
+    language: 'css',
     description: 'Master the modern flexbox layout system used by professional developers to build responsive, one-dimensional layouts.',
     exercises: [
       {
         title: 'Enable Flexbox',
-        instruction: 'Imagine you have a large stack of hardcover books. Normally, if you drop them, they will naturally stack top-to-bottom on the floor because that is exactly how the web browser naturally renders standard block-level HTML elements. But what if you want them to sit neatly side-by-side, perfectly aligned on a bookshelf? That is exactly what the **CSS Flexbox** module does — it entirely changes how child elements are spatially arranged inside a parent container.\n\nFlexbox is officially activated by setting the property **display: flex** on a parent element (which becomes known as the "flex container"). The magic happens instantly: once activated, all direct child elements automatically transform into **flex items** and line up perfectly in a horizontal row. This default behavior happens because the default **flex-direction** property is set to "row". Flexbox is one of the most powerful CSS layout properties ever created because it instantly transforms a rigid vertical stack into a fluid horizontal layout with absolutely zero complex math.\n\nHistorically, before Flexbox existed, web developers had to heavily rely on incredibly painful, hacky workarounds like float: left and the notorious clearfix to achieve basic horizontal layouts. These old hacks were extremely fragile, very hard to maintain, and regularly caused countless bugs with elements overlapping in weird ways. Flexbox gracefully replaced all of that garbage with a clean, highly predictable, one-dimensional system that became an official CSS standard.\n\nThe **flex container** globally controls the overall layout direction and alignment, while each individual **flex item** can locally control exactly how much specific space it takes up using advanced properties like flex-grow and flex-shrink.\n\n**Pro-Tip:** Remember that Flexbox is specifically designed for **one-dimensional** layouts (meaning either a single row OR a single column). If you ever need a complex two-dimensional layout (handling both rows AND columns simultaneously), you should be using CSS Grid instead!\n\n**Your Task:**\nLocate the .container class in the CSS. Add the display: flex property to instantly force all the nested .item child elements to automatically line up in a horizontal row.',
-        task: 'Set display: flex on the .container class to make child items line up in a row.',
-        initial_code: '<style>\n  .container {\n    background: #1a1a2e;\n    padding: 20px;\n    /* Enable flex here */\n  }\n  .item { background: #a855f7; color: black; padding: 10px 20px; margin: 5px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">A</div>\n  <div class="item">B</div>\n  <div class="item">C</div>\n</div>\n\n<!-- Pro-Tip: Once you set display: flex, ALL direct children become flex items automatically — no extra classes needed! -->',
+        instruction: `
+<div class="p-4 bg-indigo/10 border border-indigo/20 rounded-xl my-4">
+  <h4 class="text-indigo font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you have a large stack of hardcover books. Normally, if you drop them, they will stack on top of each other in a tall tower. But what if you want them to sit neatly side-by-side on a bookshelf? <strong>Flexbox</strong> is like the shelf that forces your items to line up in a beautiful, horizontal row instead of a messy vertical tower.</p>
+</div>
+
+### Step 1: The Logic of Alignment
+
+In standard HTML, elements like to stack vertically (one on top of the other).
+But most websites need things to be horizontal (like a menu bar or a row of photos).
+In the old days, this was very hard to do!
+Now, we use **Flexbox**. By telling a parent "box" to be "Flex," all the children inside it will instantly snap into a perfect row.
+
+### Step 2: What is a Container?
+
+Think of Flexbox like a "Parent" and its "Children."
+The parent is the large box that holds everything. 
+When the parent says "I am a Flexbox," it is giving a rule to all its children. 
+It tells them: "Line up and follow my instructions!"
+
+### Step 3: The Simplest Code Example
+
+Here is how you turn a regular box into a Flexbox:
+
+\`\`\`css
+.container {
+  display: flex;
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`.container\`**: This is the **Selector**. It points to the parent box that holds all the items.
+2. **\`{\`**: The start of our styling rules.
+3. **\`display\`**: This is the **Property**. It tells the computer *how* this box should behave on the screen.
+4. **\`:\`**: The colon that separates the property from the value.
+5. **\`flex\`**: This is the **Value**. It is the magic word that activates the Flexbox engine!
+6. **\`;\`**: The end of the instruction.
+7. **\`}\`**: The end of the style rule.
+
+### Wait! Don't Make This Mistake:
+
+A common mistake is putting \`display: flex\` on the small items instead of the large parent box. 
+If you want your books to line up, you give the shelf the instructions, not each individual book. 
+Always remember: set Flexbox on the **Container (the parent)**!
+
+**Your Task:**
+Locate the .container class in the CSS. Add the \`display: flex\` property to instantly force all the nested child elements to line up in a horizontal row.`,
+        task: 'Set display: flex on the .container class.',
+        initial_code: '<style>\n  .container {\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add display: flex here */\n  }\n  .item { background: #a855f7; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">A</div>\n  <div class="item">B</div>\n  <div class="item">C</div>\n</div>',
       },
       {
         title: 'Justify & Align',
-        instruction: 'Now that your powerful flex container is fully active, it is time to learn the two absolute most important spatial alignment properties in all of modern CSS: **justify-content** and **align-items**.\n\nThink of these two properties like an incredibly precise remote control for your entire layout. The **justify-content** property meticulously controls the positioning of items strictly along the **main axis** (which is horizontal by default). The most common values you will use include "center" (which flawlessly centers all items), "space-between" (which spreads the items out, pushing the first and last items flush against the edges), "space-around" (which adds perfectly equal space around every single item), and "flex-end" (which forcefully pushes all items to the far right edge).\n\nConversely, the **align-items** property strictly controls positioning along the **cross axis** (which is vertical by default). Common values include "center" (which vertically centers the items perfectly), "flex-start" (which pins them to the absolute top), "flex-end" (which pins them to the absolute bottom), and "stretch" (which forces them to stretch vertically to fill the entire container\'s height — this is actually the default behavior).\n\nThe magical combination of justify-content: center and align-items: center is perhaps the most famous and beloved CSS trick of all time. Before Flexbox was widely adopted, perfectly centering a DOM element both horizontally and vertically was notoriously one of the absolute hardest, most frustrating problems in all of web development, often requiring incredibly complex mathematical calculations with negative margins and CSS transforms. With modern Flexbox, it literally takes exactly two clean lines of code.\n\nHowever, for vertical centering to actually work, the flex container MUST have a specifically defined **height**. Without an explicit height, the container simply collapses to tightly fit its internal content, making any vertical centering mathematically invisible.\n\n**Pro-Tip:** The "main axis" and "cross axis" magically swap places when you change the flex-direction to "column." In a vertical column layout, justify-content controls vertical positioning and align-items controls horizontal positioning. This trips up even senior developers!\n\n**Your Task:**\nInside the .container class, add both justify-content: center and align-items: center to perfectly center the nested item both horizontally and vertically.',
-        task: 'Add justify-content: center and align-items: center to the .container to perfectly center the child element.',
-        initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    height: 200px;\n    /* Add justify-content and align-items */\n  }\n  .item { background: #a855f7; color: black; padding: 15px 25px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">Centered!</div>\n</div>\n\n<!-- Common Pitfall: If your vertical centering is not working, check that the container has an explicit height set! -->',
+        instruction: `
+<div class="p-4 bg-teal/10 border border-teal/20 rounded-xl my-4">
+  <h4 class="text-teal font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you have an <strong>Incredibly Precise Remote Control</strong> for your layout. You can push a button to move your items to the center, the left, or the right. <strong>Justify-Content</strong> and <strong>Align-Items</strong> are the buttons on that remote control that let you position your items perfectly within their container.</p>
+</div>
+
+### Step 1: The Logic of Two Directions
+
+Once you turn on Flexbox, you gain control over two directions:
+1. **The Main Axis (Horizontal):** Moving things Left, Right, or Center.
+2. **The Cross Axis (Vertical):** Moving things Top, Bottom, or Center.
+By combining these two, you can put an item exactly in the middle of a box—something that used to be a nightmare for web developers!
+
+### Step 2: What is Justify-Content?
+
+Think of this as your "Horizontal Button." 
+If you want your menu links to spread out across the page, or stay huddled together in the center, you use **justify-content**.
+Values like \`center\` or \`space-between\` tell the computer exactly how much "air" (empty space) to put between your items.
+
+### Step 3: The Simplest Code Example
+
+Here is how you perfectly center an item:
+
+\`\`\`css
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`justify-content\`**: The property for horizontal alignment.
+2. **\`:\`**: The separator.
+3. **\`center\`**: The value that tells the items to move to the middle.
+4. **\`align-items\`**: The property for vertical alignment.
+5. **\`center\`**: The value that tells the items to stay in the middle vertically.
+
+### Wait! Don't Make This Mistake:
+
+Vertical centering (\`align-items: center\`) only works if your container has a **Height**. 
+If your container is squashed flat like a pancake, you won't see any vertical movement! 
+Always check that your parent box has enough room (\`height\`) for the items to move up and down.
+
+**Your Task:**
+Inside the .container class, add both \`justify-content: center\` and \`align-items: center\` to perfectly center the nested item both horizontally and vertically.`,
+        task: 'Add justify-content: center and align-items: center to the .container.',
+        initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    height: 200px;\n    /* Add justify-content and align-items */\n  }\n  .item { background: #a855f7; padding: 15px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">Centered!</div>\n</div>',
       },
       {
         title: 'Flex Direction & Wrap',
-        instruction: 'By default, the CSS Flexbox module always assumes you want to meticulously arrange your nested items in a horizontal **row** (flowing directly from left to right). But in complex, real-world web layouts, you often need these items to stack cleanly **vertically** — for example, building a mobile-friendly sidebar navigation menu where the distinct links must go top-to-bottom. The immensely powerful **flex-direction** property lets you instantly change this primary axis.\n\nSetting **flex-direction: column** magically rotates the entire mathematical layout engine exactly 90 degrees so your items will stack vertically instead of horizontally. Other highly useful values include "row-reverse" (which flows right to left) and "column-reverse" (which flows bottom to top). The reverse values are incredibly useful for building special UI layouts like real-time chat message feeds where the absolute newest messages must forcefully appear at the very bottom.\n\nThe second critical layout property here is **flex-wrap**. By default, Flexbox aggressively tries to squeeze every single item into one single line, even if it means violently shrinking them down below their natural readable size. Setting **flex-wrap: wrap** explicitly tells the Flexbox engine to gently allow items to intelligently flow onto the next visual line whenever there is simply not enough physical space left on the current line. This specific behavior is absolutely essential for building fluid, responsive layouts — on a tiny mobile phone screen, items naturally wrap into a vertical stack, while on a massive desktop monitor they smoothly spread entirely across the row.\n\nYou can actually combine both of these properties into the incredibly useful shorthand property called **flex-flow**. For example, writing "flex-flow: column wrap" securely sets both the primary direction and the wrapping behavior in one single, clean line of CSS.\n\n**Pro-Tip:** When utilizing flex-wrap, you should always heavily combine it with the modern **gap** property (like gap: 15px) to dynamically add perfectly consistent, identical spacing between all wrapped items!\n\n**Your Task:**\nLocate the .container class. Add the flex-direction: column property and the flex-wrap: wrap property to properly stack the items and allow them to wrap.',
+        instruction: `
+<div class="p-4 bg-amber/10 border border-amber/20 rounded-xl my-4">
+  <h4 class="text-amber font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you have a bookshelf. Sometimes you want the books to sit side-by-side (like a row). But sometimes, if the shelf is too narrow, you want to <strong>Rotate the Shelf</strong> so the books stack one on top of the other (like a column). <strong>Flex-Direction</strong> and <strong>Flex-Wrap</strong> let you control this rotation and flow.</p>
+</div>
+
+### Step 1: The Logic of Rotation
+
+By default, Flexbox always thinks you want a horizontal row.
+But what if you are building a menu for a mobile phone?
+On a small screen, a long horizontal row will go off the edge of the screen!
+To fix this, we use **flex-direction: column**. This "rotates" the axis so items stack vertically.
+
+### Step 2: What is Wrapping?
+
+Think of a word processor (like Google Docs). 
+When you type to the end of a line, the computer automatically moves the next word to the new line below.
+This is called **Wrapping**.
+In Flexbox, we use **flex-wrap: wrap** to tell the items: "If you run out of room, don't shrink! Just move down to the next row."
+
+### Step 3: The Simplest Code Example
+
+Here is how you make a vertical stack that wraps:
+
+\`\`\`css
+.container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`flex-direction\`**: The property that chooses Row or Column.
+2. **\`:\`**: The separator.
+3. **\`column\`**: The value that makes things stack vertically.
+4. **\`flex-wrap\`**: The property that controls if items stay on one line or move to many.
+5. **\`wrap\`**: The value that allows items to jump to a new line when they run out of space.
+
+### Wait! Don't Make This Mistake:
+
+When you switch to \`flex-direction: column\`, the "Main Axis" and "Cross Axis" swap places!
+Now, \`justify-content\` will move things Up and Down, and \`align-items\` will move things Left and Right. 
+This is the number one thing that confuses even professional developers!
+
+**Your Task:**
+Locate the .container class. Add the \`flex-direction: column\` property and the \`flex-wrap: wrap\` property to properly stack the items and allow them to wrap.`,
         task: 'Add flex-direction: column and flex-wrap: wrap to the .container.',
-        initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add direction and wrap */\n  }\n  .item { background: #ffd60a; color: black; padding: 10px; margin: 5px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>\n\n<!-- Pro-Tip: Use the shorthand "flex-flow: column wrap" to set both properties in a single line! -->',
-      },
+        initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add direction and wrap */\n  }\n  .item { background: #ffd60a; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>',
+      }
     ]
   },
   {
-    id: 'css-grid', title: 'CSS Grid & Responsive', level: 'beginner', language: 'css',
+    id: 'css-grid',
+    title: 'CSS Grid & Responsive',
+    level: 'beginner',
+    language: 'css',
     description: 'Build complex responsive layouts with CSS Grid and media queries — the two-dimensional layout system that powers modern web design.',
     exercises: [
       {
         title: 'Your First Grid',
-        instruction: 'If CSS Flexbox is fundamentally a bookshelf (strictly one-dimensional), then **CSS Grid** is an advanced chessboard — it allows you to dynamically and meticulously control **both rows and columns** simultaneously. This fundamental two-dimensional nature makes Grid undeniably the most powerful, complex layout system natively available in modern CSS, making it absolutely ideal for structuring massive, complex page architectures like administration dashboards, intricate photo galleries, and entire holistic page layouts.\n\nTo securely activate the Grid engine, you must first set **display: grid** on a primary parent container. Once activated, you explicitly define your structural columns using the **grid-template-columns** property. The **fr** unit (which stands for fraction) is a special, dynamic Grid unit that intelligently distributes all available free space proportionally. Writing "1fr 1fr 1fr" mathematically creates three columns of exactly equal width. You could also creatively write "2fr 1fr" to aggressively make the first column exactly twice as wide as the second column.\n\nThe incredibly useful **gap** property seamlessly adds perfectly consistent spatial gaps between all grid cells without ever needing to rely on messy margin hacks. Before the modern gap property existed, web developers were forced to use complex padding workarounds that consistently caused massive headaches with edge alignment. Gap is beautifully clean, highly predictable, and works natively in both Grid and Flexbox systems.\n\nThe Grid engine also automatically places your nested child elements into the defined structural cells in strict order. If you have 6 total items and define 3 columns, the Grid engine automatically creates exactly 2 rows to hold them. You can also manually control the exact vertical heights of these rows using the powerful **grid-template-rows** property.\n\n**Pro-Tip:** Always use the repeat() function for significantly cleaner code. Instead of writing "1fr 1fr 1fr", you can compactly write repeat(3, 1fr). For advanced auto-responsive grids, the magic pattern grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) creates a fully responsive grid without using a single media query!\n\n**Your Task:**\nInside the .grid container class, carefully add display: grid to enable the engine, and then add grid-template-columns: 1fr 1fr 1fr to explicitly define three equal-width columns.',
+        instruction: `
+<div class="p-4 bg-emerald/10 border border-emerald/20 rounded-xl my-4">
+  <h4 class="text-emerald font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">If Flexbox is like a bookshelf (one row), then <strong>CSS Grid</strong> is like an <strong>Advanced Chessboard</strong>. It allows you to control both <strong>Rows</strong> and <strong>Columns</strong> at the exact same time. This is the most powerful tool you have for building the overall layout of a professional website.</p>
+</div>
+
+### Step 1: The Logic of the "Grid"
+
+Imagine you are designing a newspaper. You have some articles that are narrow, and some that are wide.
+You also have rows of pictures and rows of text.
+Trying to do this with one-dimensional tools is very hard. 
+**CSS Grid** creates an invisible grid of lines on your page, and you just tell the items which "cell" of the grid they should sit in.
+
+### Step 2: What is the "fr" Unit?
+
+In the old days, we had to use percentages (like 33.33%) to make columns.
+This was very annoying!
+Now, we use a special unit called **\`fr\`** (which stands for **Fraction**).
+If you write \`1fr 1fr 1fr\`, you are telling the computer: "Divide the screen into 3 equal pieces and give one piece to each column."
+It handles all the difficult math for you!
+
+### Step 3: The Simplest Code Example
+
+Here is how you make a 3-column grid:
+
+\`\`\`css
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`display: grid\`**: This activates the Grid engine for the parent box.
+2. **\`grid-template-columns\`**: This is the property that defines the vertical columns.
+3. **\`1fr 1fr 1fr\`**: This tells the computer to create three columns, each taking up one equal "Fraction" of the available space.
+4. **\`gap: 15px\`**: This is a bonus property that adds perfectly even space between all the boxes.
+
+### Wait! Don't Make This Mistake:
+
+A common mistake is thinking that \`grid-template-columns\` creates the content. 
+It only creates the **Slots**. 
+If you define 3 columns but you only have 2 items, the 3rd slot will just stay empty. 
+Always make sure your grid plan matches the number of items you have!
+
+**Your Task:**
+Inside the .grid container class, add \`display: grid\` to enable the engine, and then add \`grid-template-columns: 1fr 1fr 1fr\` to define three equal-width columns.`,
         task: 'Set display: grid and grid-template-columns: 1fr 1fr 1fr on the .grid container.',
-        initial_code: '<style>\n  .grid {\n    background: #0d131a;\n    padding: 20px;\n    gap: 15px;\n    /* Add grid styles */\n  }\n  .cell { background: #a855f7; color: black; padding: 20px; border-radius: 8px; text-align: center; font-weight: bold; }\n</style>\n<div class="grid">\n  <div class="cell">1</div>\n  <div class="cell">2</div>\n  <div class="cell">3</div>\n  <div class="cell">4</div>\n  <div class="cell">5</div>\n  <div class="cell">6</div>\n</div>\n\n<!-- Pro-Tip: Use repeat(3, 1fr) as a shorthand for 1fr 1fr 1fr! -->',
+        initial_code: '<style>\n  .grid {\n    background: #0d131a;\n    padding: 20px;\n    gap: 15px;\n    /* Add grid styles here */\n  }\n  .cell { background: #a855f7; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">1</div>\n  <div class="cell">2</div>\n  <div class="cell">3</div>\n  <div class="cell">4</div>\n  <div class="cell">5</div>\n  <div class="cell">6</div>\n</div>',
       },
       {
         title: 'Media Queries',
-        instruction: 'Your gorgeous new CSS grid layout looks absolutely stunning on a massive desktop monitor, but what dynamically happens when a user attempts to open your website on a tiny mobile phone? Those three wide columns get aggressively squeezed into a tiny, cramped screen and quickly become completely unreadable. This extremely common problem is exactly where **media queries** come into play — they mathematically allow you to dynamically apply entirely different CSS rules based entirely on the user\'s specific screen size or device type.\n\nThe standard CSS syntax is **@media (max-width: 600px) { ... }**, which explicitly means "forcefully apply these specific nested styles ONLY when the screen is exactly 600 pixels wide or smaller." Inside the curly braces of that media block, you can aggressively override your base grid styles to forcefully show a single vertical column: grid-template-columns: 1fr.\n\nThe specific number 600px is officially called a **breakpoint** — it is the exact mathematical threshold where your layout intelligently switches from one design paradigm to another. Common professional industry breakpoints are typically 768px (for standard tablets), 1024px (for small laptops), and 1440px (for large desktop monitors). Professional front-end developers universally utilize a strict **mobile-first** approach, where the base CSS rules at the top of the file explicitly target mobile phones, and subsequent media queries gradually add layout complexity for larger screens.\n\nMedia queries are incredibly versatile. They can dynamically test for many complex conditions far beyond simple width: screen orientation (landscape vs portrait), pixel density (for high-resolution Retina displays), and even whether the user actively prefers a dark theme using the powerful prefers-color-scheme: dark query.\n\n**Pro-Tip:** ALWAYS place your @media query blocks at the absolute bottom of your CSS file, immediately after all your base styles. If you foolishly put them at the top, they will be violently overridden by the later base rules due to the fundamental rules of the CSS cascade!\n\n**Your Task:**\nBelow all the existing CSS, carefully add a new media query block: @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } } to force the grid to automatically collapse into a single column on tiny screens.',
+        instruction: `
+<div class="p-4 bg-rose/10 border border-rose/20 rounded-xl my-4">
+  <h4 class="text-rose font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine your website has a <strong>Magic Mirror</strong>. When it looks at a giant desktop monitor, it sees plenty of room and spreads out comfortably. But when it looks at a tiny mobile phone, it realizes it needs to "shrink" and rearrange its furniture to fit. <strong>Media Queries</strong> are the sensors that tell your website how big the screen is.</p>
+</div>
+
+### Step 1: The Logic of Responsiveness
+
+Your website needs to look good on everything from a huge TV to a tiny watch.
+We call this **Responsive Design**.
+A "Media Query" is like an **IF statement** for your styles. 
+It says: "IF the screen is smaller than 600 pixels, THEN change the layout to be a single column."
+
+### Step 2: What is a Breakpoint?
+
+Think of a "Breakpoint" as a line in the sand.
+On one side of the line (Big screens), the website uses its default layout.
+Once the screen size crosses that line (Small screens), the website instantly switches to a new set of rules.
+Most professional sites have breakpoints for Tablets and Phones.
+
+### Step 3: The Simplest Code Example
+
+Here is how you tell a grid to collapse on small screens:
+
+\`\`\`css
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`@media\`**: The special keyword that tells the computer, "I am starting a screen-size rule."
+2. **\`(max-width: 600px)\`**: The condition. It means: "If the screen is 600 pixels wide or LESS."
+3. **\`{\`**: The start of the special rules for small screens.
+4. **\`.grid { ... }\`**: We put our regular CSS rules *inside* the media query block to override them.
+5. **\`1fr\`**: We change the 3-column grid back to a 1-column stack so it fits on a phone.
+
+### Wait! Don't Make This Mistake:
+
+Always place your \`@media\` rules at the **Bottom** of your CSS file. 
+CSS stands for "Cascading Style Sheets," which means the rules at the bottom of the file always "win" over the rules at the top. 
+If you put your media query at the top, your regular styles might overwrite it!
+
+**Your Task:**
+Below all the existing CSS, add a new media query block: \`@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }\` to force the grid to collapse on tiny screens.`,
         task: 'Add a @media (max-width: 600px) block that sets .grid to grid-template-columns: 1fr.',
-        initial_code: '<style>\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    padding: 20px;\n    background: #0d131a;\n  }\n  /* Add media query here */\n  .cell { background: #ffd60a; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">A</div>\n  <div class="cell">B</div>\n  <div class="cell">C</div>\n</div>\n\n<!-- Common Pitfall: Make sure your @media block comes AFTER the .grid rule! -->',
-      },
+        initial_code: '<style>\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    padding: 20px;\n    background: #0d131a;\n  }\n  /* Add media query here */\n  .cell { background: #ffd60a; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">A</div>\n  <div class="cell">B</div>\n  <div class="cell">C</div>\n</div>',
+      }
     ]
   },
   {
-    id: 'js-fundamentals', title: 'JavaScript Fundamentals', level: 'beginner', language: 'javascript',
-    description: 'Bring your websites to life with logic, variables, functions, and data structures — the core building blocks of every web application.',
+    id: 'js-fundamentals',
+    title: 'JavaScript Fundamentals',
+    level: 'beginner',
+    language: 'javascript',
+    description: 'Learn how to create labeled containers to hold information in the computer\'s memory.',
     exercises: [
       {
-        title: 'Variables & Data Types',
-        instruction: '<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4"><h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4><p class="text-sm">Imagine dining at a fancy restaurant. The <strong>Restaurant Waiter</strong> is a master of temporary memory. They walk up to your table, write down your specific order (\'Steak\', \'Water\'), store that information temporarily in their notepad, and then carry it to the kitchen. In JavaScript, <strong>variables</strong> act exactly like that waiter\'s notepad — they securely store data in the computer\'s memory so your program can actively remember and use it later. You securely create these notepads using two primary keywords: <strong>const</strong> and <strong>let</strong>.</p></div>\n\nThe **const** keyword (which is short for \'constant\') creates a highly secure variable whose specific value CANNOT be reassigned after it is initially created. You must use it for critical values that should never accidentally change during execution — things like a user\'s unique ID number, a fixed configuration setting, or a mathematical constant like Pi. Conversely, the **let** keyword explicitly creates a flexible variable that CAN be safely reassigned later on — like an active score counter in a video game or a dynamically updating shopping cart total.\n\nYou might also see a legacy keyword called **var** in older tutorials, but modern, professional JavaScript developers actively avoid using it because it suffers from extremely confusing scoping rules that frequently lead to disastrous bugs. Always prefer const by default, and only switch to let when you explicitly need to reassign a value.\n\nJavaScript fundamentally utilizes several core **data types**: **strings** (plain text wrapped in quotes), **numbers** (both integers and decimals), **booleans** (true or false logical values), **null** (an intentionally empty value), **undefined** (a variable that was declared but not yet assigned anything), and **objects** (complex structural collections of data). Understanding these data types is absolutely crucial because JavaScript is famously **dynamically typed** — it shockingly does not enforce strict types at compile time, which inevitably means bugs resulting from unexpected type mismatches are incredibly common for beginners.\n\n**Pro-Tip:** Always declare your variables using const first. Only actively switch a variable to let if you later discover that you absolutely need to reassign its specific value. This highly professional "const-first" habit effectively prevents accidental data mutations and makes your logic far more predictable!\n\n**Your Task:**\nIn the editor, explicitly declare a const named "name" (and set it to any string), and a let named "age" (and set it to any number). Then use the console.log() command to successfully print both variables.',
-        task: 'Declare a const named "name" (string) and a let named "age" (number), then console.log both values.',
-        initial_code: '// Declare your variables here\n\n// Log them\n\n// Pro-Tip: Use const by default, only use let when you need to reassign!',
-        test_cases: { expected_output: 'console.log' }
+        title: 'Creating a Labeled Bucket',
+        instruction: `
+<div class="p-4 bg-purple/10 border border-purple/20 rounded-xl my-4">
+  <h4 class="text-purple font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you are moving houses. You have a lot of stuff, so you use <strong>Cardboard Boxes</strong>. You write a label on the outside like "Books" so you know what is inside. In JavaScript, we do the exact same thing with <strong>Variables</strong>.</p>
+</div>
+
+### Step 1: The Logic of Storage
+
+Computers are incredibly fast, but they have a very short memory. 
+If you tell a computer "My name is Alex," it will forget that name a split-second later unless you save it.
+To save information, we create a "labeled bucket" in the computer's memory.
+We give the bucket a name (the label) so we can find it later when we need it.
+
+### Step 2: The Simplest Code Example
+
+Here is how we tell the computer to make a new bucket and put something in it:
+
+\`\`\`javascript
+let myBox = "Books";
+\`\`\`
+
+### Step 3: Breaking Down Every Character
+
+1. **\`let\`**: This is a "Keyword." It is a special signal that tells the computer: "I am about to create a new labeled bucket!"
+2. **The Space**: We put a space after \`let\` so the computer doesn't get confused. It needs to know where the "Create" command ends and the "Name" begins.
+3. **\`myBox\`**: This is the **Name** or **Label** of our bucket. You can call it almost anything, like \`userName\` or \`score\`.
+4. **\`=\`**: This is the **Assignment Operator**. In coding, it acts like an **Arrow**. It means: "Take the stuff on the right and put it INTO the bucket on the left."
+5. **\`"Books"\`**: These are **Quotes**. We use them to tell the computer: "This is just plain text, not a command."
+6. **\`;\`**: This is a **Semicolon**. It works just like a **Period** at the end of a sentence. It tells the computer, "I am done with this instruction."
+
+### Wait! Don't Make This Mistake:
+
+Beginners often forget the quotes around words. 
+If you write \`let myBox = Books;\` (without quotes), the computer will look for *another* bucket named Books!
+Since it won't find one, it will panic and show an error. 
+If you want to store a literal word, always wrap it in "quotes".
+
+**Your Task:**
+Create a variable named \`friend\` and store the word \`"Alex"\` inside it.`,
+        task: 'Create a variable named friend and store "Alex" in it.',
+        initial_code: '// Create your variable below this line\n',
+        test_cases: { expected_output: 'let friend = "Alex"' }
       },
       {
         title: 'Mastering Functions',
-        instruction: 'A **function** in programming is exactly like a highly detailed recipe card in a professional kitchen. You take the time to write the specific step-by-step cooking instructions just once, give the recipe a clear name, and then you can simply "call" that exact recipe whenever you need that specific dish magically made. Without using functions, you would be forced to endlessly copy-paste the exact same messy code everywhere — an absolute maintenance nightmare.\n\nYou officially define a function using the **function** keyword, immediately followed by a descriptive name, a set of parentheses for **parameters** (which are the required inputs), and curly braces that contain the actual code body. **Parameters** act as temporary placeholders that safely receive external values (which are officially called **arguments**) whenever the function is actively called into action.\n\nThe incredibly important **return** keyword explicitly sends a calculated value back to the exact location where the function was originally called. If you completely forget the return keyword, the function successfully runs but produces absolutely no usable output (it silently returns "undefined"). Modern JavaScript developers also heavily utilize **arrow functions** — a much shorter, cleaner syntax that looks like this: const greet = (name) => { ... }.\n\n**Pro-Tip:** A well-written function should aggressively do exactly ONE thing perfectly well. If your function is getting longer than 10-15 lines, you should break it down into much smaller, specialized helper functions. This concept is officially called the "Single Responsibility Principle" and it is a massive hallmark of professional clean code!\n\n**Your Task:**\nDefine a new function exactly named greetUser that accepts a single "name" parameter. Inside the function, it must return the exact string "Hello, [name]!" using the provided name.',
-        task: 'Define a function greetUser(name) that returns the string "Hello, [name]!" using the name parameter.',
-        initial_code: '// Write your function here\n\nconsole.log(greetUser("Student"));\n\n// Common Pitfall: Forgetting "return" means your function outputs undefined!',
+        instruction: `
+<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
+  <h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you have a <strong>Recipe Card</strong> for baking a cake. You don't want to write down every single step every time you bake; you just want to say "Follow the Cake Recipe." A <strong>Function</strong> is exactly like that recipe card. You write the instructions once, give it a name, and then you can "call" it whenever you need to do that work again.</p>
+</div>
+
+### Step 1: The Logic of Reusability
+
+In coding, we hate repeating ourselves. 
+If you need to calculate a tax rate or greet a user 100 times, you shouldn't type that logic 100 times.
+Instead, you wrap that logic in a "Function."
+This makes your code clean and easy to fix—if the tax rate changes, you only fix it in one place!
+
+### Step 2: What are Parameters?
+
+Think of a "Coffee Machine." 
+The machine has a set of instructions (grind beans, heat water, pour).
+But you get to choose the **Input**: do you want "Dark Roast" or "Light Roast"?
+In coding, these inputs are called **Parameters**. 
+They are placeholders that let you customize what the function does each time you use it.
+
+### Step 3: The Simplest Code Example
+
+Here is how you write a simple greeting function:
+
+\`\`\`javascript
+function sayHello(name) {
+  return "Hello, " + name + "!";
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`function\`**: The keyword that tells the computer, "I am about to write a recipe."
+2. **\`sayHello\`**: The **Name** of the function. This is what you'll use to "call" it later.
+3. **\`(name)\`**: The **Parameter**. It acts like an empty slot where you will drop a specific name later.
+4. **\`{\`**: The start of the instructions.
+5. **\`return\`**: The most important word! it tells the computer, "Give this result back to me."
+6. **\`"Hello, " + name\`**: This "glues" the word Hello to whatever name you provided.
+7. **\`}\`**: The end of the recipe.
+
+### Wait! Don't Make This Mistake:
+
+A common mistake is forgetting the **\`return\`** keyword. 
+If you forget it, the function will do the work in secret but it won't "hand" you the result. 
+It's like a chef who cooks a delicious meal but then throws it in the trash instead of serving it to you! 
+Always use \`return\` if you want to use the result later.
+
+**Your Task:**
+Define a new function named \`greetUser\` that accepts a single \`name\` parameter. Inside the function, it must return the exact string "Hello, [name]!" using the provided name.`,
+        task: 'Define a function greetUser(name) that returns the string "Hello, [name]!".',
+        initial_code: '// Write your function here\n\nconsole.log(greetUser("Student"));',
       },
       {
         title: 'Arrays',
-        instruction: 'An **array** is exactly like a massive, physically numbered filing cabinet. Every single drawer in this cabinet has a strict numerical **index** (which bizarrely starts at 0, not 1) and holds exactly one specific value. Arrays are specifically used to store logically ordered collections of related data — things like a list of usernames, a series of quiz scores, or the multiple items sitting in a shopping cart.\n\nYou officially create an array by wrapping your specific values with square brackets: const fruits = ["apple", "banana", "cherry"]. You actively access these stored items using their exact numerical index: writing fruits[0] successfully returns "apple". This counter-intuitive system of starting at index 0 is officially called **zero-based indexing** and it is a universal standard across nearly all modern programming languages.\n\nArrays natively come equipped with incredibly powerful built-in **methods** (which are just functions attached to arrays). For example: **.push()** (which cleanly adds an item to the very end), **.pop()** (which explicitly removes an item from the very end), **.length** (which instantly returns the total count of items), **.map()** (which mathematically transforms every single item), **.filter()** (which permanently keeps only the items perfectly matching a specific condition), and **.find()** (which securely returns the very first matching item). These powerful array methods are the absolute backbone of modern JavaScript logic.\n\n**Pro-Tip:** Never attempt to blindly access an index that you aren\'t sure exists! If your active array has exactly 3 items, blindly accessing fruits[10] silently returns "undefined" — it does NOT throw a loud error. Always explicitly check the .length property before dangerously accessing arrays by index!\n\n**Your Task:**\nCreate a const array specifically named "fruits" that contains exactly 3 string values (fruit names). Then use console.log() to successfully print only the very first item in the array using its index.',
-        task: 'Create a const array named "fruits" with 3 strings, then console.log(fruits[0]).',
-        initial_code: '// Create your array here\n\n// Log the first item\n\n// Pro-Tip: Arrays are zero-indexed — the first item is at index 0!',
+        instruction: `
+<div class="p-4 bg-orange/10 border border-orange/20 rounded-xl my-4">
+  <h4 class="text-orange font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you have a <strong>Large Filing Cabinet</strong> with many drawers. Each drawer is numbered starting from 0, 1, 2, and so on. You use this cabinet to store a long list of related things, like a list of your favorite fruits. An <strong>Array</strong> is exactly like this numbered filing cabinet.</p>
+</div>
+
+### Step 1: The Logic of "Lists"
+
+Sometimes, you don't just want one piece of information; you want a whole collection.
+Instead of creating 10 different variables for 10 different fruits, you can just create one "Array" that holds all of them.
+This keeps your code organized and allows you to perform actions on the whole list at once.
+
+### Step 2: What is Zero-Based Indexing?
+
+This is the part that confuses everyone!
+In the real world, we start counting at 1. 
+But in coding, we start counting at **0**. 
+The first drawer in your filing cabinet is always drawer number 0. 
+The second drawer is number 1. 
+Always remember: **Count starts at Zero!**
+
+### Step 3: The Simplest Code Example
+
+Here is how you create a list of fruits and find the first one:
+
+\`\`\`javascript
+const fruits = ["Apple", "Banana", "Cherry"];
+console.log(fruits[0]); // This gives you "Apple"
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`[\`**: The square bracket is the "Cabinet Door." It tells the computer, "A list starts here!"
+2. **\`"Apple"\`**: The first item in the list.
+3. **\`,\`**: The comma is very important. it separates the items so the computer knows they are different.
+4. **\`]\`**: The closing bracket. It means the list is finished.
+5. **\`fruits[0]\`**: This is how you "Open a Drawer." You name the cabinet (\`fruits\`) and then put the drawer number (\`0\`) in square brackets.
+
+### Wait! Don't Make This Mistake:
+
+A common mistake is trying to find the 3rd item by typing \`fruits[3]\`. 
+Because we start at 0, the 3rd item is actually at drawer number **2**! 
+If you type 3, the computer will look for a 4th item, find nothing, and say "undefined."
+
+**Your Task:**
+Create a const array named \`fruits\` with 3 strings. Then log the first item using \`fruits[0]\`.`,
+        task: 'Create an array named fruits and log the first item.',
+        initial_code: '// Create your array here\n',
       },
       {
         title: 'Objects',
-        instruction: 'If standard arrays are numerical filing cabinets with numbered drawers, **objects** are highly advanced cabinets with clearly written, descriptive text labels on every single drawer. Instead of dangerously accessing data by a blind numerical index, you explicitly use a highly descriptive **key** like "name" or "email". This fundamental difference makes objects absolutely perfect for precisely representing incredibly complex, real-world entities.\n\nYou officially create an object by wrapping your specific data with curly braces: const person = { name: "Alex", age: 25, job: "Developer" }. Every single entry inside an object is officially known as a **key-value pair**. You can actively access these internal values using clean **dot notation** (like person.name) or flexible **bracket notation** (like person["name"]).\n\nObjects are incredibly versatile and can contain absolutely any valid data type as values — standard strings, numbers, arrays, functions (which become methods), or even entirely nested objects. In professional, real-world API development, almost every single API response you receive is officially formatted in **JSON** (JavaScript Object Notation) — which is quite literally this exact object syntax. Truly mastering JavaScript objects essentially means you can confidently work with absolutely any API in the world.\n\n**Pro-Tip:** Always aggressively use **destructuring** to extract object values cleanly! Writing const { name, age } = person; magically creates two instant variables directly from the object. This powerful feature is heavily used in modern React development for cleanly extracting component props!\n\n**Your Task:**\nCreate a const object specifically named "person". It must contain the exact keys "name", "age", and "job". Finally, use console.log() to successfully print the "name" property using dot notation.',
-        task: 'Create a const object named "person" with keys name, age, and job, then console.log(person.name).',
-        initial_code: '// Create your object here\n\n// Log the name property\n\n// Pro-Tip: Use destructuring — const { name } = person — for cleaner code!',
+        instruction: `
+<div class="p-4 bg-red/10 border border-red/20 rounded-xl my-4">
+  <h4 class="text-red font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">If an Array is a cabinet with numbered drawers, an <strong>Object</strong> is a cabinet with <strong>Text Labels</strong> on each drawer. Instead of remembering that drawer #0 is the name, you just look for the drawer labeled "Name." Objects are the best way to describe "Things" in the real world, like a Person or a Car.</p>
+</div>
+
+### Step 1: The Logic of "Properties"
+
+Real-world objects have characteristics. 
+A car has a Color, a Brand, and a Speed. 
+In coding, we call these characteristics **Properties**. 
+An Object lets you group all these properties together so they don't get lost.
+
+### Step 2: The Key-Value Pair
+
+Every drawer in an Object has two parts:
+1. **The Key:** The label on the drawer (like "age").
+2. **The Value:** The stuff inside the drawer (like "25").
+We use a **Colon** to link them together.
+
+### Step 3: The Simplest Code Example
+
+Here is how you describe a person:
+
+\`\`\`javascript
+const person = {
+  name: "Alex",
+  age: 25
+};
+console.log(person.name); // This gives you "Alex"
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`{\`**: The **Curly Brace** is the "Object Door."
+2. **\`name\`**: The **Key** (the label).
+3. **\`:\`**: The connector.
+4. **\`"Alex"\`**: The **Value** (the content).
+5. **\`,\`**: Separates different properties.
+6. **\`person.name\`**: The **Dot Notation**. This is the easiest way to look inside an object. You say "Object Name" + "Dot" + "Label Name."
+
+### Wait! Don't Make This Mistake:
+
+Don't forget the comma between properties! 
+If you have a name and an age, you must put a comma after the name. 
+If you forget it, the computer will think the name and age are one big, confusing word.
+
+**Your Task:**
+Create a const object named \`person\` with keys \`name\`, \`age\`, and \`job\`. Then log \`person.name\`.`,
+        task: 'Create an object named person and log the name.',
+        initial_code: '// Create your object here\n',
       },
       {
         title: 'Loops',
-        instruction: 'Imagine you are an overworked teacher who must manually grade 100 identical essays. You obviously wouldn\'t write down 100 individual, separate grading instructions — you would strategically write ONE single set of clear instructions and explicitly repeat it 100 times. That is exactly what programming **loops** do for your computer.\n\nThe classic **for loop** is heavily structured into three distinct parts separated by semicolons: an **initialization** step (like let i = 1), a strict **condition** (like i <= 5), and an automatic **increment** step (like i++). The loop aggressively checks the strict condition immediately before every single iteration — if the condition evaluates to true, the code securely runs; if it evaluates to false, the loop instantly terminates.\n\nJavaScript also natively features **while** loops (which run endlessly while a condition remains true), **do...while** loops (which are guaranteed to run at least once), and highly modern array methods like **.forEach()** and **.map()** that elegantly loop through arrays without forcing you to do any dangerous manual index management.\n\nLoops are undeniably powerful but also inherently dangerous: accidentally creating an **infinite loop** (where the condition structurally never evaluates to false) will aggressively consume all available memory and completely crash the user\'s web browser. Always double-check that your loop has a mathematically clear exit condition!\n\n**Pro-Tip:** In highly modern, professional JavaScript, you should almost always aggressively prefer array methods like .forEach() or .map() over traditional, clunky for loops whenever you are iterating over arrays. They are significantly more readable and far less error-prone!\n\n**Your Task:**\nWrite a classic for loop starting exactly at 1 and ending exactly at 5. Inside the loop, use console.log() to successfully print the current number during each iteration.',
-        task: 'Write a for loop starting at 1, ending at 5, that uses console.log to print each number.',
-        initial_code: '// Write your loop here\n\n// Common Pitfall: Forgetting i++ creates an infinite loop!',
-      },
-    ]
-  },
-  {
-    id: 'dom-manipulation', title: 'DOM Manipulation', level: 'beginner', language: 'html',
-    description: 'Use JavaScript to make web pages interactive by reading, modifying, and creating elements in the Document Object Model.',
-    exercises: [
-      {
-        title: 'Selecting Elements',
-        instruction: 'The **DOM (Document Object Model)** is the web browser\'s highly structured internal representation of your raw HTML page mapped out as a massive, interactive tree of objects. Every single HTML tag literally becomes an interactive "node" in this massive tree, and JavaScript is mathematically capable of reading, aggressively modifying, or outright deleting any specific node. This specific bridge between logic and structure is exactly what makes modern web pages **interactive**.\n\nThe absolute most fundamental DOM selection method is **document.getElementById()**. You strictly pass it a string perfectly matching an element\'s HTML **id** attribute, and it instantly returns a powerful JavaScript reference to that specific DOM element. Once you securely hold this active reference, you can dramatically change its internal text content using the **.textContent** property, dangerously modify its internal HTML structure using **.innerHTML**, or drastically alter its live CSS styles, classes, and attributes.\n\nThere are several other powerful selection methods available: **document.querySelector()** securely selects the very first element matching any valid CSS selector (which is incredibly powerful), **document.querySelectorAll()** securely returns a static list of ALL matching elements on the page, and **document.getElementsByClassName()** efficiently selects elements entirely by their class name.\n\nIn professional front-end development, raw DOM manipulation is the fundamental foundation of literally every single interactive feature — from simple toggling of dark mode themes to building complex infinite scroll social media feeds. Massive frameworks like React, Vue, and Angular actually just abstract heavily over these core methods.\n\n**Pro-Tip:** Almost always aggressively prefer using querySelector() instead of older methods like getElementById() in modern codebases. It natively accepts ANY valid CSS selector (like .class, #id, or div > p), making it infinitely more flexible and powerful!\n\n**Your Task:**\nInside the changeText() function, use the document.getElementById("title") method to select the heading. Then use the .textContent property to change its text to exactly: "I clicked it!".',
-        task: 'Inside changeText(), use document.getElementById("title").textContent = "I clicked it!" to update the heading.',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <h1 id="title">Click the button!</h1>\n  <button onclick="changeText()">Click Me</button>\n  <script>\n    function changeText() {\n      // Change the h1 text here\n    }\n  </script>\n</body>\n</html>\n\n<!-- Pro-Tip: Use .textContent for plain text, .innerHTML only when you need to insert HTML tags! -->',
-      },
-      {
-        title: 'Changing Styles',
-        instruction: 'Beyond merely changing basic text content, JavaScript can forcefully modify absolutely any CSS property on an active DOM element natively through the **element.style** object property. This explicit power lets you dynamically create massive visual effects on the fly — complex hover animations, instant theme toggles, dynamic loading indicators, and highly interactive drag-and-drop interfaces.\n\nThe specific JavaScript syntax is: **element.style.propertyName = "value"**. However, you must carefully note that CSS property names that normally contain hyphens (like "background-color") are strictly written in **camelCase** in JavaScript: becoming backgroundColor. This strict change happens because hyphens mathematically represent subtraction in JavaScript, so they are explicitly not allowed in standard property names.\n\nCommon dynamic style manipulations explicitly include dynamically changing the backgroundColor, altering the color, toggling the display (to securely show or hide elements), adjusting the opacity (for complex fade effects), and aggressively modifying the transform property (for buttery smooth 3D animations).\n\nFor significantly more complex structural style changes, professional developers absolutely prefer toggling entire **CSS classes** dynamically using the highly efficient **element.classList.add()**, **.remove()**, or **.toggle()** methods instead of brutally setting individual inline styles. This best practice beautifully keeps your styling strictly in CSS (where it belongs) and your complex logic strictly in JavaScript.\n\n**Pro-Tip:** Aggressively avoid setting styles directly with element.style in massive production codebases unless absolutely necessary. Instead, define complex CSS classes like .active or .hidden inside your stylesheet and smoothly toggle them dynamically with classList.toggle("active"). It leverages browser caching for significantly better rendering performance!\n\n**Your Task:**\nInside the empty changeColor() function, use document.getElementById("box") to select the box element. Then use the .style.backgroundColor property to explicitly change its background color to exactly "purple".',
-        task: 'Inside changeColor(), use document.getElementById("box").style.backgroundColor = "purple" to update the color.',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <div id="box" style="width:100px;height:100px;background:red;border-radius:8px;"></div>\n  <br>\n  <button onclick="changeColor()">Change Color</button>\n  <script>\n    function changeColor() {\n      // Change the background color here\n    }\n  </script>\n</body>\n</html>\n\n<!-- Common Pitfall: CSS "background-color" becomes "backgroundColor" in JavaScript — no hyphens allowed! -->',
-      },
-    ]
-  },
-  {
-    id: 'js-events', title: 'JS Events & Forms', level: 'beginner', language: 'html',
-    description: 'Handle user interactions with JavaScript event listeners — the professional way to build interactive web applications.',
-    exercises: [
-      {
-        title: 'Event Listeners',
-        instruction: 'In older, legacy tutorials, you might have frequently used the **onclick** attribute directly typed into the raw HTML to quickly handle user clicks. While this technically works for quick prototypes, professional modern developers aggressively avoid inline event handlers entirely because they horribly mix JavaScript logic directly into HTML structure, making large-scale codebases an absolute nightmare to reliably maintain and debug.\n\nThe highly professional, modern approach is utilizing **addEventListener()**. This incredibly powerful method strictly attaches an event handler dynamically to a DOM element entirely from within your JavaScript file. The specific syntax is: **element.addEventListener("eventType", callbackFunction)**. The exact first argument is the specific event type string (like "click", "mouseover", "keydown", or "submit"), and the second argument is the specific callback function to aggressively execute exactly when that event inevitably fires.\n\nThe absolute biggest technical advantage of addEventListener over legacy onclick attributes is that you can actively attach **multiple distinct handlers** to the exact same element. With the old onclick method, every new assignment violently overwrites the previous one. However, addEventListener smoothly stacks them, ensuring all handlers run perfectly in order.\n\nBrowser events also naturally "**bubble**" straight up the DOM tree — meaning a simple click on a nested button also actively triggers click events on its parent div, then the body, and finally the root document. This complex bubbling behavior is actually the brilliant foundation of an incredibly powerful optimization pattern called **event delegation**.\n\n**Pro-Tip:** Always aggressively use addEventListener instead of outdated inline onclick HTML attributes. It beautifully keeps your HTML completely clean, your complex JavaScript highly organized, and makes it incredibly easy to securely remove listeners later to prevent severe memory leaks!\n\n**Your Task:**\nSelect the button securely using btn.addEventListener. Listen specifically for the "click" event, and pass it a function that uses console.log() to exactly print the phrase "Button clicked!".',
-        task: 'Use btn.addEventListener("click", function() { console.log("Button clicked!"); }) to attach the handler.',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <button id="btn">Click Me</button>\n  <script>\n    const btn = document.getElementById("btn");\n    // Add event listener here\n  </script>\n</body>\n</html>\n\n<!-- Pro-Tip: You can listen for "mouseover", "keydown", "scroll", and dozens of other event types! -->',
-      },
-      {
-        title: 'Form Validation',
-        instruction: 'Whenever a user naturally submits an HTML form, the standard web browser\'s default, native behavior is to instantly reload the entire page and forcefully send the raw data to a backend server. In highly modern single-page applications (SPAs) built with React or Vue, you almost absolutely always want to strictly **prevent** this disruptive default behavior and aggressively handle the data submission natively with JavaScript instead.\n\nThe highly critical **event.preventDefault()** method forcefully stops the browser from actually performing its native default action. For standard forms, this explicitly means the page will definitively NOT reload, instantly giving your JavaScript complete, god-like control over exactly what happens next — allowing you to aggressively validate user inputs, display specific error messages without reloading, or securely send the data directly to an API using modern fetch().\n\n**Form validation** is explicitly the strict process of checking that user input definitively meets all your security requirements before dangerously processing it. Very common complex validations include: rigorously checking that required fields are absolutely not empty, strictly verifying complex email formats using Regex, aggressively ensuring passwords meet severe length requirements, and completely confirming that numeric fields strictly contain valid numbers.\n\nThe standard professional pattern is: actively listen for the "submit" event directly on the form element, instantly call preventDefault(), securely read the raw input values using document.getElementById("inputId").value, aggressively check the values logically, and display appropriate feedback.\n\n**Pro-Tip:** You should absolutely use the native HTML5 "required" attribute directly on your inputs for simple basic validation that natively works entirely without JavaScript. But always combine it with custom JavaScript validation for complex rules and better user experience. And NEVER rely solely on client-side validation for true database security!\n\n**Your Task:**\nInside the submit event listener, immediately call e.preventDefault(). Then, write an if statement checking if the value of the "name" input is explicitly an empty string. If it is empty, forcefully show an alert() saying exactly "Name is required!".',
-        task: 'Call e.preventDefault(), then check if the name input value is empty. If empty, show an alert saying "Name is required!".',
-        initial_code: '<!DOCTYPE html>\n<html>\n<body>\n  <form id="myForm">\n    <input type="text" id="name" placeholder="Your name" />\n    <button type="submit">Submit</button>\n  </form>\n  <script>\n    document.getElementById("myForm").addEventListener("submit", function(e) {\n      // Validate here\n    });\n  </script>\n</body>\n</html>\n\n<!-- Common Pitfall: Forgetting e.preventDefault() means the page reloads and you lose all your JavaScript state! -->',
-      },
-    ]
-  },
+        instruction: `
+<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
+  <h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
+  <p class="text-sm">Imagine you are in trouble at school and the teacher tells you to write "I will not talk in class" 100 times on the <strong>Chalkboard</strong>. Your hand would get very tired! In coding, a <strong>Loop</strong> is like having a robot write those lines for you. You just tell the robot: "Write this sentence 100 times," and it does all the hard work in a second.</p>
+</div>
 
-// ─── PRO TRACK ────────────────────────────────────────────────
-{
-  id: 'react-components', title: 'React Components', level: 'pro', language: 'javascript',
-    description: 'Build reusable UI components with React and JSX.',
-      exercises: [
-        {
-          title: 'Your First Component',
-          instruction: 'Think of React components exactly like custom, reusable LEGO bricks. Instead of building a massive, messy website out of raw HTML all at once, you build tiny, independent, self-contained pieces — like a button brick, a header brick, or a sidebar brick — and then snap them all together to dynamically build your entire application. This modular approach is exactly why React is used by massive tech companies.\n\nAt their absolute core, **React components** are literally just standard JavaScript functions that magically return **JSX** (which is a special syntax extension that looks exactly like HTML but has the full programmatic power of JavaScript). This means you can use variables, loops, and conditional logic directly inside your UI structure.\n\nWhen you create a component, you must always start the function name with a **Capital Letter** (like Greeting, never greeting). This strict naming convention is how React mathematically distinguishes between your custom components and standard HTML tags (like <div> or <h1>). Once your component is defined, you can render it anywhere by using it as a self-closing tag: <Greeting />.\n\n**Pro-Tip:** Always keep your components incredibly small and focused! A component should ideally do one specific thing. If your component has more than 100 lines of code, you should almost certainly break it down into smaller, more manageable child components. This makes debugging massively easier!\n\n**Your Task:**\nDefine a new functional component exactly named Greeting. Inside the function, specifically return an <h1> element containing the exact text "Hello, React!". Do not forget the return statement!',
-          task: 'Create and render a Greeting component.',
-          initial_code: '// Write your Greeting component\nfunction Greeting() {\n  // Return JSX here\n}\n\n// Render it\nconsole.log("Greeting component created!");\n',
-        },
-        {
-          title: 'Props',
-          instruction: 'If React components are reusable custom LEGO bricks, then **Props** (which is short for "properties") are the specific color and size instructions you give to each individual brick. Props allow you to dynamically pass specific data directly into your components, making them infinitely reusable across your entire application.\n\nFor example, imagine building a user profile card. Instead of hardcoding Alex\'s name and photo directly into the HTML structure, you create one single Card component and pass the specific name and photo securely in as props: <Card title="Alex" />.\n\nInside the component function, props are received as a standard JavaScript object in the very first parameter: function Card(props) { ... }. You then actively access the data using standard dot notation: props.title. In JSX, whenever you want to evaluate and render a dynamic JavaScript variable inside the HTML, you MUST aggressively wrap it in curly braces: {props.title}.\n\n**Pro-Tip:** Professional React developers almost always use **object destructuring** directly in the function parameters to make the code significantly cleaner! Instead of writing function Card(props), they elegantly write function Card({ title }). This immediately extracts the title variable, saving you from writing props. over and over again!\n\n**Your Task:**\nCreate a functional component named Card that explicitly accepts a props object. Inside the component, return an <h2> element that dynamically renders the props.title value.',
-          task: 'Create Card({ title }) that renders <h2>{title}</h2>',
-          initial_code: '// Create Card component with title prop\nfunction Card(props) {\n  // Return h2 with props.title\n}\n\nconsole.log("Card component ready!");\n',
-        },
-        {
-          title: 'State with useState',
-          instruction: 'If props are data passed DOWN from a parent component, then **State** is the private, internal memory actively managed by the component itself. Props are strictly read-only, but State is completely dynamic and can aggressively change over time in response to user actions — like typing in an input field, opening a modal, or violently clicking a counter button.\n\nIn modern functional React, you manage this internal memory using a massive feature called a **Hook**, specifically the **useState** hook. When you call useState, it mathematically returns an array containing exactly two things: the current state value, and a special setter function to securely update that value later.\n\nThe standard syntax uses array destructuring: const [count, setCount] = useState(0);. The 0 is the initial starting value. When a user clicks a button, you explicitly call setCount(count + 1). The absolute magic of React is that whenever you call a state setter function, React instantly and automatically re-renders the component to display the brand new value!\n\n**Pro-Tip:** NEVER attempt to modify a state variable directly (like count = count + 1)! This completely breaks React\'s internal tracking engine, and the UI will absolutely not update. You MUST always use the dedicated setter function (like setCount) to trigger a proper re-render cycle!\n\n**Your Task:**\nInside the Counter component, initialize state: const [count, setCount] = useState(0);. Then add onClick event handlers to the buttons. The "-" button should call setCount(count - 1), and the "+" button should call setCount(count + 1). Display the count inside the span.',
-          task: 'Use useState to build a counter with + and - buttons.',
-          initial_code: '// Counter component using useState\n// import React, { useState } from "react";\n\nfunction Counter() {\n  // Add state here\n  return (\n    <div>\n      <button>-</button>\n      <span>0</span>\n      <button>+</button>\n    </div>\n  );\n}\n',
-        },
-      ]
-},
-{
-  id: 'react-hooks', title: 'React Hooks', level: 'pro', language: 'javascript',
-    description: 'Master useEffect, useCallback, and custom hooks.',
-      exercises: [
-        {
-          title: 'useEffect Basics',
-          instruction: 'If useState manages a component\'s internal memory, then the **useEffect** hook manages its complex side effects. A "side effect" is literally anything that reaches outside the component\'s immediate mathematical scope — fetching data from an external database, manually changing the document title, setting up a WebSocket connection, or aggressively reading from local storage.\n\nThe useEffect hook strictly takes exactly two arguments: a callback function containing your side effect logic, and a highly critical **dependency array**. This array is the remote control that explicitly tells React exactly WHEN to run your effect.\n\nIf you provide an empty array [], the effect strictly runs exactly ONCE immediately when the component first appears on the screen (called "mounting"). If you put variables inside the array [count], the effect will aggressively run on mount AND every single time the count variable mathematically changes. If you completely omit the array entirely, the effect disastrously runs after EVERY single render, which frequently causes catastrophic infinite loops and crashes browsers.\n\n**Pro-Tip:** Always thoroughly double-check your dependency arrays! The most common, massive bug for intermediate React developers is creating an infinite re-render loop by blindly modifying state inside a useEffect that has no dependency array.\n\n**Your Task:**\nInside the MyComponent function, add a useEffect hook. Pass it a function that uses console.log() to print "Component mounted!". Critically, pass an empty array [] as the second argument so it only runs once.',
-          task: 'Use useEffect with [] to log on mount.',
-          initial_code: '// import { useEffect } from "react";\n\nfunction MyComponent() {\n  // Add useEffect here\n  \n  return <div>Check the console!</div>;\n}\n',
-        },
-        {
-          title: 'Fetching Data',
-          instruction: 'The absolute most common, universally standard use case for the useEffect hook is fetching remote data from an external API exactly when a component first loads on the screen. Because network requests are inherently asynchronous (meaning they take an unpredictable amount of time to complete), you cannot just blindly fetch data directly in the main body of your component.\n\nTo effectively fetch data, you place the complex network logic safely inside a useEffect with an empty dependency array []. However, there is a massive technical catch: the callback function passed directly to useEffect strictly CANNOT be an async function.\n\nTo solve this properly, professional developers define an async helper function INSIDE the effect, and then immediately call it. This pattern cleanly isolates the complex asynchronous fetching logic while strictly obeying React\'s structural rules. Once the remote data finally arrives, you securely save it into the component\'s memory using a standard useState setter function, which instantly triggers a re-render to beautifully display the new data.\n\n**Pro-Tip:** When fetching data, always gracefully handle the "loading" state! Create a const [isLoading, setIsLoading] = useState(true) variable. Show a beautiful spinning loading indicator while fetching, and gracefully set it to false exactly when the data arrives or the network violently fails.\n\n**Your Task:**\nInside the loadUsers async function, you already fetch the data. Add a line to console.log() the exact name property of the very first user in the array using data[0].name.',
-          task: 'Fetch from the API in useEffect and log data.',
-          initial_code: '// Fetch data with useEffect\nasync function loadUsers() {\n  const res = await fetch("https://jsonplaceholder.typicode.com/users");\n  const data = await res.json();\n  // Log the first user\'s name here\n}\n\nloadUsers();\n',
-        },
-      ]
-},
-{
-  id: 'node-express', title: 'Node.js & Express', level: 'pro', language: 'javascript',
-    description: 'Build backend APIs with Node.js and the Express framework.',
-      exercises: [
-        {
-          title: 'Express Hello World',
-          instruction: 'Think of **Node.js** as the powerful engine that lets you run JavaScript completely outside the web browser, directly on a bare metal server. But building a complex web server from scratch using raw Node.js is incredibly tedious and error-prone. **Express.js** is a massive, highly popular framework that acts like a perfectly organized toolkit on top of Node, making it infinitely easier to quickly build robust backend APIs.\n\nIn standard Express, you actively create a server by initializing an app object: const app = express();. You then explicitly define specific **routes** — which are just URL paths that your server actively listens for.\n\nA route requires an HTTP method (like GET for securely reading data, POST for aggressively creating data), a specific URL path (like /hello), and a critical callback function (req, res) that aggressively executes exactly when a user visits that path. The req (request) object violently contains all the data sent by the user, while the res (response) object explicitly controls what data you send back.\n\n**Pro-Tip:** In modern, professional backend development, your server almost always responds with strict JSON data, never raw HTML text. Always use res.json({ key: "value" }) instead of the legacy res.send(). This guarantees the response headers are perfectly formatted for modern frontend frameworks like React to consume easily!\n\n**Your Task:**\nAdd a new route using app.get("/hello", (req, res) => { ... }). Inside the callback, explicitly use res.json() to actively return an object containing exactly { message: "Hello World" }.',
-          task: 'Create a GET /hello route that returns JSON.',
-          initial_code: 'const express = require("express");\nconst app = express();\n\n// Add your GET /hello route here\n\napp.listen(3000, () => console.log("Server running on port 3000"));\n',
-        },
-        {
-          title: 'Route Parameters',
-          instruction: 'When building massive, scalable APIs, you absolutely cannot hardcode a million separate routes for every single user in your database. Instead, you heavily rely on **dynamic route parameters**. These act exactly like incredibly flexible variables directly embedded inside the URL path itself.\n\nIn Express, you explicitly define a dynamic parameter by aggressively placing a colon : immediately before the specific path segment, like this: /user/:id. When a user structurally visits /user/42, the Express engine mathematically intercepts the request, dynamically extracts the "42", and securely places it into the req.params object exactly under the key id (req.params.id).\n\nThis fundamental pattern is universally how all modern platforms fetch specific data. When you view a tweet, the URL is /status/:id. When you view an Amazon product, the URL contains the product :id. The backend simply rips that ID out of the URL, securely queries the database for that specific item, and dynamically returns the requested data.\n\n**Pro-Tip:** Remember that route parameters extracted from the URL are ALWAYS inherently formatted as raw strings by default! If you actually need to structurally perform math or secure database lookups that explicitly require an integer, you MUST actively convert the parameter using parseInt(req.params.id, 10) before aggressively querying your database!\n\n**Your Task:**\nCreate an app.get() route for exactly /user/:id. Inside the callback function, securely extract the ID using req.params.id and aggressively return it to the client using res.json({ userId: req.params.id }).',
-          task: 'Create GET /user/:id route returning the id as JSON.',
-          initial_code: 'const express = require("express");\nconst app = express();\n\n// Add your /user/:id route here\n\napp.listen(3000);\n',
-        },
-      ]
-},
-{
-  id: 'api-fetching', title: 'Fetch API & Async', level: 'pro', language: 'javascript',
-    description: 'Master async/await and the Fetch API for real-world data.',
-      exercises: [
-        {
-          title: 'Async/Await',
-          instruction: 'In modern JavaScript, fetching remote data from a distant server fundamentally takes an unpredictable amount of time. If JavaScript just blindly stopped and waited for the network, the entire web page would completely freeze up. To solve this mathematically, JavaScript heavily uses **Promises** to handle asynchronous tasks in the deep background.\n\nWhile older code heavily relied on messy .then() chains, modern professional developers almost universally use the **async/await** syntax. It elegantly allows you to write complex asynchronous code that mathematically reads exactly like traditional synchronous code, making it infinitely easier to reason about.\n\nYou simply add the async keyword explicitly in front of the function definition. Inside that function, you can dynamically use the await keyword immediately in front of any Promise (like a fetch() call). The await keyword forcefully pauses the internal execution of that specific function until the network request completely finishes, while gracefully allowing the rest of the web page to remain fully interactive.\n\n**Pro-Tip:** The await keyword absolutely MUST only be used directly inside a function clearly marked with the async keyword! Trying to brutally use await inside a standard, regular function is mathematically illegal and will instantly crash your application with a massive syntax error!\n\n**Your Task:**\nInside the fetchData function, write: const res = await fetch("https://jsonplaceholder.typicode.com/posts/1");. Then parse the JSON with const data = await res.json();. Finally, strictly return data.title.',
-          task: 'Create async fetchData() that returns the post title.',
-          initial_code: '// Write your async function\nasync function fetchData() {\n  // Fetch and return the title\n}\n\nfetchData().then(title => console.log(title));\n',
-        },
-        {
-          title: 'Error Handling',
-          instruction: 'When aggressively fetching data across the wild, unpredictable internet, things will absolutely fail. The user\'s Wi-Fi drops, the distant server violently crashes, or the requested URL completely changes. If you do not actively catch these network errors, your entire application will fatally crash in front of the user, leading to a catastrophic User Experience.\n\nWhen heavily using async/await, the universally standard, professional way to securely handle network failures is by explicitly wrapping your dangerous fetch calls in a robust **try/catch** block.\n\nThe try block dynamically attempts to execute the dangerous network code. If absolutely anything violently fails inside the try block, execution instantly jumps to the catch block, securely passing an error object. This mathematically allows you to gracefully recover — perhaps by silently retrying the request, or cleanly showing a beautiful "Network Error" notification to the user instead of a broken white screen.\n\n**Pro-Tip:** The native fetch() API behaves incredibly weirdly: it actually DOES NOT mathematically throw an error if the server returns a 404 (Not Found) or 500 (Server Error) HTTP status! It only strictly throws an error on massive network failures. You MUST always explicitly check if res.ok is true immediately after the fetch, and actively throw your own custom error if it isn\'t!\n\n**Your Task:**\nWrap the entire provided fetch logic securely inside a try { ... } block. Then elegantly add a catch (error) { ... } block. Inside the catch, use console.error() to specifically print "Fetch failed: " followed by the actual error message.',
-          task: 'Add try/catch with a friendly error message.',
-          initial_code: 'async function fetchData(url) {\n  // Add try/catch around the fetch\n  const res = await fetch(url);\n  const data = await res.json();\n  return data;\n}\n\nfetchData("https://invalid-url-xyz.com").then(console.log);\n',
-        },
-      ]
-},
+### Step 1: The Logic of Repetition
 
-// ─── MASTER TRACK ─────────────────────────────────────────────
-{
-  id: 'system-design', title: 'System Design Basics', level: 'master', language: 'javascript',
-    description: 'Learn to design scalable, production-ready systems.',
-      exercises: [
-        {
-          title: 'REST API Design',
-          instruction: 'When building massive, scalable applications, your frontend client and backend server must communicate efficiently. **REST (Representational State Transfer)** is the universal architectural standard for how web APIs should structurally look and mathematically behave. Think of it like a strict grammatical language for backend servers.\n\nA professional REST API strictly relies on standard HTTP methods to actively indicate the exact action being performed. **GET** is strictly for securely reading existing data. **POST** is aggressively for creating brand new data. **PUT** (or PATCH) is strictly for heavily updating existing data. And **DELETE** is explicitly for permanently removing data.\n\nFurthermore, the actual URL paths (endpoints) must be clean, predictable nouns, absolutely NEVER verbs. For example, to actively retrieve a specific user, you definitively DO NOT design the endpoint as /getUser/123. Instead, you structurally design it as GET /users/123. This heavily standardized predictability is exactly what allows entirely different technical teams to integrate with your API without constantly reading massive documentation.\n\n**Pro-Tip:** In a professional, high-quality REST API, if a user requests a specific resource that mathematically does not exist, your server absolutely MUST explicitly return a strict 404 Not Found HTTP status code! If the request lacks proper security credentials, actively return a 401 Unauthorized. Never brutally return a 200 OK with an internal error message!\n\n**Your Task:**\nRead the comments in the editor. Actively fill in the endpoint descriptions. GET /todos should simply "Get all todos". POST /todos should "Create a new todo". PUT /todos/:id should "Update a specific todo". DELETE /todos/:id should "Delete a specific todo".',
-          task: 'Document 4 REST endpoints for a todo app (comments only).',
-          initial_code: '// REST API for a Todo App\n// Document your endpoints here:\n\n// GET   /todos       → \n// POST  /todos       → \n// PUT   /todos/:id   → \n// DELETE /todos/:id  → \n\nconsole.log("API design documented!");\n',
-        },
-      ]
-},
-{
-  id: 'data-structures', title: 'Data Structures', level: 'master', language: 'javascript',
-    description: 'Master the data structures used in technical interviews.',
-      exercises: [
-        {
-          title: 'Linked List',
-          instruction: 'A **Linked List** is a highly foundational data structure universally heavily tested in intense software engineering interviews at companies like Google or Meta. Unlike a standard array where all data is violently packed tightly together in consecutive physical memory, a linked list mathematically scatters its data randomly across memory.\n\nTo securely connect this scattered data, each element is mathematically wrapped into a **Node** object. A Node securely contains exactly two things: the actual data value, and a highly critical next pointer (which is literally just a reference pointing mathematically directly to the very next Node in the scattered chain).\n\nBecause the nodes are simply chained by references, aggressively inserting or deleting massive amounts of data at the absolute beginning of a Linked List is incredibly fast O(1) time, unlike standard arrays which painfully require shifting millions of elements. However, blindly searching for a specific item is incredibly slow O(n) because you mathematically must traverse the entire chain manually, step by step, from the very beginning.\n\n**Pro-Tip:** Linked lists are absolutely phenomenal for building queues, stacks, or managing massive, constantly shifting data sets where you absolutely never need to randomly access data in the middle. Always meticulously draw out the node pointers on a physical whiteboard during coding interviews to actively prevent catastrophic infinite loops!\n\n**Your Task:**\nComplete the Node class constructor to securely store this.value = value and strictly initialize this.next = null. Then, manually link the nodes by setting node1.next = node2 and node2.next = node3.',
-          task: 'Create 3 linked Node objects.',
-          initial_code: '// Create a Node class\nclass Node {\n  // Add constructor with value and next\n}\n\n// Create and link 3 nodes\nconst node1 = new Node(1);\nconst node2 = new Node(2);\nconst node3 = new Node(3);\n// Link them here\n\nconsole.log(node1.next.value); // Should log 2\n',
-        },
-        {
-          title: 'Stack (LIFO)',
-          instruction: 'A **Stack** is a critically important abstract data structure that strictly operates on the **LIFO (Last-In-First-Out)** principle. Imagine physically stacking heavy dinner plates in a massive cafeteria: you absolutely must add new plates explicitly to the very top, and when you need a plate, you forcefully remove it exactly from the very top. The absolute last plate added is mathematically the very first plate removed.\n\nIn computer science, stacks are heavily used everywhere. The web browser\'s "Back" button history mathematically uses a stack. The "Undo" functionality in complex text editors uses a stack. And most importantly, the JavaScript engine itself inherently uses a massive "Call Stack" to meticulously track exactly which functions are currently actively executing.\n\nA professional Stack mathematically requires exactly three core methods: **push()** (which safely adds a specific item strictly to the very top), **pop()** (which aggressively removes and securely returns the exact top item), and **peek()** (which safely returns the top item without actually modifying or deleting it).\n\n**Pro-Tip:** In modern JavaScript, you can easily implement a highly efficient Stack using a standard Array by strictly ONLY using the native .push() and .pop() methods. However, in a strict coding interview, you might be explicitly asked to aggressively build a Stack entirely from scratch using a custom Linked List to perfectly ensure mathematically O(1) constant time operations!\n\n**Your Task:**\nInside the Stack class, define a push(item) method that calls this.items.push(item). Define a pop() method that returns this.items.pop(). Define a peek() method that returns the very last item using this.items[this.items.length - 1].',
-          task: 'Build a Stack with push, pop, and peek methods.',
-          initial_code: 'class Stack {\n  constructor() {\n    this.items = [];\n  }\n  \n  // Add push(item), pop(), peek() methods\n}\n\nconst s = new Stack();\ns.push(1); s.push(2); s.push(3);\nconsole.log(s.peek()); // 3\nconsole.log(s.pop());  // 3\nconsole.log(s.peek()); // 2\n',
-        },
-        {
-          title: 'Binary Search',
-          instruction: '**Binary Search** is arguably the absolute most famous, widely tested algorithm in all of computer science. It provides an incredibly fast mathematical method for explicitly finding a target item within a massively large, **perfectly sorted** array.\n\nInstead of slowly checking every single item from the beginning (which is called Linear Search and takes O(n) time), Binary Search aggressively checks the exact middle element. If the target is mathematically smaller than the middle, the algorithm instantly, violently discards the entire right half of the array. It continually halves the search space until the target is found. This magical halving mathematically results in a time complexity of O(log n).\n\nTo put that incredible speed in perspective: if you have an array of 1 million sorted names, Linear Search might brutally take 1 million steps. Binary Search mathematically guarantees finding the name in an absolute maximum of exactly 20 steps.\n\n**Pro-Tip:** The most mathematically common, catastrophic bug when actively writing Binary Search is violently calculating the middle index incorrectly, heavily leading to massive integer overflow in languages like Java or C++. In JavaScript, always safely calculate the middle dynamically using Math.floor((left + right) / 2) to completely avoid fractional decimal indices!\n\n**Your Task:**\nInside the while (left <= right) loop, rigorously calculate let mid = Math.floor((left + right) / 2). If arr[mid] === target, instantly return mid. If arr[mid] < target, aggressively move left = mid + 1. Else, forcefully move right = mid - 1.',
-          task: 'Implement binary search returning the index or -1.',
-          initial_code: 'function binarySearch(arr, target) {\n  let left = 0;\n  let right = arr.length - 1;\n  \n  // Implement binary search here\n}\n\nconst arr = [1, 3, 5, 7, 9, 11, 13];\nconsole.log(binarySearch(arr, 7));  // 3\nconsole.log(binarySearch(arr, 6));  // -1\n',
-        },
-      ]
-},
+Computers are perfect for doing boring, repetitive tasks. 
+If you need to print a list of 1,000 users, or check 5,000 files, you use a Loop.
+A loop repeats the same block of code over and over until a specific "stopping point" is reached.
+
+### Step 2: The Three Parts of a Loop
+
+To make a loop work, you need three pieces of information:
+1. **The Starting Point:** Where do we begin counting? (Usually at 0 or 1).
+2. **The Stopping Rule:** When should we stop? (Example: "Stop when you reach 100").
+3. **The Step:** How do we move to the next number? (Example: "Add 1 every time").
+
+### Step 3: The Simplest Code Example
+
+Here is a loop that counts from 1 to 5:
+
+\`\`\`javascript
+for (let i = 1; i <= 5; i++) {
+  console.log(i);
+}
+\`\`\`
+
+### Step 4: Breaking Down Every Character
+
+1. **\`for\`**: The keyword that starts the loop engine.
+2. **\`let i = 1\`**: The **Start**. We create a tiny counter variable named \`i\` and set it to 1.
+3. **\`;\`**: Semicolons separate the three parts of the loop.
+4. **\`i <= 5\`**: The **Rule**. It means: "Keep going as long as \`i\` is less than or equal to 5."
+5. **\`i++\`**: The **Step**. This is a shortcut for "Add 1 to \`i\`."
+6. **\`{ ... }\`**: The code inside these braces is what gets repeated.
+
+### Wait! Don't Make This Mistake:
+
+The most dangerous mistake is the **Infinite Loop**. 
+If you forget to add the "Step" (\`i++\`), the counter will stay at 1 forever. 
+The computer will keep looping forever and ever until it crashes or your computer gets very hot! 
+Always make sure your "Stopping Rule" will eventually become true.
+
+**Your Task:**
+Write a classic for loop starting exactly at 1 and ending exactly at 5. Inside the loop, use \`console.log()\` to print the current number during each iteration.`,
+        task: 'Write a for loop starting at 1, ending at 5, that prints each number.',
+        initial_code: '// Write your loop here\n',
+      }
+    ]
+  }
 ];
 
 // Helper: get lessons grouped by level
