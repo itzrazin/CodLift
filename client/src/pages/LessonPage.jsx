@@ -308,9 +308,31 @@ const LessonPage = () => {
         <div className="w-full md:w-[300px] border-b md:border-b-0 md:border-r border-white/5 flex flex-col bg-navy/30 shrink-0 max-h-[40vh] md:max-h-none overflow-y-auto">
           <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">
             <h1 className="text-xl font-syne font-extrabold mb-3">{exercise.title}</h1>
+            <style dangerouslySetInnerHTML={{ __html: `
+              .instruction-content h3 { color: #a855f7; font-size: 1.125rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.75rem; font-family: 'Syne', sans-serif; }
+              .instruction-content p { margin-bottom: 1rem; }
+              .instruction-content code { background: rgba(255,255,255,0.05); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: 'DM Mono', monospace; color: #a855f7; font-size: 0.875rem; }
+              .instruction-content pre { background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05); margin: 1rem 0; overflow-x: auto; }
+              .instruction-content pre code { background: none; padding: 0; color: #d1d5db; }
+              .instruction-content strong { color: #a855f7; font-weight: 700; }
+              .instruction-content ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 1rem; }
+              .instruction-content li { margin-bottom: 0.5rem; }
+            `}} />
             <div 
-              className="text-gray-300 text-sm leading-relaxed mb-5 whitespace-pre-wrap instruction-content"
-              dangerouslySetInnerHTML={{ __html: exercise.instruction }}
+              className="text-gray-300 text-sm leading-relaxed mb-5 instruction-content"
+              dangerouslySetInnerHTML={{ 
+                __html: exercise.instruction
+                  .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                  .replace(/`(.*?)`/g, '<code>$1</code>')
+                  .replace(/```(\w+)?\n([\s\S]*?)\n```/g, '<pre><code>$2</code></pre>')
+                  .split('\n\n').map(p => {
+                    const trimmed = p.trim();
+                    if (!trimmed) return '';
+                    if (trimmed.startsWith('<')) return trimmed;
+                    return `<p>${trimmed}</p>`;
+                  }).join('')
+              }}
             />
             
             {exercise.task && (
