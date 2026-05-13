@@ -63,7 +63,7 @@ router.post('/', async (req, res) => {
 
 // Automated Test Runner & Verification Gatekeeper
 router.post('/verify', async (req, res) => {
-  const { code, topic, instruction, language, test_cases } = req.body;
+  const { code, topic, instruction, task, language, test_cases } = req.body;
   
   // 1. Run the code first to get actual output (if not HTML/CSS)
   let actualOutput = '';
@@ -132,38 +132,42 @@ router.post('/verify', async (req, res) => {
 
   try {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: 'google/gemini-2.0-flash-lite-preview-02-05:free',
+      model: 'anthropic/claude-3.5-sonnet',
       messages: [
         { 
           role: 'system', 
-          content: `You are the CodLift AI Gatekeeper. Your goal is to strictly verify student code submissions.
+          content: `You are the CodLift AI Gatekeeper, a professional coding tutor. Your goal is to strictly and accurately verify student code submissions.
           
           Context:
           - Language: ${language}
           - Topic: ${topic}
-          - Instruction: ${instruction}
-          - Expected Output/Key: ${JSON.stringify(test_cases)}
+          - Full Instruction: ${instruction}
+          - Specific Task: ${task}
+          - Expected Requirements: ${JSON.stringify(test_cases)}
           - Actual Output from Execution: "${actualOutput}"
           
           Guidelines:
-          1. Return RAW JSON ONLY: {"isCorrect": true/false, "feedback": "Brief pedagogical feedback"}
-          2. isCorrect: true if the code fulfills the logic, even if output slightly differs (unless output is the point).
-          3. feedback: If false, explain what's missing or why the output was wrong.`
+          1. Return RAW JSON ONLY: {"isCorrect": true/false, "feedback": "Short, encouraging pedagogical feedback"}
+          2. isCorrect should be true only if the student's code correctly implements the Specific Task.
+          3. Be lenient with whitespace or minor formatting unless it's critical to the exercise.
+          4. If wrong, provide a specific hint based on the Task without giving away the full answer. Use emojis. 🎉💪💡
+          5. If the execution produced a runtime error but the logic looks mostly correct, mark as false and explain the error.`
         },
         { 
           role: 'user', 
           content: `Student Code:
-          \`\`\`${language}
-          ${code}
-          \`\`\`
-          
-          Actual Output: ${actualOutput}
-          
-          Is this correct?`
+\`\`\`${language}
+${code}
+\`\`\`
+
+Actual Execution Output: ${actualOutput || 'No output / Client-side rendering'}
+
+Is this correct based on the instruction? Reply with JSON only.`
         }
       ],
-      max_tokens: 300,
-      temperature: 0.1
+      max_tokens: 500,
+      temperature: 0.1,
+      response_format: { type: 'json_object' }
     }, {
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -173,24 +177,29 @@ router.post('/verify', async (req, res) => {
     });
 
     const content = response.data.choices[0].message.content.trim();
-    const cleanContent = content.replace(/^```json\s*|```\s*$/g, '').trim();
     
     try {
+      // OpenRouter/Claude usually returns clean JSON if response_format is used, 
+      // but we handle potential markdown wrapping just in case.
+      const cleanContent = content.replace(/^```json\s*|```\s*$/g, '').trim();
       const parsed = JSON.parse(cleanContent);
+      
       return res.json({
         isCorrect: !!(parsed.isCorrect ?? parsed.success),
-        feedback: parsed.feedback || "Verified!"
+        feedback: parsed.feedback || (parsed.isCorrect ? "Perfect! Well done. 🎉" : "Not quite right yet. Try again! 💪")
       });
     } catch (parseErr) {
-      throw new Error('Invalid AI response');
+      console.error('AI JSON Parse Error:', content);
+      throw new Error('Invalid AI response format');
     }
   } catch (err) {
-    // Final Fallback
+    console.error('AI verification failed:', err.response?.data || err.message);
+    // Final Fallback: simple inclusion check
     const expected = test_cases?.expected_output || '';
-    const isCorrect = expected ? code.includes(expected) : true;
+    const isCorrect = expected ? code.toLowerCase().includes(expected.toLowerCase()) : true;
     res.json({ 
       isCorrect, 
-      feedback: isCorrect ? "Verified via fallback!" : `Check your code for: "${expected}"`
+      feedback: isCorrect ? "Verified! Keep it up. 🚀" : `Double check your code for: "${expected}"`
     });
   }
 });

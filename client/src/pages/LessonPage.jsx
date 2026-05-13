@@ -13,7 +13,6 @@ import { XPAnimation } from '../components/ui/XPAnimation';
 import { SEO } from '../utils/SEO';
 import { API_URL } from '../utils/config';
 import { clientCurriculum } from '../data/curriculum';
-import { AdSenseBlock } from '../components/AdSenseBlock';
 
 const LessonPage = () => {
   const [lesson, setLesson] = useState(null);
@@ -113,6 +112,7 @@ const LessonPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           instruction: exercise.instruction,
+          task: exercise.task,
           topic: exercise.title,
           language: lesson.language
         })
@@ -161,6 +161,7 @@ const LessonPage = () => {
           code,
           topic: exercise.title,
           instruction: exercise.instruction,
+          task: exercise.task,
           language: lesson.language,
           test_cases: exercise.test_cases
         })
@@ -408,10 +409,6 @@ const LessonPage = () => {
             </Button>
           </div>
 
-          {/* AdSense Sidebar Slot */}
-          <div className="px-4 pb-4">
-            <AdSenseBlock slot="lesson_sidebar" format="vertical" />
-          </div>
         </div>
 
         {/* Panel 2: Editor (Middle) */}

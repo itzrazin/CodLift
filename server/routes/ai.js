@@ -4,7 +4,7 @@ const axios = require('axios');
 
 // Verify code submission via AI
 router.post('/verify', async (req, res) => {
-  const { code, topic, instruction, language } = req.body;
+  const { code, topic, instruction, task, language } = req.body;
   
   if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_key_here') {
     // Fallback: basic regex/output validation
@@ -16,7 +16,7 @@ router.post('/verify', async (req, res) => {
 
   try {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: 'anthropic/claude-sonnet-4-5',
+      model: 'anthropic/claude-3.5-sonnet',
       messages: [
         { 
           role: 'system', 
@@ -27,17 +27,19 @@ If wrong, give a specific hint about what to fix without giving the full answer.
         },
         { 
           role: 'user', 
-          content: `The student is learning ${topic || language}.
-The exercise asks them to: ${instruction}
-Their submitted code is:
+          content: `Topic/Language: ${topic || language}
+Instruction: ${instruction}
+Specific Task: ${task}
+Submitted code:
 \`\`\`${language || 'html'}
 ${code}
 \`\`\`
 Does this code correctly solve the exercise? Reply with JSON only.`
         }
       ],
-      max_tokens: 200,
-      temperature: 0.3
+      max_tokens: 300,
+      temperature: 0.2,
+      response_format: { type: 'json_object' }
     }, {
       headers: {
         'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
@@ -80,7 +82,7 @@ Does this code correctly solve the exercise? Reply with JSON only.`
 
 // Generate hint for exercise
 router.post('/hint', async (req, res) => {
-  const { instruction, topic, language } = req.body;
+  const { instruction, task, topic, language } = req.body;
   
   if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_key_here') {
     return res.json({ hint: "💡 Read the instructions carefully and try one step at a time!" });
@@ -88,7 +90,7 @@ router.post('/hint', async (req, res) => {
 
   try {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: 'anthropic/claude-sonnet-4-5',
+      model: 'anthropic/claude-3.5-sonnet',
       messages: [
         { 
           role: 'system', 
@@ -96,10 +98,10 @@ router.post('/hint', async (req, res) => {
         },
         { 
           role: 'user', 
-          content: `Exercise topic: ${topic || language}\nInstruction: ${instruction}` 
+          content: `Exercise topic: ${topic || language}\nInstruction: ${instruction}\nSpecific Task: ${task}` 
         }
       ],
-      max_tokens: 50,
+      max_tokens: 100,
       temperature: 0.7
     }, {
       headers: {
