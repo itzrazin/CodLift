@@ -8,6 +8,7 @@ export const clientCurriculum = [
     description: 'Learn the foundational building blocks of every website through deep dives into HTML syntax and structure.',
     exercises: [
       {
+        id: 'html_1_1',
         title: 'The Skeleton of the Web',
         instruction: `
 <div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
@@ -63,6 +64,7 @@ Update the text inside the existing <h1> tag in the editor to exactly read: "Hel
         }
       },
       {
+        id: 'html_1_2',
         title: 'Paragraphs & Text Blocks',
         instruction: `
 <div class="p-4 bg-blue/10 border border-blue/20 rounded-xl my-4">
@@ -118,6 +120,7 @@ Below the existing heading, add a new \`<p>\` tag and set its text content to ex
         }
       },
       {
+        id: 'html_1_3',
         title: 'Hyperlinks & Global Connectivity',
         instruction: `
 <div class="p-4 bg-green/10 border border-green/20 rounded-xl my-4">
@@ -186,6 +189,7 @@ Create a new anchor tag that says "Visit CodLift". You must set the href attribu
     description: 'Build accessible, structured web pages using semantic HTML5 elements that search engines and screen readers understand.',
     exercises: [
       {
+        id: 'html_2_1',
         title: 'Semantic Layout',
         instruction: `
 <div class="p-4 bg-orange/10 border border-orange/20 rounded-xl my-4">
@@ -254,6 +258,7 @@ Wrap the existing \`<h1>\` heading exactly inside a proper \`<header>\` element.
     description: 'Transform plain HTML into beautiful, high-performance interfaces with modern CSS techniques.',
     exercises: [
       {
+        id: 'css_1_1',
         title: 'Painting with CSS',
         instruction: `
 <div class="p-4 bg-pink/10 border border-pink/20 rounded-xl my-4">
@@ -321,6 +326,7 @@ Update the CSS rule for the h1 selector. Change the value of the color property 
     description: 'Master the modern flexbox layout system used by professional developers to build responsive, one-dimensional layouts.',
     exercises: [
       {
+        id: 'css_2_1',
         title: 'Enable Flexbox',
         instruction: `
 <div class="p-4 bg-indigo/10 border border-indigo/20 rounded-xl my-4">
@@ -378,6 +384,7 @@ Locate the .container class in the CSS. Add the \`display: flex\` property to in
         }
       },
       {
+        id: 'css_2_2',
         title: 'Justify & Align',
         instruction: `
 <div class="p-4 bg-teal/10 border border-teal/20 rounded-xl my-4">
@@ -434,6 +441,7 @@ Inside the .container class, add both \`justify-content: center\` and \`align-it
         }
       },
       {
+        id: 'css_2_3',
         title: 'Flex Direction & Wrap',
         instruction: `
 <div class="p-4 bg-amber/10 border border-amber/20 rounded-xl my-4">
@@ -500,6 +508,7 @@ Locate the .container class. Add the \`flex-direction: column\` property and the
     description: 'Build complex responsive layouts with CSS Grid and media queries — the two-dimensional layout system that powers modern web design.',
     exercises: [
       {
+        id: 'css_3_1',
         title: 'Your First Grid',
         instruction: `
 <div class="p-4 bg-emerald/10 border border-emerald/20 rounded-xl my-4">
@@ -557,6 +566,7 @@ Inside the .grid container class, add \`display: grid\` to enable the engine, an
         }
       },
       {
+        id: 'css_3_2',
         title: 'Media Queries',
         instruction: `
 <div class="p-4 bg-rose/10 border border-rose/20 rounded-xl my-4">
@@ -623,6 +633,7 @@ Below all the existing CSS, add a new media query block: \`@media (max-width: 60
     description: 'Learn how to create labeled containers to hold information in the computer\'s memory.',
     exercises: [
       {
+        id: 'js_1_1',
         title: 'Creating a Labeled Bucket',
         instruction: `
 <div class="p-4 bg-purple/10 border border-purple/20 rounded-xl my-4">
@@ -672,6 +683,7 @@ Create a variable named \`friend\` and store the word \`"Alex"\` inside it.`,
         }
       },
       {
+        id: 'js_1_2',
         title: 'Mastering Functions',
         instruction: `
 <div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
@@ -789,6 +801,7 @@ Create a const array named \`fruits\` with 3 strings. Then log the first item us
         }
       },
       {
+        id: 'js_1_4',
         title: 'Objects',
         instruction: `
 <div class="p-4 bg-red/10 border border-red/20 rounded-xl my-4">
@@ -847,6 +860,7 @@ Create a const object named \`person\` with keys \`name\`, \`age\`, and \`job\`.
         }
       },
       {
+        id: 'js_1_5',
         title: 'Loops',
         instruction: `
 <div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">

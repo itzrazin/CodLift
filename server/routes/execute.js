@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const path = require('path');
+const { validateExercise } = require('../utils/manualValidators');
 
 // Piston API configuration
 const PISTON_URL = (process.env.PISTON_API_URL || 'https://emkc.org/api/v2/piston').replace(/\/+$/, '');
@@ -46,8 +47,17 @@ router.post('/', async (req, res) => {
 
 // Automated Test Runner & Verification Gatekeeper
 router.post('/verify', async (req, res) => {
-  const { code, topic, instruction, task, language, test_cases } = req.body;
+  const { id, code, topic, instruction, task, language, test_cases } = req.body;
   
+  // 0. Manual (Deterministic) Validation
+  // This handles the user's request for "Manual" checking with exact error lists.
+  if (id) {
+    const manualResult = validateExercise(id, code);
+    if (manualResult && !manualResult.isCorrect) {
+      return res.json(manualResult);
+    }
+  }
+
   // 1. Run the code first to get actual output (if not HTML/CSS)
   let actualOutput = '';
   let runError = '';
@@ -177,11 +187,9 @@ Perform a line-by-line verification. Is this code perfect?`
     }
   } catch (err) {
     console.error('AI verification failed:', err.response?.data || err.message);
-    const expected = test_cases?.expected_output || '';
-    const isCorrect = expected ? code.toLowerCase().includes(String(expected).toLowerCase()) : true;
     res.json({ 
-      isCorrect, 
-      feedback: isCorrect ? "Verified (Fallback). Keep going! 🚀" : `Double check your syntax and ensure it includes: "${expected}"`
+      isCorrect: false, 
+      feedback: "### ⚠️ Verification Error\n\nThe AI validator is currently busy or unavailable. Since we want to ensure 100% accuracy, we cannot verify this submission automatically right now. Please try again in 30 seconds."
     });
   }
 });

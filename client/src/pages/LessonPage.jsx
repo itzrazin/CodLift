@@ -158,6 +158,7 @@ const LessonPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          id: exercise.id,
           code,
           topic: exercise.title,
           instruction: exercise.instruction,
