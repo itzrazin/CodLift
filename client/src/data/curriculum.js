@@ -681,6 +681,11 @@ Always use \`return\` if you want to use the result later.
 Define a new function named \`greetUser\` that accepts a single \`name\` parameter. Inside the function, it must return the exact string "Hello, [name]!" using the provided name.`,
         task: 'Define a function greetUser(name) that returns the string "Hello, [name]!".',
         initial_code: '// Write your function here\n\nconsole.log(greetUser("Student"));',
+        test_cases: { 
+          function_name: 'greetUser', 
+          test_args: '"Student"', 
+          expected_output: 'Hello, Student!' 
+        }
       },
       {
         title: 'Arrays',

@@ -47,7 +47,7 @@ const LessonPage = () => {
   }, [hasRun, exercise, lesson, level, slug, exerciseId]);
 
   const fetchExercise = async () => {
-    // First try client-side curriculum (fast, no network)
+    // 1. First try client-side curriculum (fast)
     const localLesson = clientCurriculum.find(l => l.id === slug);
     if (localLesson) {
       const exIdx = parseInt(exerciseId) - 1;
@@ -65,37 +65,42 @@ const LessonPage = () => {
           number: exIdx + 1,
           total: localLesson.exercises.length,
         });
-        const savedCode = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
-        setCode(savedCode || ex.initial_code || '');
+
+        // Load code: Priority -> Backend -> LocalStorage -> Default
+        let initialCode = ex.initial_code || '';
+        
+        // Try Backend if authenticated
+        if (token) {
+          try {
+            const res = await fetch(`${API_URL}/user/progress`, {
+              headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+              const data = await res.json();
+              const saved = data.progress_data?.find(p => p.lesson_id === slug && p.exercise_id === exerciseId.toString());
+              if (saved?.code_content) {
+                initialCode = saved.code_content;
+              }
+            }
+          } catch (e) { console.error('Backend progress fetch failed'); }
+        }
+
+        // If no backend code, try LocalStorage
+        if (initialCode === ex.initial_code) {
+          const localSaved = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+          if (localSaved) initialCode = localSaved;
+        }
+
+        setCode(initialCode);
         setStatus('idle');
         setMessage('');
         setShowHint(false);
         setHintText('');
-        setHasRun(!!savedCode);
+        setHasRun(initialCode !== ex.initial_code);
         setActiveTab(localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console');
         return;
       }
     }
-
-    // Fallback: fetch from backend (slug only — no level prefix in API)
-    try {
-      const res = await fetch(`${API_URL}/lessons/${slug}/exercise/${exerciseId}`);
-      if (!res.ok) { navigate('/dashboard'); return; }
-      const data = await res.json();
-      setLesson(data.lesson);
-      setExercise(data.exercise);
-      const savedCode = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
-      setCode(savedCode || data.exercise.initial_code || '');
-      setStatus('idle');
-      setMessage('');
-      setShowHint(false);
-      setHintText('');
-      setHasRun(!!savedCode);
-      setActiveTab(data.lesson.language === 'html' || data.lesson.language === 'css' ? 'preview' : 'console');
-    } catch {
-      navigate('/dashboard');
-    }
-  };
 
   const handleGetHint = async () => {
     if (hintText) { setShowHint(s => !s); return; }
@@ -182,7 +187,7 @@ const LessonPage = () => {
 
         // Sync to backend (non-blocking, with auth)
         if (token) {
-          fetch(`${API_URL}/progress`, {
+          fetch(`${API_URL}/user/update-progress`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -190,7 +195,7 @@ const LessonPage = () => {
             },
             body: JSON.stringify({
               lesson_id: lesson.id,
-              exercise_id: exercise.number,
+              exercise_id: exercise.number.toString(),
               code_submitted: code,
               xp_earned: xp
             })

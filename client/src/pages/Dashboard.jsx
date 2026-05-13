@@ -63,19 +63,20 @@ const Dashboard = () => {
 
   const fetchProgress = async () => {
     try {
-      const res = await fetch(`${API_URL}/progress`, {
+      const res = await fetch(`${API_URL}/user/progress`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('codlift_token')}` }
       });
       if (res.ok) {
         const data = await res.json();
-        setProgress(data.map(p => `beginner-${p.lesson_id}-${p.exercise_id}`));
+        // data.completed_lessons is an array of lesson IDs
+        setProgress(data.completed_lessons || []);
       } else {
         // Fallback to local
-        const local = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+        const local = JSON.parse(localStorage.getItem('codlift_progress_lessons') || '[]');
         setProgress(local);
       }
     } catch {
-      const local = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
+      const local = JSON.parse(localStorage.getItem('codlift_progress_lessons') || '[]');
       setProgress(local);
     }
   };
@@ -98,11 +99,9 @@ const Dashboard = () => {
 
   if (!user) return null;
 
-  // Build dynamic skill tree from curriculum (beginner only on main dashboard)
+  // Build dynamic skill tree from curriculum
   const beginnerLessons = clientCurriculum.filter(l => l.level === 'beginner');
-  const completedLessons = new Set(
-    progress.map(key => key.split('-').slice(1, -1).join('-'))
-  );
+  const completedLessons = new Set(progress);
 
   const buildSkillTree = () => {
     const positions = [

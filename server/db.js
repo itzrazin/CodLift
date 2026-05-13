@@ -18,13 +18,32 @@ pool.query('SELECT NOW()', async (err, res) => {
   } else {
     console.log('✅ Database connected successfully at:', res.rows[0].now);
     
-    // Auto-migration: Ensure OAuth columns exist
+    // Auto-migration: Ensure schema matches requirements
     try {
       await pool.query(`
+        -- Add OAuth and Progress columns if missing
         ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS github_id VARCHAR(255) UNIQUE;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_total INTEGER DEFAULT 0;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS streak INTEGER DEFAULT 0;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS progress_data JSONB DEFAULT '{"completed_lessons": [], "current_xp": 0}';
+        
+        -- Create progress table if missing (with VARCHAR lesson_id)
+        CREATE TABLE IF NOT EXISTS progress (
+          id SERIAL PRIMARY KEY,
+          user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+          lesson_id VARCHAR(255),
+          exercise_id VARCHAR(255),
+          code_content TEXT,
+          xp_earned INTEGER DEFAULT 0,
+          is_completed BOOLEAN DEFAULT false,
+          completed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+          UNIQUE(user_id, lesson_id, exercise_id)
+        );
+
+        -- Ensure columns exist in case table already existed
+        ALTER TABLE progress ADD COLUMN IF NOT EXISTS code_content TEXT;
+        ALTER TABLE progress ALTER COLUMN lesson_id TYPE VARCHAR(255);
       `);
       console.log('✅ Database schema verified/updated.');
     } catch (migrateErr) {

@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
   is_admin BOOLEAN DEFAULT false,
   goal VARCHAR(50),
   notifications BOOLEAN DEFAULT true,
+  progress_data JSONB DEFAULT '{"completed_lessons": [], "current_xp": 0}',
   created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -37,8 +38,9 @@ CREATE TABLE IF NOT EXISTS lessons (
 CREATE TABLE IF NOT EXISTS progress (
   id SERIAL PRIMARY KEY,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-  lesson_id INTEGER, -- Can be linked to lessons table or internal ID
+  lesson_id VARCHAR(255), -- Slug from curriculum
   exercise_id VARCHAR(255),
+  code_content TEXT,
   xp_earned INTEGER DEFAULT 0,
   is_completed BOOLEAN DEFAULT false,
   completed_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

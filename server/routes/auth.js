@@ -95,6 +95,10 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
+    // Initialize session for Requirement 1
+    req.session.user = { id: updatedUser.id, username: updatedUser.username, email: updatedUser.email };
+    req.session.save(); // Ensure session is saved to PG store
+
     try {
       await transporter.sendMail({
         from: process.env.GMAIL_USER,
