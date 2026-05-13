@@ -49,13 +49,17 @@ router.post('/', async (req, res) => {
 router.post('/verify', async (req, res) => {
   const { id, code, topic, instruction, task, language, test_cases } = req.body;
   
-  // 0. Manual (Deterministic) Validation
-  // This handles the user's request for "Manual" checking with exact error lists.
-  if (id) {
-    const manualResult = validateExercise(id, code);
+  // 0. Manual (Deterministic) Validation — runs before AI for all lessons
+  if (id || language) {
+    const manualResult = validateExercise(id, code, language);
     if (manualResult && !manualResult.isCorrect) {
       return res.json(manualResult);
     }
+    // If manualResult.isCorrect === true and force_ai is NOT set, accept immediately
+    if (manualResult && manualResult.isCorrect && !test_cases?.force_ai) {
+      return res.json(manualResult);
+    }
+    // Otherwise fall through to AI for deeper semantic check
   }
 
   // 1. Run the code first to get actual output (if not HTML/CSS)
@@ -82,26 +86,8 @@ router.post('/verify', async (req, res) => {
     }
   }
 
-  // 2. Programmatic Verification (Simple exact matches or regex)
-  if (test_cases?.expected_output && !test_cases.use_ai_only) {
-    const trimmedCode = code.replace(/\s+/g, ' ').trim();
-    const trimmedExpected = String(test_cases.expected_output).trim();
-    
-    // For very simple exact text matches, we can be quick.
-    // But we avoid passing if the code looks like gibberish.
-    const isExactMatch = trimmedCode === trimmedExpected || 
-                         (language === 'html' && trimmedCode.includes(`>${trimmedExpected}<`));
-
-    // If it's a simple match and doesn't look like gibberish (basic tag check)
-    const looksLikeValidHTML = language !== 'html' || (code.includes('<') && code.includes('>'));
-
-    if (isExactMatch && looksLikeValidHTML && !test_cases.force_ai) {
-      return res.json({ 
-        isCorrect: true, 
-        feedback: "Perfect match! Your code is clean and correct. 🎯" 
-      });
-    }
-  }
+  // 2. Loose programmatic check removed — all verification now goes through
+  // the manual validator first, then AI for semantic/logic verification.
 
   // 3. AI Verification (The Pedantic Judge)
   const apiKey = process.env.OPENROUTER_API_KEY;

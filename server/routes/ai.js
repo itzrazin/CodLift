@@ -7,10 +7,9 @@ router.post('/verify', async (req, res) => {
   const { code, topic, instruction, task, language } = req.body;
   
   if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_key_here') {
-    // Fallback: basic regex/output validation
     return res.json({ 
-      correct: true, 
-      feedback: "Great job! Your code looks good! 🎉" 
+      correct: false, 
+      feedback: "⚠️ AI verifier is offline. Please try again shortly."
     });
   }
 
@@ -74,8 +73,8 @@ Does this code correctly solve the exercise? Reply with JSON only.`
   } catch (err) {
     console.error('AI verify error:', err.message);
     res.json({ 
-      correct: true, 
-      feedback: "Your code looks great! Keep going! 🎉" 
+      correct: false, 
+      feedback: "⚠️ Verification error. Please try submitting again."
     });
   }
 });
