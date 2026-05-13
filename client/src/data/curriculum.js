@@ -56,7 +56,11 @@ Always remember: every "Open" command needs a "Close" command with a slash.
 Update the text inside the existing <h1> tag in the editor to exactly read: "Hello CodLift".`,
         task: 'Update the h1 tag text to exactly: Hello CodLift',
         initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n  </body>\n</html>',
-        test_cases: { expected_output: 'Hello CodLift' }
+        test_cases: { 
+          expected_output: 'Hello CodLift',
+          solution: '<html>\n  <body>\n    <h1>Hello CodLift</h1>\n  </body>\n</html>',
+          force_ai: true
+        }
       },
       {
         title: 'Paragraphs & Text Blocks',
@@ -107,7 +111,11 @@ Always keep your paragraphs for regular text, and use headings only for titles.
 Below the existing heading, add a new \`<p>\` tag and set its text content to exactly: "Learning to code is fun!".`,
         task: 'Add a <p> tag with the text exactly: Learning to code is fun!',
         initial_code: '<h1>CodLift</h1>\n<!-- Add your paragraph below this line -->',
-        test_cases: { expected_output: 'Learning to code is fun!' }
+        test_cases: { 
+          expected_output: 'Learning to code is fun!',
+          solution: '<h1>CodLift</h1>\n<p>Learning to code is fun!</p>',
+          force_ai: true
+        }
       },
       {
         title: 'Hyperlinks & Global Connectivity',
@@ -162,7 +170,11 @@ Always include the full address to make sure your magic doorway works.
 Create a new anchor tag that says "Visit CodLift". You must set the href attribute to point to the exact URL "https://codlift.site".`,
         task: 'Add a hyperlink pointing to https://codlift.site with the text "Visit CodLift".',
         initial_code: '<p>Check out our site:</p>\n<!-- Add link here -->',
-        test_cases: { expected_output: 'https://codlift.site' }
+        test_cases: { 
+          expected_output: 'https://codlift.site',
+          solution: '<p>Check out our site:</p>\n<a href="https://codlift.site">Visit CodLift</a>',
+          force_ai: true
+        }
       },
     ]
   },
@@ -227,6 +239,10 @@ Always keep it simple: one header for the top, and one main for the middle.
 Wrap the existing \`<h1>\` heading exactly inside a proper \`<header>\` element. Then, wrap the existing \`<p>\` paragraph exactly inside a \`<main>\` element.`,
         task: 'Wrap the <h1> inside a <header> element, and the <p> inside a <main> element.',
         initial_code: '<h1>My Blog</h1>\n<p>Welcome to my blog!</p>',
+        test_cases: {
+          solution: '<header>\n  <h1>My Blog</h1>\n</header>\n<main>\n  <p>Welcome to my blog!</p>\n</main>',
+          force_ai: true
+        }
       }
     ]
   },
@@ -289,7 +305,11 @@ Always remember: **Property : Value ;**
 Update the CSS rule for the h1 selector. Change the value of the color property to exactly "purple" to match the CodLift brand aesthetic.`,
         task: 'Set h1 { color: purple; }',
         initial_code: '<style>\n  h1 {\n    color: white;\n  }\n</style>\n<h1>Colorful World</h1>',
-        test_cases: { expected_output: 'color: purple' }
+        test_cases: { 
+          expected_output: 'color: purple',
+          solution: '<style>\n  h1 {\n    color: purple;\n  }\n</style>\n<h1>Colorful World</h1>',
+          force_ai: true
+        }
       }
     ]
   },
@@ -352,6 +372,10 @@ Always remember: set Flexbox on the **Container (the parent)**!
 Locate the .container class in the CSS. Add the \`display: flex\` property to instantly force all the nested child elements to line up in a horizontal row.`,
         task: 'Set display: flex on the .container class.',
         initial_code: '<style>\n  .container {\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add display: flex here */\n  }\n  .item { background: #a855f7; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">A</div>\n  <div class="item">B</div>\n  <div class="item">C</div>\n</div>',
+        test_cases: {
+          solution: '<style>\n  .container {\n    background: #1a1a2e;\n    padding: 20px;\n    display: flex;\n  }\n  .item { background: #a855f7; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">A</div>\n  <div class="item">B</div>\n  <div class="item">C</div>\n</div>',
+          force_ai: true
+        }
       },
       {
         title: 'Justify & Align',
@@ -404,6 +428,10 @@ Always check that your parent box has enough room (\`height\`) for the items to 
 Inside the .container class, add both \`justify-content: center\` and \`align-items: center\` to perfectly center the nested item both horizontally and vertically.`,
         task: 'Add justify-content: center and align-items: center to the .container.',
         initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    height: 200px;\n    /* Add justify-content and align-items */\n  }\n  .item { background: #a855f7; padding: 15px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">Centered!</div>\n</div>',
+        test_cases: {
+          solution: '<style>\n  .container {\n    display: flex;\n    justify-content: center;\n    align-items: center;\n    background: #1a1a2e;\n    height: 200px;\n  }\n  .item { background: #a855f7; padding: 15px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">Centered!</div>\n</div>',
+          force_ai: true
+        }
       },
       {
         title: 'Flex Direction & Wrap',
@@ -457,6 +485,10 @@ This is the number one thing that confuses even professional developers!
 Locate the .container class. Add the \`flex-direction: column\` property and the \`flex-wrap: wrap\` property to properly stack the items and allow them to wrap.`,
         task: 'Add flex-direction: column and flex-wrap: wrap to the .container.',
         initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add direction and wrap */\n  }\n  .item { background: #ffd60a; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>',
+        test_cases: {
+          solution: '<style>\n  .container {\n    display: flex;\n    flex-direction: column;\n    flex-wrap: wrap;\n    background: #1a1a2e;\n    padding: 20px;\n  }\n  .item { background: #ffd60a; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>',
+          force_ai: true
+        }
       }
     ]
   },
@@ -519,6 +551,10 @@ Always make sure your grid plan matches the number of items you have!
 Inside the .grid container class, add \`display: grid\` to enable the engine, and then add \`grid-template-columns: 1fr 1fr 1fr\` to define three equal-width columns.`,
         task: 'Set display: grid and grid-template-columns: 1fr 1fr 1fr on the .grid container.',
         initial_code: '<style>\n  .grid {\n    background: #0d131a;\n    padding: 20px;\n    gap: 15px;\n    /* Add grid styles here */\n  }\n  .cell { background: #a855f7; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">1</div>\n  <div class="cell">2</div>\n  <div class="cell">3</div>\n  <div class="cell">4</div>\n  <div class="cell">5</div>\n  <div class="cell">6</div>\n</div>',
+        test_cases: {
+          solution: '<style>\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    background: #0d131a;\n    padding: 20px;\n    gap: 15px;\n  }\n  .cell { background: #a855f7; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">1</div>\n  <div class="cell">2</div>\n  <div class="cell">3</div>\n  <div class="cell">4</div>\n  <div class="cell">5</div>\n  <div class="cell">6</div>\n</div>',
+          force_ai: true
+        }
       },
       {
         title: 'Media Queries',
@@ -572,6 +608,10 @@ If you put your media query at the top, your regular styles might overwrite it!
 Below all the existing CSS, add a new media query block: \`@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }\` to force the grid to collapse on tiny screens.`,
         task: 'Add a @media (max-width: 600px) block that sets .grid to grid-template-columns: 1fr.',
         initial_code: '<style>\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    padding: 20px;\n    background: #0d131a;\n  }\n  /* Add media query here */\n  .cell { background: #ffd60a; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">A</div>\n  <div class="cell">B</div>\n  <div class="cell">C</div>\n</div>',
+        test_cases: {
+          solution: '<style>\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    padding: 20px;\n    background: #0d131a;\n  }\n  @media (max-width: 600px) {\n    .grid {\n      grid-template-columns: 1fr;\n    }\n  }\n  .cell { background: #ffd60a; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">A</div>\n  <div class="cell">B</div>\n  <div class="cell">C</div>\n</div>',
+          force_ai: true
+        }
       }
     ]
   },
@@ -625,7 +665,11 @@ If you want to store a literal word, always wrap it in "quotes".
 Create a variable named \`friend\` and store the word \`"Alex"\` inside it.`,
         task: 'Create a variable named friend and store "Alex" in it.',
         initial_code: '// Create your variable below this line\n',
-        test_cases: { expected_output: 'let friend = "Alex"' }
+        test_cases: { 
+          expected_output: 'let friend = "Alex"',
+          solution: 'let friend = "Alex";',
+          force_ai: true
+        }
       },
       {
         title: 'Mastering Functions',
@@ -684,7 +728,9 @@ Define a new function named \`greetUser\` that accepts a single \`name\` paramet
         test_cases: { 
           function_name: 'greetUser', 
           test_args: '"Student"', 
-          expected_output: 'Hello, Student!' 
+          expected_output: 'Hello, Student!',
+          solution: 'function greetUser(name) {\n  return "Hello, " + name + "!";\n}',
+          force_ai: true
         }
       },
       {
@@ -737,6 +783,10 @@ If you type 3, the computer will look for a 4th item, find nothing, and say "und
 Create a const array named \`fruits\` with 3 strings. Then log the first item using \`fruits[0]\`.`,
         task: 'Create an array named fruits and log the first item.',
         initial_code: '// Create your array here\n',
+        test_cases: {
+          solution: 'const fruits = ["Apple", "Banana", "Cherry"];\nconsole.log(fruits[0]);',
+          force_ai: true
+        }
       },
       {
         title: 'Objects',
@@ -791,6 +841,10 @@ If you forget it, the computer will think the name and age are one big, confusin
 Create a const object named \`person\` with keys \`name\`, \`age\`, and \`job\`. Then log \`person.name\`.`,
         task: 'Create an object named person and log the name.',
         initial_code: '// Create your object here\n',
+        test_cases: {
+          solution: 'const person = {\n  name: "Alex",\n  age: 25,\n  job: "Developer"\n};\nconsole.log(person.name);',
+          force_ai: true
+        }
       },
       {
         title: 'Loops',
@@ -843,6 +897,10 @@ Always make sure your "Stopping Rule" will eventually become true.
 Write a classic for loop starting exactly at 1 and ending exactly at 5. Inside the loop, use \`console.log()\` to print the current number during each iteration.`,
         task: 'Write a for loop starting at 1, ending at 5, that prints each number.',
         initial_code: '// Write your loop here\n',
+        test_cases: {
+          solution: 'for (let i = 1; i <= 5; i++) {\n  console.log(i);\n}',
+          force_ai: true
+        }
       }
     ]
   }

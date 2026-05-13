@@ -1,63 +1,46 @@
 const express = require('express');
 const router = express.Router();
 const axios = require('axios');
+const path = require('path');
 
+// Piston API configuration
 const PISTON_URL = (process.env.PISTON_API_URL || 'https://emkc.org/api/v2/piston').replace(/\/+$/, '');
 
-// Language version mapping
-const LANGUAGE_MAP = {
-  'javascript': { language: 'javascript', version: '18.15.0' },
-  'js': { language: 'javascript', version: '18.15.0' },
-  'python': { language: 'python', version: '3.10.0' },
-  'python3': { language: 'python', version: '3.10.0' },
-  'html': { language: 'javascript', version: '18.15.0' }, // HTML renders client-side
-  'css': { language: 'javascript', version: '18.15.0' },  // CSS renders client-side
+// Helper to determine language for Piston
+const getPistonLang = (ext) => {
+  const map = {
+    'js': 'javascript',
+    'javascript': 'javascript',
+    'py': 'python',
+    'python': 'python',
+    'html': 'html',
+    'css': 'css'
+  };
+  return map[ext] || ext;
 };
 
+// Main execution endpoint
 router.post('/', async (req, res) => {
-  const { language, code } = req.body;
-  
-  if (!code || code.trim().length === 0) {
-    return res.json({ 
-      run: { stdout: '', stderr: 'No code provided', code: 1, output: 'No code provided' }
-    });
-  }
+  const { code, language, stdin = '' } = req.body;
+  const lang = getPistonLang(language);
 
-  // For HTML/CSS, we don't execute server-side
-  const lang = (language || 'javascript').toLowerCase();
+  // HTML/CSS don't run on Piston, they just return the code for preview
   if (lang === 'html' || lang === 'css') {
-    return res.json({
-      run: { stdout: 'HTML/CSS renders in preview panel', stderr: '', code: 0, output: 'HTML/CSS renders in preview panel' },
-      language: lang,
-      renderInPreview: true
-    });
+    return res.json({ run: { stdout: code, stderr: '', output: code } });
   }
-
-  const langConfig = LANGUAGE_MAP[lang] || { language: lang, version: '*' };
 
   try {
     const response = await axios.post(`${PISTON_URL}/execute`, {
-      language: langConfig.language,
-      version: langConfig.version,
-      files: [{ content: code }]
-    }, {
-      timeout: 15000 // 15 second timeout
+      language: lang,
+      version: '*',
+      files: [{ content: code }],
+      stdin: stdin
     });
 
-    const data = response.data;
-    res.json({
-      ...data,
-      run: {
-        ...data.run,
-        output: data.run?.stdout || data.run?.stderr || data.run?.output || ''
-      }
-    });
+    res.json(response.data);
   } catch (err) {
-    console.error('Code execution error:', err.message);
-    if (err.code === 'ECONNABORTED') {
-      return res.status(408).json({ message: 'Code execution timed out. Your code might have an infinite loop! 🔄' });
-    }
-    res.status(500).json({ message: 'Code execution service is temporarily unavailable. Try again in a moment! ⚡' });
+    console.error('Piston error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Code execution failed' });
   }
 });
 
@@ -68,65 +51,59 @@ router.post('/verify', async (req, res) => {
   // 1. Run the code first to get actual output (if not HTML/CSS)
   let actualOutput = '';
   let runError = '';
-  
-  const lang = (language || 'javascript').toLowerCase();
-  if (lang !== 'html' && lang !== 'css') {
+  const lang = getPistonLang(language);
+
+  if (lang === 'html' || lang === 'css') {
+    // For HTML/CSS, we don't "run" on server, we just analyze the code
+    actualOutput = code; 
+  } else {
     try {
-      const langConfig = LANGUAGE_MAP[lang] || { language: lang, version: '*' };
-      
-      // If we're testing a function return, we might need to append a console.log
-      let codeToRun = code;
-      if (test_cases?.function_name && !code.includes(`console.log(${test_cases.function_name}`)) {
-        // Simple heuristic: if we expect a function return, call it and log it
-        const args = test_cases.test_args || '';
-        codeToRun += `\nconsole.log(${test_cases.function_name}(${args}));`;
-      }
-
-      const response = await axios.post(`${PISTON_URL}/execute`, {
-        language: langConfig.language,
-        version: langConfig.version,
-        files: [{ content: codeToRun }]
-      }, { timeout: 10000 });
-      
-      actualOutput = (response.data.run?.stdout || '').trim();
-      runError = (response.data.run?.stderr || '').trim();
+      const runRes = await axios.post(`${PISTON_URL}/execute`, {
+        language: lang,
+        version: '*',
+        files: [{ content: code }],
+        stdin: test_cases?.stdin || ''
+      });
+      actualOutput = runRes.data.run.stdout || '';
+      runError = runRes.data.run.stderr || '';
     } catch (err) {
-      console.error('Execution during verify failed:', err.message);
+      console.error('Execution failed for verification:', err.message);
+      // Don't fail the whole request, AI might still verify logic
     }
   }
 
-  // 2. Direct Test Case Validation (The "Test Runner")
-  if (test_cases?.expected_output) {
-    const expected = test_cases.expected_output.toString().trim();
+  // 2. Programmatic Verification (Simple exact matches or regex)
+  if (test_cases?.expected_output && !test_cases.use_ai_only) {
+    const trimmedCode = code.replace(/\s+/g, ' ').trim();
+    const trimmedExpected = String(test_cases.expected_output).trim();
     
-    // Check if actual output matches expected output (strict or partial)
-    if (actualOutput === expected || actualOutput.includes(expected)) {
-      return res.json({
-        isCorrect: true,
-        feedback: `Excellent! The code produced the expected output: "${expected}". 🎉`
-      });
-    }
-    
-    // If we have an error, and it's not HTML, maybe return that
-    if (runError && lang !== 'html') {
-      return res.json({
-        isCorrect: false,
-        feedback: `Execution Error: ${runError.split('\n')[0]}. Try fixing your syntax!`
+    // For very simple exact text matches, we can be quick.
+    // But we avoid passing if the code looks like gibberish.
+    const isExactMatch = trimmedCode === trimmedExpected || 
+                         (language === 'html' && trimmedCode.includes(`>${trimmedExpected}<`));
+
+    // If it's a simple match and doesn't look like gibberish (basic tag check)
+    const looksLikeValidHTML = language !== 'html' || (code.includes('<') && code.includes('>'));
+
+    if (isExactMatch && looksLikeValidHTML && !test_cases.force_ai) {
+      return res.json({ 
+        isCorrect: true, 
+        feedback: "Perfect match! Your code is clean and correct. 🎯" 
       });
     }
   }
 
-  // 3. AI Verification (For conceptual tasks or where output match is tricky)
+  // 3. AI Verification (The Pedantic Judge)
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey || apiKey === 'your_openrouter_key_here') {
-    // Fallback: simple text match if no AI key and direct match failed
+    // Fallback: simple text match if no AI key
     const expected = test_cases?.expected_output || '';
-    const success = code.toLowerCase().includes(expected.toLowerCase());
+    const success = code.toLowerCase().includes(String(expected).toLowerCase());
     return res.json({ 
       isCorrect: success, 
       feedback: success 
-        ? "Great job! Your code seems to contain the correct logic. 🎉" 
-        : `Almost there! Make sure your code addresses: "${expected}"`
+        ? "Verified via basic check. (AI is currently offline)" 
+        : `Your code must contain: "${expected}"`
     });
   }
 
@@ -136,37 +113,45 @@ router.post('/verify', async (req, res) => {
       messages: [
         { 
           role: 'system', 
-          content: `You are the CodLift AI Gatekeeper, a professional coding tutor. Your goal is to strictly and accurately verify student code submissions.
+          content: `You are the CodLift Master Validator. Your goal is to be an EXTREMELY STRICT coding judge. 
+          You verify every single line, tag, symbol, and detail.
           
-          Context:
-          - Language: ${language}
-          - Topic: ${topic}
-          - Full Instruction: ${instruction}
-          - Specific Task: ${task}
-          - Expected Requirements: ${JSON.stringify(test_cases)}
-          - Actual Output from Execution: "${actualOutput}"
+          STRICT CRITERIA:
+          1. SYNTAX: Reject any malformed tags (e.g., <h1Hello, <1>, </h1, missing brackets).
+          2. STRUCTURE: Tags must be properly nested and balanced. Reject stray or misplaced tags (like </html> at the top).
+          3. LOGIC: The code must fulfill the Specific Task exactly.
+          4. COMPARISON: If a "solution" is provided in the Requirements, compare the student's code against it. It doesn't have to be a literal string match (whitespace is okay), but the structure and content must be equivalent.
+          5. NO GIBBERISH: Even if the required string is present, if the surrounding code is nonsense or broken, it is WRONG.
           
-          Guidelines:
-          1. Return RAW JSON ONLY: {"isCorrect": true/false, "feedback": "Short, encouraging pedagogical feedback"}
-          2. isCorrect should be true only if the student's code correctly implements the Specific Task.
-          3. Be lenient with whitespace or minor formatting unless it's critical to the exercise.
-          4. If wrong, provide a specific hint based on the Task without giving away the full answer. Use emojis. 🎉💪💡
-          5. If the execution produced a runtime error but the logic looks mostly correct, mark as false and explain the error.`
+          RESPONSE FORMAT:
+          Return RAW JSON ONLY: {"isCorrect": true/false, "feedback": "Markdown-formatted report"}
+          
+          FEEDBACK GUIDELINES:
+          - Start with "### ❌ Submission Rejected" or "### ✅ Submission Accepted".
+          - If wrong, provide a PRECISE bulleted list of errors.
+          - Mention exactly which tag or symbol is broken.
+          - Be firm but professional. Use emojis. 🔍🛠️`
         },
         { 
           role: 'user', 
-          content: `Student Code:
+          content: `Exercise: ${topic}
+Language: ${language}
+Specific Task: ${task}
+Instruction Context: ${instruction}
+Requirements: ${JSON.stringify(test_cases)}
+
+Student Submission:
 \`\`\`${language}
 ${code}
 \`\`\`
 
-Actual Execution Output: ${actualOutput || 'No output / Client-side rendering'}
+Actual Output from execution (if any): "${actualOutput}"
 
-Is this correct based on the instruction? Reply with JSON only.`
+Perform a line-by-line verification. Is this code perfect?`
         }
       ],
-      max_tokens: 500,
-      temperature: 0.1,
+      max_tokens: 800,
+      temperature: 0,
       response_format: { type: 'json_object' }
     }, {
       headers: {
@@ -179,14 +164,12 @@ Is this correct based on the instruction? Reply with JSON only.`
     const content = response.data.choices[0].message.content.trim();
     
     try {
-      // OpenRouter/Claude usually returns clean JSON if response_format is used, 
-      // but we handle potential markdown wrapping just in case.
       const cleanContent = content.replace(/^```json\s*|```\s*$/g, '').trim();
       const parsed = JSON.parse(cleanContent);
       
       return res.json({
-        isCorrect: !!(parsed.isCorrect ?? parsed.success),
-        feedback: parsed.feedback || (parsed.isCorrect ? "Perfect! Well done. 🎉" : "Not quite right yet. Try again! 💪")
+        isCorrect: !!parsed.isCorrect,
+        feedback: parsed.feedback
       });
     } catch (parseErr) {
       console.error('AI JSON Parse Error:', content);
@@ -194,12 +177,11 @@ Is this correct based on the instruction? Reply with JSON only.`
     }
   } catch (err) {
     console.error('AI verification failed:', err.response?.data || err.message);
-    // Final Fallback: simple inclusion check
     const expected = test_cases?.expected_output || '';
-    const isCorrect = expected ? code.toLowerCase().includes(expected.toLowerCase()) : true;
+    const isCorrect = expected ? code.toLowerCase().includes(String(expected).toLowerCase()) : true;
     res.json({ 
       isCorrect, 
-      feedback: isCorrect ? "Verified! Keep it up. 🚀" : `Double check your code for: "${expected}"`
+      feedback: isCorrect ? "Verified (Fallback). Keep going! 🚀" : `Double check your syntax and ensure it includes: "${expected}"`
     });
   }
 });
