@@ -23,8 +23,14 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="hidden sm:flex">Log In</Button>
-          <Button size="sm" onClick={() => navigate('/signup')}>Start Now</Button>
+          {!localStorage.getItem('codlift_token') ? (
+            <>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="hidden sm:flex">Log In</Button>
+              <Button size="sm" onClick={() => navigate('/signup')}>Start Now</Button>
+            </>
+          ) : (
+            <Button size="sm" onClick={() => navigate('/dashboard')}>Resume</Button>
+          )}
         </div>
       </div>
     </nav>

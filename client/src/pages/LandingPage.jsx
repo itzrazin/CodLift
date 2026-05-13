@@ -23,7 +23,7 @@ const CTA = () => {
             that helps you ship real software.
           </p>
           <Button size="lg" className="mx-auto px-12 text-xl" onClick={() => navigate(localStorage.getItem('codlift_token') ? '/dashboard' : '/signup')}>
-            Start Now <ArrowRight className="w-6 h-6" />
+            {localStorage.getItem('codlift_token') ? 'Resume' : 'Start Now'} <ArrowRight className="w-6 h-6" />
           </Button>
         </div>
       </div>
