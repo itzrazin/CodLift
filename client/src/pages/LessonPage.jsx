@@ -101,6 +101,7 @@ const LessonPage = () => {
         return;
       }
     }
+  };
 
   const handleGetHint = async () => {
     if (hintText) { setShowHint(s => !s); return; }
