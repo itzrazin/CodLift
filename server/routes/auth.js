@@ -47,7 +47,7 @@ router.post('/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const result = await db.query(
-      'INSERT INTO users (username, email, password, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, xp, streak',
+      'INSERT INTO users (username, email, password, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, streak',
       [username, email, hashedPassword]
     );
 
@@ -116,7 +116,7 @@ router.post('/login', async (req, res) => {
     }
 
     const updateResult = await db.query(
-      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, xp, streak',
+      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, streak',
       [streak, user.id]
     );
     const updatedUser = updateResult.rows[0];
@@ -150,7 +150,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
 
 router.get('/me', auth, async (req, res) => {
   try {
-    const result = await db.query('SELECT id, email, username, xp, streak FROM users WHERE id = $1', [req.user.id]);
+    const result = await db.query('SELECT id, email, username, streak FROM users WHERE id = $1', [req.user.id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
