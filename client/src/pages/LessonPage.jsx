@@ -36,30 +36,11 @@ const LessonPage = () => {
   const { user, token } = useAuth();
   const { submitProgress } = useLesson();
 
-  useEffect(() => {
-    fetchExercise();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [level, slug, exerciseId]);
-
-  // ─── Code change handler ──────────────────────────────────────────────────
-  const handleCodeChange = useCallback((val) => {
-    setCode(val || '');
-
-    // Mark first edit and start the solve timer
-    if (!codeEdited) {
-      setCodeEdited(true);
-      startTimeRef.current = Date.now();
-    }
-
-    // Persist draft to localStorage
-    if (lesson && exercise) {
-      localStorage.setItem(`codlift_code_${level}_${slug}_${exerciseId}`, val || '');
-    }
-  }, [codeEdited, exercise, lesson, level, slug, exerciseId]);
-
-  // ─── Load exercise data ───────────────────────────────────────────────────
-  const fetchExercise = async () => {
-    // RESET STATE for isolation
+  // ─── Load exercise data ─────────────────────────────────────────────────────
+  // Wrapped in useCallback so the useEffect always gets a fresh reference
+  // when route params (level / slug / exerciseId) change.
+  const fetchExercise = useCallback(async () => {
+    // ── 1. RESET all state immediately so stale data never leaks ──────────
     setLesson(null);
     setExercise(null);
     setCode('');
@@ -71,18 +52,13 @@ const LessonPage = () => {
     setCodeEdited(false);
     startTimeRef.current = null;
 
+    // ── 2. Find the lesson + exercise in the local curriculum ─────────────
     const localLesson = clientCurriculum.find(l => l.id === slug);
-    if (!localLesson) {
-      navigate('/dashboard');
-      return;
-    }
+    if (!localLesson) { navigate('/dashboard'); return; }
 
     const exIdx = parseInt(exerciseId, 10) - 1;
     const ex    = localLesson.exercises[exIdx];
-    if (!ex) {
-      navigate('/dashboard');
-      return;
-    }
+    if (!ex) { navigate('/dashboard'); return; }
 
     setLesson({
       id:          localLesson.id,
@@ -91,13 +67,9 @@ const LessonPage = () => {
       language:    localLesson.language,
       description: localLesson.description,
     });
-    setExercise({
-      ...ex,
-      number: exIdx + 1,
-      total:  localLesson.exercises.length,
-    });
+    setExercise({ ...ex, number: exIdx + 1, total: localLesson.exercises.length });
 
-    // Priority: Backend saved code → LocalStorage → Initial code
+    // ── 3. Resolve starting code (backend > localStorage > starter) ───────
     let initialCode = ex.initial_code || '';
 
     if (token) {
@@ -107,29 +79,46 @@ const LessonPage = () => {
         });
         if (res.ok) {
           const data = await res.json();
-          // Find specifically this exercise's progress
           const saved = data.progress_data?.find(
             p => p.lesson_id === slug && p.exercise_id === exerciseId.toString()
           );
-          if (saved?.code_content) initialCode = saved.code_content;
+          // Only load saved code if not yet completed (allow retry with fresh code)
+          if (saved?.code_content && !saved?.is_completed) {
+            initialCode = saved.code_content;
+          }
         }
-      } catch (err) { 
-        console.warn('Backend progress fetch failed, falling back to local storage', err);
+      } catch (err) {
+        console.warn('Backend progress fetch failed, falling back to localStorage', err);
       }
     }
 
-    // Fall back to localStorage draft ONLY if backend had nothing
+    // localStorage draft as last resort
     if (initialCode === (ex.initial_code || '')) {
-      const localSaved = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+      const localSaved = localStorage.getItem(`codlift_draft_${slug}_${exerciseId}`);
       if (localSaved) initialCode = localSaved;
     }
 
     setCode(initialCode);
     setCodeEdited(initialCode !== (ex.initial_code || ''));
-    setActiveTab(
-      localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console'
-    );
-  };
+    setActiveTab(localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level, slug, exerciseId, token]);
+
+  useEffect(() => {
+    fetchExercise();
+  }, [fetchExercise]);
+
+  // ─── Code change handler ──────────────────────────────────────────────────
+  const handleCodeChange = useCallback((val) => {
+    setCode(val || '');
+    // Start solve timer on first edit
+    if (!codeEdited) {
+      setCodeEdited(true);
+      startTimeRef.current = Date.now();
+    }
+    // Persist draft — keyed per lesson+exercise to prevent cross-lesson bleed
+    localStorage.setItem(`codlift_draft_${slug}_${exerciseId}`, val || '');
+  }, [codeEdited, slug, exerciseId]);
 
   // ─── Hint ─────────────────────────────────────────────────────────────────
   const handleGetHint = async () => {
@@ -183,7 +172,6 @@ const LessonPage = () => {
     }
   };
 
-  // ─── Submit & Verify ──────────────────────────────────────────────────────
   const handleSubmit = async () => {
     if (status === 'running') return;
     setStatus('running');
@@ -195,21 +183,21 @@ const LessonPage = () => {
 
     try {
       // 1. Verify code via AI/Sandbox
-      const res  = await fetch(`${API_URL}/execute/verify`, {
+      const res = await fetch(`${API_URL}/execute/verify`, {
         method:  'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
         body: JSON.stringify({
-          id:         exercise.id,
+          id:          exercise.id,
           code,
-          topic:      exercise.title,
+          topic:       exercise.title,
           instruction: exercise.instruction,
-          task:       exercise.task,
-          language:   lesson.language,
-          test_cases: exercise.test_cases,
-          start_time: startTimeRef.current
+          task:        exercise.task,
+          language:    lesson.language,
+          test_cases:  exercise.test_cases,
+          start_time:  startTimeRef.current
         })
       });
 
@@ -223,23 +211,20 @@ const LessonPage = () => {
       const data = await res.json();
 
       if (data.isCorrect) {
-        // 2. BULLETPROOF PROGRESSION: Must save to backend before marking success
+        // 2. Try to save progress — but NEVER block the user if it fails
         if (token) {
-          setMessage('Saving progress to mainframe...');
-          const saveResult = await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
-          
-          if (!saveResult.success) {
-            setStatus('error');
-            setMessage(`Correct code, but failed to sync progress: ${saveResult.error}. Please try again.`);
-            return;
+          try {
+            await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
+          } catch (err) {
+            // Progress save failed (e.g. server down) — log but don't block
+            console.warn('Progress sync failed (non-blocking):', err);
           }
         } else {
-          // Local fallback
           localStorage.setItem(`codlift_completed_${slug}_${exercise.number}`, '1');
         }
 
-        // 3. SUCCESS STATE: Only reached if everything above passed
-        localStorage.removeItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+        // 3. Clear draft and show success regardless of sync outcome
+        localStorage.removeItem(`codlift_draft_${slug}_${exerciseId}`);
         setStatus('success');
         setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
         setShowModal(true);
@@ -253,6 +238,7 @@ const LessonPage = () => {
       setMessage('Network error during verification. Please check your connection.');
     }
   };
+
 
   // ─── Navigation ───────────────────────────────────────────────────────────
   const goNext = () => {
