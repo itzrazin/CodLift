@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { GlassCard, Button } from '../components/ui/Core';
 import { Rocket, Code2, Zap, Terminal } from 'lucide-react';
 import { API_URL } from '../utils/config';

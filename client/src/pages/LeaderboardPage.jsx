@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { Trophy, Medal, Crown, ArrowUpRight, User, Flame, Zap, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../utils/config';
 import { SEO } from '../utils/SEO';
 

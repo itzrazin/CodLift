@@ -1,15 +1,14 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
-import { AuthProvider, useAuth } from './components/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Footer } from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy load page components
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
-const LoginPage      = lazy(() => import('./pages/LoginPage'));
-const SignupPage     = lazy(() => import('./pages/SignupPage'));
-const OAuthCallbackPage = lazy(() => import('./pages/OAuthCallbackPage'));
+const AuthPage       = lazy(() => import('./components/AuthPage'));
+const AuthCallback   = lazy(() => import('./pages/AuthCallback'));
 const Dashboard      = lazy(() => import('./pages/Dashboard'));
 const LessonPage     = lazy(() => import('./pages/LessonPage'));
 const Arena          = lazy(() => import('./pages/Arena'));
@@ -36,7 +35,7 @@ const PageLoader = () => (
 );
 
 // Pages that should NOT show the global footer (they have their own layout)
-const NO_FOOTER_PAGES = ['/dashboard', '/learn', '/arena', '/profile', '/leaderboard', '/onboarding', '/admin', '/login', '/signup', '/oauth'];
+const NO_FOOTER_PAGES = ['/dashboard', '/learn', '/arena', '/profile', '/leaderboard', '/onboarding', '/admin', '/login', '/signup', '/auth'];
 
 // ProtectedRoute: redirects unauthenticated users to /login
 const ProtectedRoute = ({ children }) => {
@@ -82,9 +81,9 @@ function AppRoutes() {
           <Route path="/contact" element={<Contact />} />
 
           {/* Auth pages (redirect if already logged in) */}
-          <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
-          <Route path="/signup" element={<GuestRoute><SignupPage /></GuestRoute>} />
-          <Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+          <Route path="/login" element={<GuestRoute><AuthPage /></GuestRoute>} />
+          <Route path="/signup" element={<GuestRoute><AuthPage /></GuestRoute>} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Onboarding (requires auth) */}
           <Route path="/onboarding" element={<ProtectedRoute><OnboardingPage /></ProtectedRoute>} />

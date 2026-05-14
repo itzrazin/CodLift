@@ -6,7 +6,7 @@ import {
   Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Trophy, Menu, X
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
 import { Logo } from '../components/ui/Logo';

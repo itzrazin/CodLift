@@ -9,7 +9,7 @@ import {
   CheckCircle2, Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { SEO } from '../utils/SEO';
 
 const Badge = ({ icon: Icon, title, color }) => (

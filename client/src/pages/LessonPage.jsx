@@ -8,7 +8,7 @@ import {
   Terminal, Globe, Sparkles, BookOpen
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useAuth } from '../components/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { XPAnimation }  from '../components/ui/XPAnimation';
 import { SuccessModal } from '../components/ui/SuccessModal';
 import { SEO }          from '../utils/SEO';
