@@ -56,6 +56,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [progress, setProgress]     = useState([]);
+  const [rankInfo, setRankInfo]     = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar toggle
 
   useEffect(() => {
@@ -71,6 +72,13 @@ const Dashboard = () => {
         const data = await res.json();
         // data.completed_lessons is an array of lesson IDs
         setProgress(data.completed_lessons || []);
+        if (data.rank) {
+          setRankInfo({
+            current: data.rank,
+            next: data.next_rank,
+            xp: data.current_xp || 0
+          });
+        }
       } else {
         // Fallback to local
         const local = JSON.parse(localStorage.getItem('codlift_progress_lessons') || '[]');
@@ -215,17 +223,61 @@ const Dashboard = () => {
 
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
-          <div>
-            <h1 className="text-3xl font-syne font-extrabold tracking-tight">
+          <div className="flex-1">
+            <h1 className="text-3xl font-syne font-extrabold tracking-tight mb-2">
               Welcome back, <span className="text-gradient-purple">{user.username}</span>!
             </h1>
-            <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>
+            
+            {/* ── Gamified Rank & XP Bar HUD ── */}
+            {rankInfo && (
+              <div className="mt-4 max-w-md">
+                <div className="flex items-end justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl">{rankInfo.current.badge}</span>
+                    <span className="font-bold text-lg text-purple-light">{rankInfo.current.title}</span>
+                  </div>
+                  {rankInfo.next && (
+                    <span className="text-xs text-gray-400 font-mono">
+                      {rankInfo.xp} / {rankInfo.next.xp_required} XP
+                    </span>
+                  )}
+                </div>
+                
+                {rankInfo.next ? (
+                  <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.min(100, Math.max(0, ((rankInfo.xp - rankInfo.current.xp_required) / (rankInfo.next.xp_required - rankInfo.current.xp_required)) * 100))}%` }}
+                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      className="h-full bg-gradient-to-r from-purple to-cyan-400 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)] relative"
+                    >
+                      {/* Shine effect */}
+                      <div className="absolute top-0 right-0 bottom-0 left-0 bg-gradient-to-r from-transparent via-white/40 to-transparent w-10 animate-[slide_2s_ease-in-out_infinite]" />
+                    </motion.div>
+                  </div>
+                ) : (
+                  <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden flex items-center justify-center relative">
+                     <div className="absolute inset-0 bg-gradient-to-r from-yellow to-orange-500 opacity-80" />
+                     <span className="relative z-10 text-[8px] font-black tracking-widest text-black">MAX RANK ACHIEVED</span>
+                  </div>
+                )}
+                {rankInfo.next && (
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-2">
+                    {rankInfo.next.xp_required - rankInfo.xp} XP to {rankInfo.next.title} {rankInfo.next.badge}
+                  </p>
+                )}
+              </div>
+            )}
+            {!rankInfo && <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>}
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
             {stats.map(s => (
-              <div key={s.label} className="flex items-center gap-1.5 glass px-3 py-2 rounded-full">
-                <s.icon className={`w-4 h-4 ${s.color}`} />
-                <span className="font-bold text-sm">{s.value}</span>
+              <div key={s.label} className="flex items-center justify-between sm:justify-start w-full sm:w-auto gap-3 glass px-4 py-2.5 rounded-xl border border-white/5">
+                <div className="flex items-center gap-2">
+                  <s.icon className={`w-4 h-4 ${s.color} drop-shadow-[0_0_8px_currentColor]`} />
+                  <span className="text-xs text-gray-400 uppercase tracking-widest font-bold">{s.label}</span>
+                </div>
+                <span className="font-black text-lg">{s.value}</span>
               </div>
             ))}
           </div>
