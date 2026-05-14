@@ -6,8 +6,14 @@ const path = require('path');
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 dotenv.config(); // also try local
 
+let dbUrl = process.env.DATABASE_URL || '';
+// Render's new postgres connections trigger a pg-connection-string warning.
+if (dbUrl.includes('sslmode=require') && !dbUrl.includes('uselibpqcompat=1')) {
+  dbUrl = dbUrl.replace('sslmode=require', 'sslmode=require&uselibpqcompat=1');
+}
+
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: dbUrl,
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
@@ -43,6 +49,7 @@ pool.query('SELECT NOW()', async (err, res) => {
 
         -- Ensure columns exist in case table already existed
         ALTER TABLE progress ADD COLUMN IF NOT EXISTS code_content TEXT;
+        ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_lesson_id_fkey;
         ALTER TABLE progress ALTER COLUMN lesson_id TYPE VARCHAR(255);
       `);
       console.log('✅ Database schema verified/updated.');
