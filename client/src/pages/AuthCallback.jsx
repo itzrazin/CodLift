@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../utils/config';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ const AuthCallback = () => {
       }
 
       try {
-        const response = await axios.get('/api/auth/me', {
+        const response = await axios.get(`${API_URL}/auth/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         

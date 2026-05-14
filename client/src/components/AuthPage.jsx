@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+import { API_URL } from '../utils/config';
 
 const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,7 +23,7 @@ const AuthPage = () => {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/signup';
+      const endpoint = isLogin ? `${API_URL}/auth/login` : `${API_URL}/auth/signup`;
       const payload = isLogin 
         ? { email: formData.email, password: formData.password }
         : formData;
@@ -38,7 +39,7 @@ const AuthPage = () => {
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = '/api/auth/google';
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (
