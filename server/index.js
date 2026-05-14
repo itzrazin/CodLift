@@ -34,19 +34,26 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: function (origin, callback) {
+    // Allow server-to-server requests (no Origin header)
     if (!origin) return callback(null, true);
     const cleanOrigin = origin.replace(/\/$/, '');
-    
-    // Check if origin is in allowed list or is a Vercel preview URL
+
+    // Accept explicitly whitelisted origins and Vercel preview deployments
+    const isWhitelisted   = allowedOrigins.includes(cleanOrigin);
     const isVercelPreview = cleanOrigin.endsWith('.vercel.app') && cleanOrigin.includes('codlift-');
-    
-    if (allowedOrigins.indexOf(cleanOrigin) !== -1 || isVercelPreview) {
+
+    if (isWhitelisted || isVercelPreview) {
       return callback(null, true);
     }
-    
-    console.log('CORS blocked origin:', origin);
-    // In production, you might want to block unknown origins, 
-    // but for now we'll allow but log for debugging.
+
+    // In production, actually block unknown origins instead of just logging them.
+    // In development, allow everything to keep DX smooth.
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(`[CORS] Blocked unknown origin: ${origin}`);
+      return callback(Object.assign(new Error('CORS: origin not allowed'), { status: 403 }));
+    }
+
+    console.warn(`[CORS] Unknown origin allowed in dev: ${origin}`);
     return callback(null, true);
   },
   credentials: true

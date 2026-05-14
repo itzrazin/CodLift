@@ -1,120 +1,136 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
-import { 
-  ArrowLeft, Play, Send, Lightbulb, 
-  ChevronLeft, ChevronRight, CheckCircle2, AlertCircle, 
+import {
+  ArrowLeft, Play, Send, Lightbulb,
+  ChevronLeft, ChevronRight, CheckCircle2, AlertCircle,
   Terminal, Globe, Sparkles, BookOpen
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
-import { XPAnimation } from '../components/ui/XPAnimation';
-import { SEO } from '../utils/SEO';
-import { API_URL } from '../utils/config';
+import { XPAnimation }  from '../components/ui/XPAnimation';
+import { SuccessModal } from '../components/ui/SuccessModal';
+import { SEO }          from '../utils/SEO';
+import { API_URL }      from '../utils/config';
 import { clientCurriculum } from '../data/curriculum';
 
 const LessonPage = () => {
-  const [lesson, setLesson] = useState(null);
-  const [exercise, setExercise] = useState(null);
-  const [code, setCode] = useState('');
-  const [hasRun, setHasRun] = useState(false);
-  const [output, setOutput] = useState('');
+  const [lesson, setLesson]       = useState(null);
+  const [exercise, setExercise]   = useState(null);
+  const [code, setCode]           = useState('');
+  const [codeEdited, setCodeEdited] = useState(false); // true once user modifies code
+  const [output, setOutput]       = useState('');
   const [activeTab, setActiveTab] = useState('preview');
-  const [showHint, setShowHint] = useState(false);
-  const [hintText, setHintText] = useState('');
-  const [status, setStatus] = useState('idle'); // idle | running | success | error
-  const [message, setMessage] = useState('');
-  const [showXP, setShowXP] = useState(false);
-  const [xpEarned, setXpEarned] = useState(0);
-  
+  const [showHint, setShowHint]   = useState(false);
+  const [hintText, setHintText]   = useState('');
+  const [status, setStatus]       = useState('idle'); // idle | running | success | error
+  const [message, setMessage]     = useState('');
+  const [showXP, setShowXP]       = useState(false);
+  const [xpEarned, setXpEarned]   = useState(0);
+  const [xpBreakdown, setXpBreakdown] = useState({});
+  const [showModal, setShowModal] = useState(false);
+
+  // Track when the user starts editing so we can send solve_time_ms to the server
+  const startTimeRef = useRef(null);
+
   const navigate = useNavigate();
   const { level, slug, exerciseId = '1' } = useParams();
   const { user, token, updateProgress } = useAuth();
 
   useEffect(() => {
     fetchExercise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [level, slug, exerciseId]);
 
+  // ─── Code change handler ──────────────────────────────────────────────────
   const handleCodeChange = useCallback((val) => {
     setCode(val || '');
-    if (!hasRun && val !== exercise?.initial_code) setHasRun(true);
-    // Save to localStorage
+
+    // Mark first edit and start the solve timer
+    if (!codeEdited) {
+      setCodeEdited(true);
+      startTimeRef.current = Date.now();
+    }
+
+    // Persist draft to localStorage
     if (lesson && exercise) {
       localStorage.setItem(`codlift_code_${level}_${slug}_${exerciseId}`, val || '');
     }
-  }, [hasRun, exercise, lesson, level, slug, exerciseId]);
+  }, [codeEdited, exercise, lesson, level, slug, exerciseId]);
 
+  // ─── Load exercise data ───────────────────────────────────────────────────
   const fetchExercise = async () => {
-    // 1. First try client-side curriculum (fast)
     const localLesson = clientCurriculum.find(l => l.id === slug);
-    if (localLesson) {
-      const exIdx = parseInt(exerciseId) - 1;
-      const ex = localLesson.exercises[exIdx];
-      if (ex) {
-        setLesson({
-          id: localLesson.id,
-          title: localLesson.title,
-          level: localLesson.level,
-          language: localLesson.language,
-          description: localLesson.description,
+    if (!localLesson) return;
+
+    const exIdx = parseInt(exerciseId, 10) - 1;
+    const ex    = localLesson.exercises[exIdx];
+    if (!ex) return;
+
+    setLesson({
+      id:          localLesson.id,
+      title:       localLesson.title,
+      level:       localLesson.level,
+      language:    localLesson.language,
+      description: localLesson.description,
+    });
+    setExercise({
+      ...ex,
+      number: exIdx + 1,
+      total:  localLesson.exercises.length,
+    });
+
+    // Priority: Backend saved code → LocalStorage → Initial code
+    let initialCode = ex.initial_code || '';
+
+    if (token) {
+      try {
+        const res = await fetch(`${API_URL}/user/progress`, {
+          headers: { Authorization: `Bearer ${token}` }
         });
-        setExercise({
-          ...ex,
-          number: exIdx + 1,
-          total: localLesson.exercises.length,
-        });
-
-        // Load code: Priority -> Backend -> LocalStorage -> Default
-        let initialCode = ex.initial_code || '';
-        
-        // Try Backend if authenticated
-        if (token) {
-          try {
-            const res = await fetch(`${API_URL}/user/progress`, {
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (res.ok) {
-              const data = await res.json();
-              const saved = data.progress_data?.find(p => p.lesson_id === slug && p.exercise_id === exerciseId.toString());
-              if (saved?.code_content) {
-                initialCode = saved.code_content;
-              }
-            }
-          } catch (e) { console.error('Backend progress fetch failed'); }
+        if (res.ok) {
+          const data = await res.json();
+          const saved = data.progress_data?.find(
+            p => p.lesson_id === slug && p.exercise_id === exerciseId.toString()
+          );
+          if (saved?.code_content) initialCode = saved.code_content;
         }
-
-        // If no backend code, try LocalStorage
-        if (initialCode === ex.initial_code) {
-          const localSaved = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
-          if (localSaved) initialCode = localSaved;
-        }
-
-        setCode(initialCode);
-        setStatus('idle');
-        setMessage('');
-        setShowHint(false);
-        setHintText('');
-        setHasRun(initialCode !== ex.initial_code);
-        setActiveTab(localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console');
-        return;
-      }
+      } catch { /* backend offline — use localStorage fallback */ }
     }
+
+    // Fall back to localStorage draft if backend had nothing new
+    if (initialCode === ex.initial_code) {
+      const localSaved = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+      if (localSaved) initialCode = localSaved;
+    }
+
+    setCode(initialCode);
+    setStatus('idle');
+    setMessage('');
+    setShowHint(false);
+    setHintText('');
+    setCodeEdited(initialCode !== ex.initial_code);
+    startTimeRef.current = null;
+    setActiveTab(
+      localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console'
+    );
   };
 
+  // ─── Hint ─────────────────────────────────────────────────────────────────
   const handleGetHint = async () => {
     if (hintText) { setShowHint(s => !s); return; }
     setHintText('Thinking...');
     setShowHint(true);
     try {
-      const res = await fetch(`${API_URL}/ai/hint`, {
-        method: 'POST',
+      const res  = await fetch(`${API_URL}/ai/hint`, {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body:    JSON.stringify({
           instruction: exercise.instruction,
-          task: exercise.task,
-          topic: exercise.title,
-          language: lesson.language
+          task:        exercise.task,
+          topic:       exercise.title,
+          language:    lesson.language
         })
       });
       const data = await res.json();
@@ -124,20 +140,22 @@ const LessonPage = () => {
     }
   };
 
+  // ─── Run (no verification, just execute) ──────────────────────────────────
   const handleRun = async () => {
-    setHasRun(true);
+    setCodeEdited(true);
+    if (!startTimeRef.current) startTimeRef.current = Date.now();
     setStatus('running');
+
     try {
-      // For HTML/CSS: just render in preview, no server call needed
       if (lesson.language === 'html' || lesson.language === 'css') {
         setActiveTab('preview');
         setStatus('idle');
         return;
       }
-      const res = await fetch(`${API_URL}/execute`, {
-        method: 'POST',
+      const res  = await fetch(`${API_URL}/execute`, {
+        method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ language: lesson.language, code })
+        body:    JSON.stringify({ language: lesson.language, code })
       });
       const data = await res.json();
       if (data.renderInPreview) { setActiveTab('preview'); setStatus('idle'); return; }
@@ -151,59 +169,92 @@ const LessonPage = () => {
     }
   };
 
+  // ─── Submit & Verify ──────────────────────────────────────────────────────
   const handleSubmit = async () => {
     setStatus('running');
+
+    // Capture solve time (ms) — capped at 10 minutes
+    const solveTimeMs = startTimeRef.current
+      ? Math.min(Date.now() - startTimeRef.current, 600_000)
+      : null;
+
     try {
-      const res = await fetch(`${API_URL}/execute/verify`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res  = await fetch(`${API_URL}/execute/verify`, {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
         body: JSON.stringify({
-          id: exercise.id,
+          id:         exercise.id,
           code,
-          topic: exercise.title,
+          topic:      exercise.title,
           instruction: exercise.instruction,
-          task: exercise.task,
-          language: lesson.language,
-          test_cases: exercise.test_cases
+          task:       exercise.task,
+          language:   lesson.language,
+          test_cases: exercise.test_cases,
+          start_time: startTimeRef.current  // server uses this for speed bonus
         })
       });
+
+      // Handle 429 rate limit
+      if (res.status === 429) {
+        const data = await res.json();
+        setStatus('error');
+        setMessage(data.feedback || 'Submitting too fast. Please wait a moment.');
+        return;
+      }
+
       const data = await res.json();
-      
+
       if (data.isCorrect) {
         setStatus('success');
         setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
-        
-        // Award XP
-        const xp = 10;
-        updateProgress(xp);
-        setXpEarned(xp);
-        setShowXP(true);
-        setTimeout(() => setShowXP(false), 3000);
 
-        // Save to localStorage
-        const progress = JSON.parse(localStorage.getItem('codlift_progress') || '[]');
-        const key = `${level}-${slug}-${exercise.number}`;
-        if (!progress.includes(key)) {
-          progress.push(key);
-          localStorage.setItem('codlift_progress', JSON.stringify(progress));
+        // Guard: only award XP on first completion (localStorage acts as cache)
+        const completedKey  = `codlift_completed_${slug}_${exercise.number}`;
+        const isFirstPass   = !localStorage.getItem(completedKey);
+
+        if (isFirstPass) {
+          localStorage.setItem(completedKey, '1');
+
+          // Sync to backend — backend computes XP server-side, we use its result
+          if (token) {
+            try {
+              const progressRes = await fetch(`${API_URL}/user/update-progress`, {
+                method:  'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization:  `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                  lesson_id:    lesson.id,
+                  exercise_id:  exercise.number.toString(),
+                  code_submitted: code,
+                  solve_time_ms: solveTimeMs
+                  // NOTE: xp_earned is intentionally NOT sent — server computes it
+                })
+              });
+
+              if (progressRes.ok) {
+                const progressData = await progressRes.json();
+                const earnedXP     = progressData.xp_awarded || 0;
+
+                if (earnedXP > 0) {
+                  // Update local user XP from server's authoritative value
+                  updateProgress(earnedXP);
+                  setXpEarned(earnedXP);
+                  setXpBreakdown(progressData.breakdown || {});
+                  setShowXP(true);
+                  setTimeout(() => setShowXP(false), 3000);
+                }
+              }
+            } catch { /* non-blocking — progress sync failed silently */ }
+          }
         }
 
-        // Sync to backend (non-blocking, with auth)
-        if (token) {
-          fetch(`${API_URL}/user/update-progress`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              lesson_id: lesson.id,
-              exercise_id: exercise.number.toString(),
-              code_submitted: code,
-              xp_earned: xp
-            })
-          }).catch(() => {});
-        }
+        // Show the success modal regardless of XP (re-completion still deserves celebration)
+        setShowModal(true);
       } else {
         setStatus('error');
         setMessage(data.feedback || 'Not quite right. Try again! 💪');
@@ -214,7 +265,9 @@ const LessonPage = () => {
     }
   };
 
+  // ─── Navigation ───────────────────────────────────────────────────────────
   const goNext = () => {
+    setShowModal(false);
     if (exercise.number < exercise.total) {
       navigate(`/learn/${level}/${slug}/${exercise.number + 1}`);
     } else {
@@ -222,6 +275,7 @@ const LessonPage = () => {
     }
   };
 
+  // ─── Loading state ────────────────────────────────────────────────────────
   if (!lesson || !exercise) {
     return (
       <div className="h-screen bg-background flex flex-col items-center justify-center gap-4">
@@ -231,22 +285,35 @@ const LessonPage = () => {
     );
   }
 
-  const editorLang = lesson.language === 'html' ? 'html'
-    : lesson.language === 'css' ? 'css'
+  const editorLang = lesson.language === 'html'   ? 'html'
+    : lesson.language === 'css'    ? 'css'
     : lesson.language === 'python' ? 'python'
     : 'javascript';
 
   return (
     <div className="h-screen flex flex-col bg-background overflow-hidden text-white">
-      <SEO 
+      <SEO
         title={`${lesson.title} — Free Interactive Lesson | CodLift`}
         description={lesson.description || `Learn ${lesson.language} interactively on CodLift.`}
         keywords={`learn ${lesson.language}, ${lesson.language} for beginners, free interactive coding`}
         url={`/learn/${level}/${slug}/${exerciseId}`}
       />
+
+      {/* XP float animation */}
       {showXP && <XPAnimation amount={xpEarned} />}
-      
-      {/* Header */}
+
+      {/* Challenge Complete Modal */}
+      <SuccessModal
+        isOpen={showModal}
+        xpEarned={xpEarned}
+        breakdown={xpBreakdown}
+        exerciseTitle={exercise.title}
+        isLastExercise={exercise.number >= exercise.total}
+        onNext={goNext}
+        onClose={() => setShowModal(false)}
+      />
+
+      {/* ─── Header ───────────────────────────────────────────────────────── */}
       <header className="h-14 border-b border-white/5 px-4 flex items-center justify-between bg-navy/50 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
           <Link to="/dashboard" className="p-2 hover:bg-white/5 rounded-lg transition-colors">
@@ -266,21 +333,21 @@ const LessonPage = () => {
           </div>
         </div>
 
-        {/* Progress dots */}
+        {/* Progress bar — hidden on very small screens */}
         <div className="hidden md:flex flex-1 max-w-xs mx-8 items-center gap-1.5">
           {Array.from({ length: exercise.total }).map((_, i) => (
             <div
               key={i}
               className={`h-1.5 flex-1 rounded-full transition-all ${
-                i + 1 < exercise.number ? 'bg-purple' 
-                : i + 1 === exercise.number ? 'bg-purple animate-pulse' 
+                i + 1 <  exercise.number ? 'bg-purple'
+                : i + 1 === exercise.number ? 'bg-purple animate-pulse'
                 : 'bg-white/10'
               }`}
             />
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="px-3 py-1 rounded-full bg-yellow/10 border border-yellow/20 text-yellow text-xs font-bold flex items-center gap-1">
             <Sparkles className="w-3 h-3" /> {user?.xp_total || 0} XP
           </div>
@@ -298,7 +365,9 @@ const LessonPage = () => {
                 onClick={() => status === 'success' && goNext()}
                 disabled={status !== 'success'}
                 className={`p-1.5 rounded-lg transition-colors ${
-                  status === 'success' ? 'text-purple bg-purple/10 hover:bg-purple/20' : 'text-gray-800 cursor-not-allowed opacity-50'
+                  status === 'success'
+                    ? 'text-purple bg-purple/10 hover:bg-purple/20'
+                    : 'text-gray-800 cursor-not-allowed opacity-50'
                 }`}
                 title={status === 'success' ? 'Next Challenge' : 'Complete the challenge to unlock'}
               >
@@ -309,16 +378,19 @@ const LessonPage = () => {
         </div>
       </header>
 
-      {/* 3-Panel Layout (Stacks on mobile) */}
+      {/* ─── 3-Panel Layout ───────────────────────────────────────────────── */}
+      {/* Stacks vertically on mobile, horizontal on md+ */}
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        
-        {/* Panel 1: Instructions (Top on mobile, Left on Desktop) */}
+
+        {/* Panel 1 — Instructions */}
         <div className="w-full md:w-[300px] border-b md:border-b-0 md:border-r border-white/5 flex flex-col bg-navy/30 shrink-0 max-h-[40vh] md:max-h-none overflow-y-auto">
           <div className="p-5 overflow-y-auto flex-1 custom-scrollbar">
             <h1 className="text-xl font-syne font-extrabold mb-3">{exercise.title}</h1>
+
+            {/* Inline style block for instruction markdown rendering */}
             <style dangerouslySetInnerHTML={{ __html: `
               .instruction-content h3 { color: #a855f7; font-size: 1.125rem; font-weight: 800; margin-top: 1.5rem; margin-bottom: 0.75rem; font-family: 'Syne', sans-serif; }
-              .instruction-content p { margin-bottom: 1rem; }
+              .instruction-content p  { margin-bottom: 1rem; }
               .instruction-content code { background: rgba(255,255,255,0.05); padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: 'DM Mono', monospace; color: #a855f7; font-size: 0.875rem; }
               .instruction-content pre { background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(255,255,255,0.05); margin: 1rem 0; overflow-x: auto; }
               .instruction-content pre code { background: none; padding: 0; color: #d1d5db; }
@@ -326,9 +398,10 @@ const LessonPage = () => {
               .instruction-content ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 1rem; }
               .instruction-content li { margin-bottom: 0.5rem; }
             `}} />
-            <div 
+
+            <div
               className="text-gray-300 text-sm leading-relaxed mb-5 instruction-content"
-              dangerouslySetInnerHTML={{ 
+              dangerouslySetInnerHTML={{
                 __html: exercise.instruction
                   .replace(/^### (.*$)/gim, '<h3>$1</h3>')
                   .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -342,7 +415,7 @@ const LessonPage = () => {
                   }).join('')
               }}
             />
-            
+
             {exercise.task && (
               <div className="p-4 bg-purple/5 rounded-xl border border-purple/15 mb-5">
                 <h4 className="text-[10px] font-black text-purple uppercase tracking-widest mb-2">Your Task</h4>
@@ -350,30 +423,34 @@ const LessonPage = () => {
               </div>
             )}
 
-            {/* Result feedback */}
+            {/* Feedback panel */}
             <AnimatePresence>
               {status !== 'idle' && status !== 'running' && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0  }}
+                  exit={{   opacity: 0, y: -10 }}
                   className={`p-4 rounded-xl border flex flex-col gap-2 mb-4 ${
-                    status === 'success' 
-                      ? 'bg-green-500/10 border-green-500/30 text-green-400' 
+                    status === 'success'
+                      ? 'bg-green-500/10 border-green-500/30 text-green-400'
                       : 'bg-red-500/10 border-red-500/30 text-red-400'
                   }`}
                 >
                   <div className="flex items-center gap-2">
-                    {status === 'success' 
-                      ? <CheckCircle2 className="w-5 h-5 shrink-0" /> 
-                      : <AlertCircle className="w-5 h-5 shrink-0" />}
-                    <p className="font-bold text-sm">{status === 'success' ? 'Great job! 🎉' : 'Almost there 💪'}</p>
+                    {status === 'success'
+                      ? <CheckCircle2 className="w-5 h-5 shrink-0" />
+                      : <AlertCircle  className="w-5 h-5 shrink-0" />}
+                    <p className="font-bold text-sm">
+                      {status === 'success' ? 'Correct! 🎉' : 'Almost there 💪'}
+                    </p>
                   </div>
-                  <p className="text-xs opacity-90 leading-relaxed">{message}</p>
+                  {/* Render markdown feedback safely */}
+                  <p className="text-xs opacity-90 leading-relaxed whitespace-pre-line">
+                    {String(message).replace(/^###\s*[✅❌⚠️]\s*/gm, '').replace(/^-\s+/gm, '• ')}
+                  </p>
                   {status === 'success' && (
-                    <Button size="sm" className="mt-2 w-full" onClick={goNext}>
-                      {exercise.number < exercise.total ? 'Next Challenge' : 'Finish Lesson'} 
-                      <ChevronRight className="w-4 h-4 ml-1" />
+                    <Button size="sm" className="mt-2 w-full" onClick={() => setShowModal(true)}>
+                      View Results <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>
                   )}
                 </motion.div>
@@ -386,7 +463,7 @@ const LessonPage = () => {
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
+                  exit={{   opacity: 0, height: 0 }}
                   className="overflow-hidden"
                 >
                   <GlassCard className="p-4 border-yellow/30 bg-yellow/5" hover={false}>
@@ -399,20 +476,19 @@ const LessonPage = () => {
               )}
             </AnimatePresence>
           </div>
-          
+
           <div className="p-4 border-t border-white/5 bg-navy/50">
             <Button variant="ghost" className="w-full flex justify-between group text-sm" onClick={handleGetHint}>
               <span className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-yellow group-hover:animate-pulse" /> 
+                <Lightbulb className="w-4 h-4 text-yellow group-hover:animate-pulse" />
                 Need a hint?
               </span>
               <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">AI</span>
             </Button>
           </div>
-
         </div>
 
-        {/* Panel 2: Editor (Middle) */}
+        {/* Panel 2 — Code Editor */}
         <div className="flex-1 flex flex-col min-w-0 md:min-w-[400px] border-b md:border-b-0 md:border-r border-white/5 h-[50vh] md:h-auto">
           <div className="h-10 bg-navy border-b border-white/5 flex items-center px-4 justify-between shrink-0">
             <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1.5">
@@ -420,13 +496,18 @@ const LessonPage = () => {
               main.{editorLang === 'javascript' ? 'js' : editorLang}
             </span>
             <div className="flex gap-2">
-              <Button size="sm" variant="ghost" onClick={handleRun} disabled={status === 'running'} className="h-7 text-xs px-3">
+              <Button
+                size="sm" variant="ghost"
+                onClick={handleRun}
+                disabled={status === 'running'}
+                className="h-7 text-xs px-3"
+              >
                 <Play className="w-3 h-3 mr-1" /> Run
               </Button>
-              <Button 
-                size="sm" 
-                onClick={handleSubmit} 
-                disabled={status === 'running' || status === 'success'} 
+              <Button
+                size="sm"
+                onClick={handleSubmit}
+                disabled={status === 'running' || status === 'success'}
                 className="h-7 text-xs px-3"
               >
                 <Send className="w-3 h-3 mr-1" /> Submit
@@ -450,21 +531,21 @@ const LessonPage = () => {
               value={code}
               onChange={handleCodeChange}
               options={{
-                fontSize: 14,
-                minimap: { enabled: false },
-                scrollBeyondLastLine: false,
-                padding: { top: 16, bottom: 16 },
-                fontFamily: '"DM Mono", "Fira Code", monospace',
-                fontLigatures: true,
-                lineNumbers: 'on',
-                renderLineHighlight: 'gutter',
-                tabSize: 2,
+                fontSize:              14,
+                minimap:               { enabled: false },
+                scrollBeyondLastLine:  false,
+                padding:               { top: 16, bottom: 16 },
+                fontFamily:            '"DM Mono", "Fira Code", monospace',
+                fontLigatures:         true,
+                lineNumbers:           'on',
+                renderLineHighlight:   'gutter',
+                tabSize:               2,
               }}
             />
           </div>
         </div>
 
-        {/* Panel 3: Preview / Console (Bottom on mobile, Right on Desktop) */}
+        {/* Panel 3 — Preview / Console */}
         <div className="w-full md:w-[320px] flex flex-col bg-navy shrink-0 min-h-[30vh] md:min-h-0">
           <div className="h-10 border-b border-white/5 px-2 flex items-center gap-1 bg-navy/80 shrink-0">
             <button
@@ -484,21 +565,25 @@ const LessonPage = () => {
               <Terminal className="w-3 h-3" /> Console
             </button>
           </div>
-          
+
           <div className="flex-1 overflow-hidden">
             {activeTab === 'console' ? (
               <div className="w-full h-full bg-[#0d131a] p-4 overflow-y-auto font-mono text-sm custom-scrollbar text-gray-300">
-                <pre className="whitespace-pre-wrap break-words">{output || '> Ready. Click Run to execute your code.'}</pre>
+                <pre className="whitespace-pre-wrap break-words">
+                  {output || '> Ready. Click Run to execute your code.'}
+                </pre>
               </div>
             ) : (
               <div className="w-full h-full">
                 {lesson.language === 'html' || lesson.language === 'css' ? (
-                  hasRun ? (
+                  codeEdited || code !== exercise?.initial_code ? (
                     <iframe
                       title="preview"
                       srcDoc={code}
                       className="w-full h-full border-none bg-white"
-                      sandbox="allow-scripts allow-same-origin"
+                      // BUG FIX: removed "allow-same-origin" — combining it with
+                      // "allow-scripts" defeats the sandbox's security boundary.
+                      sandbox="allow-scripts"
                     />
                   ) : (
                     <div className="flex items-center justify-center h-full bg-navy/80 text-gray-500 p-6 text-center">
@@ -512,7 +597,9 @@ const LessonPage = () => {
                   <div className="flex items-center justify-center h-full bg-navy/50 text-gray-500 p-6 text-center">
                     <div>
                       <Terminal className="w-8 h-8 mx-auto mb-3 opacity-30" />
-                      <p className="text-sm italic">Live preview available for HTML/CSS only. Use Console to see JS/Python output.</p>
+                      <p className="text-sm italic">
+                        Live preview available for HTML/CSS only. Use Console for JS/Python output.
+                      </p>
                     </div>
                   </div>
                 )}
@@ -524,4 +611,5 @@ const LessonPage = () => {
     </div>
   );
 };
+
 export default LessonPage;

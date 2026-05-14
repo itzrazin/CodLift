@@ -95,9 +95,11 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-    // Initialize session for Requirement 1
-    req.session.user = { id: updatedUser.id, username: updatedUser.username, email: updatedUser.email };
-    req.session.save(); // Ensure session is saved to PG store
+    // Persist session — MUST be awaited to prevent race condition where the
+    // client redirect fires before the session is written to PostgreSQL.
+    await new Promise((resolve, reject) =>
+      req.session.save(err => (err ? reject(err) : resolve()))
+    );
 
     try {
       await transporter.sendMail({

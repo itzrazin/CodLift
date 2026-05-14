@@ -30,15 +30,27 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
         return done(null, { ...result.rows[0], google_id: profile.id, avatar: avatarUrl, is_new_user: false });
       }
 
-      // Create new user
-      const username = profile.displayName?.replace(/\s+/g, '') || `user${profile.id.slice(0, 8)}`;
+      // Create new user — ensure unique username to avoid DB unique-constraint crash
+      let baseUsername = profile.displayName?.replace(/\s+/g, '') || `user${profile.id.slice(0, 8)}`;
+      // Sanitise: keep only alphanumeric + underscore, max 30 chars
+      baseUsername = baseUsername.replace(/[^a-zA-Z0-9_]/g, '').slice(0, 26);
+      if (!baseUsername) baseUsername = 'user';
+
+      // Check for collision and append suffix if needed
+      let username = baseUsername;
+      const taken = await db.query('SELECT 1 FROM users WHERE username = $1', [username]);
+      if (taken.rows.length > 0) {
+        username = `${baseUsername}${Math.floor(1000 + Math.random() * 9000)}`;
+      }
+
       const randomPass = require('crypto').randomBytes(16).toString('hex');
-      const avatarUrl = profile.photos?.[0]?.value || `https://ui-avatars.com/api/?name=${username}&background=00f5d4&color=080b10`;
+      const avatarUrl  = profile.photos?.[0]?.value ||
+        `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=00f5d4&color=080b10`;
       const newUser = await db.query(
         'INSERT INTO users (username, email, google_id, avatar, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
         [username, email, profile.id, avatarUrl, randomPass]
       );
-      
+
       return done(null, { ...newUser.rows[0], is_new_user: true });
     } catch (err) {
       return done(err, null);
@@ -75,14 +87,23 @@ try {
           return done(null, { ...result.rows[0], github_id: profile.id.toString(), avatar: avatarUrl, is_new_user: false });
         }
 
-        const username = profile.username || `user${profile.id}`;
+        // Ensure unique username for GitHub OAuth signup
+        let baseUsername = (profile.username || `user${profile.id}`)
+          .replace(/[^a-zA-Z0-9_]/g, '').slice(0, 26) || 'user';
+        let username = baseUsername;
+        const ghTaken = await db.query('SELECT 1 FROM users WHERE username = $1', [username]);
+        if (ghTaken.rows.length > 0) {
+          username = `${baseUsername}${Math.floor(1000 + Math.random() * 9000)}`;
+        }
+
         const randomPass = require('crypto').randomBytes(16).toString('hex');
-        const avatarUrl = profile.photos?.[0]?.value || `https://ui-avatars.com/api/?name=${username}&background=00f5d4&color=080b10`;
+        const avatarUrl  = profile.photos?.[0]?.value ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=00f5d4&color=080b10`;
         const newUser = await db.query(
           'INSERT INTO users (username, email, github_id, avatar, password) VALUES ($1, $2, $3, $4, $5) RETURNING *',
           [username, email, profile.id.toString(), avatarUrl, randomPass]
         );
-        
+
         return done(null, { ...newUser.rows[0], is_new_user: true });
       } catch (err) {
         return done(err, null);
@@ -94,10 +115,16 @@ try {
 }
 
 passport.serializeUser((user, done) => done(null, user.id));
+
+// Only select the columns actually needed — never expose the hashed password
+// in the request cycle unnecessarily.
 passport.deserializeUser(async (id, done) => {
   try {
-    const result = await db.query('SELECT * FROM users WHERE id = $1', [id]);
-    done(null, result.rows[0]);
+    const result = await db.query(
+      'SELECT id, email, username, avatar, level, xp, xp_total, streak, longest_streak, is_admin FROM users WHERE id = $1',
+      [id]
+    );
+    done(null, result.rows[0] || null);
   } catch (err) {
     done(err, null);
   }

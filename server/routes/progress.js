@@ -2,21 +2,31 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const auth = require('../middleware/auth');
+const { calculateXP, getRankForXP, getNextRank } = require('../utils/xpEngine');
 
-// Get user progress summary (for dashboard/unlocking)
+// ─── GET: User progress summary ───────────────────────────────────────────────
+// Used by the dashboard to determine which lessons are unlocked.
 router.get('/user/progress', auth, async (req, res) => {
   try {
-    const result = await db.query('SELECT lesson_id, exercise_id, code_content, is_completed FROM progress WHERE user_id = $1', [req.user.id]);
-    
-    // Transform into a format that's easy for the frontend:
-    // { completed_lessons: ["html-basics", "css-flexbox"], last_exercise: { slug: "html-basics", id: 2 } }
+    const result = await db.query(
+      'SELECT lesson_id, exercise_id, code_content, is_completed FROM progress WHERE user_id = $1',
+      [req.user.id]
+    );
+
     const completedExercises = result.rows;
     const completedLessonIds = [...new Set(completedExercises.map(ex => ex.lesson_id))];
-    
+
+    // Fetch fresh XP from DB — never rely on client-provided value
+    const userRow = await db.query('SELECT xp_total, streak FROM users WHERE id = $1', [req.user.id]);
+    const currentXP = userRow.rows[0]?.xp_total || 0;
+    const streakDays = userRow.rows[0]?.streak || 0;
+
     res.json({
       completed_lessons: completedLessonIds,
-      progress_data: completedExercises,
-      current_xp: req.user.xp_total || 0
+      progress_data:     completedExercises,
+      current_xp:        currentXP,
+      rank:              getRankForXP(currentXP),
+      next_rank:         getNextRank(currentXP)
     });
   } catch (error) {
     console.error('Error fetching user progress:', error);
@@ -24,29 +34,65 @@ router.get('/user/progress', auth, async (req, res) => {
   }
 });
 
-// Update progress (completed an activity)
+// ─── POST: Record a completed exercise & award XP ─────────────────────────────
+// XP is computed entirely server-side; the client's xp_earned value is IGNORED.
 router.post('/user/update-progress', auth, async (req, res) => {
   try {
-    const { lesson_id, exercise_id, code_submitted, xp_earned = 10 } = req.body;
-    
+    const { lesson_id, exercise_id, code_submitted, solve_time_ms } = req.body;
+
     if (!lesson_id || !exercise_id) {
       return res.status(400).json({ error: 'Missing lesson_id or exercise_id' });
     }
 
+    // Fetch streak for multiplier calculation
+    const userRow = await db.query('SELECT streak, xp_total FROM users WHERE id = $1', [req.user.id]);
+    const streakDays = userRow.rows[0]?.streak || 0;
+
+    // Check for first-time completion to prevent duplicate XP awards
+    const existing = await db.query(
+      'SELECT id FROM progress WHERE user_id = $1 AND lesson_id = $2 AND exercise_id = $3 AND is_completed = true',
+      [req.user.id, lesson_id, exercise_id]
+    );
+    const alreadyCompleted = existing.rows.length > 0;
+
+    // Server-side XP calculation — never trust client
+    const { xp: xpEarned, breakdown } = alreadyCompleted
+      ? { xp: 0, breakdown: {} }
+      : calculateXP({
+          exerciseId:  exercise_id,
+          lessonId:    lesson_id,
+          solveTimeMs: solve_time_ms || null,
+          streakDays
+        });
+
+    // Upsert progress row
     await db.query(
-      'INSERT INTO progress (user_id, lesson_id, exercise_id, code_content, xp_earned, is_completed) VALUES ($1, $2, $3, $4, $5, true) ON CONFLICT (user_id, lesson_id, exercise_id) DO UPDATE SET is_completed = true, code_content = $4, completed_at = NOW()',
-      [req.user.id, lesson_id, exercise_id, code_submitted, xp_earned]
+      `INSERT INTO progress (user_id, lesson_id, exercise_id, code_content, xp_earned, is_completed)
+       VALUES ($1, $2, $3, $4, $5, true)
+       ON CONFLICT (user_id, lesson_id, exercise_id)
+       DO UPDATE SET is_completed = true, code_content = $4, completed_at = NOW()`,
+      [req.user.id, lesson_id, exercise_id, code_submitted, xpEarned]
     );
 
-    // Update user's total XP
-    const userUpdate = await db.query(
-      'UPDATE users SET xp_total = COALESCE(xp_total, 0) + $1 WHERE id = $2 RETURNING xp_total',
-      [xp_earned, req.user.id]
-    );
+    let currentXP = userRow.rows[0]?.xp_total || 0;
 
-    res.json({ 
-      success: true, 
-      current_xp: userUpdate.rows[0].xp_total 
+    if (!alreadyCompleted && xpEarned > 0) {
+      // Award XP only on first correct completion
+      const updated = await db.query(
+        'UPDATE users SET xp_total = COALESCE(xp_total, 0) + $1 WHERE id = $2 RETURNING xp_total',
+        [xpEarned, req.user.id]
+      );
+      currentXP = updated.rows[0].xp_total;
+    }
+
+    res.json({
+      success:       true,
+      xp_awarded:    xpEarned,
+      current_xp:    currentXP,
+      already_done:  alreadyCompleted,
+      breakdown,
+      rank:          getRankForXP(currentXP),
+      next_rank:     getNextRank(currentXP)
     });
   } catch (error) {
     console.error('Error updating user progress:', error);
@@ -54,9 +100,9 @@ router.post('/user/update-progress', auth, async (req, res) => {
   }
 });
 
-// Smart Resume: Find the next lesson for the user
+// ─── GET: Smart Resume ────────────────────────────────────────────────────────
+// Returns the next lesson the user should continue from.
 router.get('/resume', auth, async (req, res) => {
-  // ... (keep existing resume logic)
   try {
     const curriculum = require('../data/curriculum');
     const result = await db.query(
@@ -68,22 +114,22 @@ router.get('/resume', auth, async (req, res) => {
       const first = curriculum[0];
       return res.json({
         nextLesson: {
-          level: first.category?.toLowerCase() || 'beginner',
-          slug: first.id,
+          level:      first.level?.toLowerCase() || 'beginner',
+          slug:       first.id,
           exerciseId: 1
         }
       });
     }
 
-    const last = result.rows[0];
+    const last    = result.rows[0];
     const lastIdx = curriculum.findIndex(l => l.id === last.lesson_id);
-    const nextIdx = lastIdx + 1 < curriculum.length ? lastIdx + 1 : lastIdx;
-    const next = curriculum[nextIdx];
+    const nextIdx = (lastIdx + 1 < curriculum.length) ? lastIdx + 1 : lastIdx;
+    const next    = curriculum[nextIdx];
 
     res.json({
       nextLesson: {
-        level: next.category?.toLowerCase() || 'beginner',
-        slug: next.id,
+        level:      next.level?.toLowerCase() || 'beginner',
+        slug:       next.id,
         exerciseId: 1
       }
     });

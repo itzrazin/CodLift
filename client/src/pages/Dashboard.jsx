@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
-import { 
-  Home, BookOpen, Gamepad2, User, 
-  Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Trophy
+import {
+  Home, BookOpen, Gamepad2, User,
+  Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Trophy, Menu, X
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../components/AuthContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
 import { Logo } from '../components/ui/Logo';
+import { API_URL } from '../utils/config';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
@@ -54,7 +55,8 @@ const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [progress, setProgress] = useState([]);
+  const [progress, setProgress]     = useState([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar toggle
 
   useEffect(() => {
     fetchProgress();
@@ -142,19 +144,41 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background flex text-white font-sans">
       <SEO title="Dashboard | CodLift" description="Track your coding progress, XP, and continue learning." url="/dashboard" />
 
-      {/* Sidebar */}
-      <aside className="w-64 border-r border-white/5 p-6 flex flex-col fixed h-full z-20 bg-navy/70 backdrop-blur-md">
-        <Link to="/" className="flex items-center gap-2 mb-10">
+      {/* ── Mobile sidebar overlay ──────────────────────────────────────── */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 z-30 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* ── Sidebar ─────────────────────────────────────────────────────── */}
+      {/* On desktop: fixed left. On mobile: slides in over content.        */}
+      <aside className={`
+        fixed top-0 left-0 h-full z-40 flex flex-col
+        w-64 border-r border-white/5 p-6
+        bg-navy/95 backdrop-blur-md
+        transition-transform duration-300 ease-in-out
+        ${ sidebarOpen ? 'translate-x-0' : '-translate-x-full' }
+        md:translate-x-0
+      `}>
+        <Link to="/" className="flex items-center gap-2 mb-10" onClick={() => setSidebarOpen(false)}>
           <Logo className="w-9 h-9" />
           <span className="text-xl font-syne font-extrabold tracking-tighter">CODLIFT</span>
         </Link>
 
         <nav className="flex-1 space-y-1.5">
-          <SidebarItem icon={Home}     label="Dashboard"  active onClick={() => navigate('/dashboard')} />
-          <SidebarItem icon={BookOpen} label="Curriculum" onClick={() => navigate('/dashboard')} />
-          <SidebarItem icon={Gamepad2} label="Arena"      onClick={() => navigate('/arena')} />
-          <SidebarItem icon={Trophy}   label="Leaderboard" onClick={() => navigate('/leaderboard')} />
-          <SidebarItem icon={User}     label="Profile"    onClick={() => navigate('/profile')} />
+          <SidebarItem icon={Home}     label="Dashboard"   active onClick={() => { setSidebarOpen(false); navigate('/dashboard'); }} />
+          <SidebarItem icon={BookOpen} label="Curriculum"  onClick={() => { setSidebarOpen(false); navigate('/dashboard'); }} />
+          <SidebarItem icon={Gamepad2} label="Arena"       onClick={() => { setSidebarOpen(false); navigate('/arena'); }} />
+          <SidebarItem icon={Trophy}   label="Leaderboard" onClick={() => { setSidebarOpen(false); navigate('/leaderboard'); }} />
+          <SidebarItem icon={User}     label="Profile"     onClick={() => { setSidebarOpen(false); navigate('/profile'); }} />
         </nav>
 
         <div className="mt-auto space-y-1">
@@ -162,7 +186,7 @@ const Dashboard = () => {
             <p className="text-xs text-gray-400">Signed in as</p>
             <p className="font-bold text-sm truncate">{user.username}</p>
           </div>
-          <button 
+          <button
             onClick={() => { logout(); navigate('/'); }}
             className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-400/5 transition-all text-sm"
           >
@@ -172,8 +196,23 @@ const Dashboard = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 ml-64 p-8 lg:p-10 overflow-y-auto">
+      {/* ── Main Content ────────────────────────────────────────────────── */}
+      {/* md:ml-64 offsets the fixed sidebar on desktop; no offset on mobile */}
+      <main className="flex-1 md:ml-64 p-4 sm:p-8 lg:p-10 overflow-y-auto w-full">
+
+        {/* Mobile header bar with hamburger */}
+        <div className="flex items-center justify-between mb-6 md:hidden">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 rounded-lg bg-white/5 border border-white/10 text-gray-300 hover:text-white transition-colors"
+            aria-label="Open menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <span className="font-syne font-extrabold text-sm tracking-tight">Dashboard</span>
+          <div className="w-9" />{/* spacer */}
+        </div>
+
         {/* Header */}
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
           <div>

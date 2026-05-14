@@ -746,6 +746,7 @@ Define a new function named \`greetUser\` that accepts a single \`name\` paramet
         }
       },
       {
+        id: 'js_1_3',
         title: 'Arrays',
         instruction: `
 <div class="p-4 bg-orange/10 border border-orange/20 rounded-xl my-4">
