@@ -8,21 +8,33 @@ export default {
     extend: {
       colors: {
         background: "#000000",
+        // Cyber-Neon Palette
+        cyber: {
+          pink: "#FF00FF",   // Electric Purple/Pink
+          cyan: "#00FFFF",   // Bright Cyan
+          green: "#ADFF2F",  // Neon Green / GreenYellow
+          dark: "#0a0a0a"
+        },
         purple: {
-          DEFAULT: "#a855f7",
-          light: "#c084fc",
-          dark: "#9333ea",
+          DEFAULT: "#FF00FF", // Redirect default purple to cyber pink
+          light: "#ff66ff",
+          dark: "#b300b3",
         },
         yellow: {
-          DEFAULT: "#ffd60a",
-          light: "#ffde40",
-          dark: "#ccab00",
+          DEFAULT: "#ADFF2F", // Redirect default yellow to cyber green
+          light: "#c4ff66",
+          dark: "#7ab300",
         },
         navy: {
-          DEFAULT: "#000000",
-          light: "#080b10",
-          lighter: "#101010",
+          DEFAULT: "#050505",
+          light: "#0a0a0a",
+          lighter: "#111",
         },
+      },
+      boxShadow: {
+        'neo': '4px 4px 0px 0px rgba(255,0,255,1)',
+        'neo-cyan': '4px 4px 0px 0px rgba(0,255,255,1)',
+        'neo-green': '4px 4px 0px 0px rgba(173,255,47,1)',
       },
       fontFamily: {
         syne: ["Syne", "sans-serif"],

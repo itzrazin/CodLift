@@ -15,31 +15,30 @@ export const Button = ({
   ...props 
 }) => {
   const variants = {
-    primary: 'bg-purple text-black hover:bg-purple-light shadow-[0_0_20px_rgba(168,85,247,0.3)] hover:shadow-[0_0_30px_rgba(168,85,247,0.5)]',
-    secondary: 'bg-yellow text-black hover:bg-yellow-light shadow-[0_0_20px_rgba(255,214,10,0.3)] hover:shadow-[0_0_30px_rgba(255,214,10,0.5)]',
-    ghost: 'bg-transparent border border-white/20 hover:bg-white/10 text-white',
-    purpleGhost: 'bg-transparent border border-purple/30 hover:bg-purple/10 text-purple',
+    primary: 'bg-cyber-pink text-black border-2 border-white hover:bg-white hover:text-black shadow-neo hover:shadow-neo-cyan hover:-translate-y-1',
+    secondary: 'bg-cyber-green text-black border-2 border-white hover:bg-white hover:text-black shadow-neo-green hover:shadow-neo hover:-translate-y-1',
+    ghost: 'bg-transparent border-2 border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-black shadow-neo-cyan hover:-translate-y-1',
+    purpleGhost: 'bg-transparent border-2 border-cyber-pink text-cyber-pink hover:bg-cyber-pink hover:text-black shadow-neo hover:-translate-y-1',
+    danger: 'bg-red-500 text-white border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,0,0,1)] hover:bg-red-400 hover:-translate-y-1'
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-sm',
-    md: 'px-6 py-3 text-base font-semibold',
-    lg: 'px-8 py-4 text-lg font-bold',
+    sm: 'px-4 py-2 text-sm uppercase tracking-widest font-black',
+    md: 'px-6 py-3 text-base uppercase tracking-widest font-black',
+    lg: 'px-8 py-4 text-lg uppercase tracking-widest font-black',
   };
 
   return (
     <motion.button
-      whileHover={{ scale: 1.05, y: -2 }}
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.95, y: 2, boxShadow: '0px 0px 0px 0px rgba(0,0,0,0)' }}
       className={cn(
-        'relative rounded-full transition-all duration-300 flex items-center justify-center gap-2 group overflow-hidden',
+        'relative transition-all duration-200 flex items-center justify-center gap-2',
         variants[variant],
         sizes[size],
         className
       )}
       {...props}
     >
-      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
       <div className="relative z-10 flex items-center gap-2">
         {children}
       </div>
@@ -50,9 +49,9 @@ export const Button = ({
 export const GlassCard = ({ children, className, hover = true }) => {
   return (
     <motion.div
-      whileHover={hover ? { y: -5, borderColor: 'rgba(168,85,247,0.3)' } : {}}
+      whileHover={hover ? { y: -5, boxShadow: '4px 4px 0px 0px rgba(0,255,255,1)' } : {}}
       className={cn(
-        'glass rounded-2xl p-6 transition-all duration-300',
+        'bg-cyber-dark border-2 border-white shadow-[4px_4px_0px_0px_rgba(255,0,255,0.5)] p-6 transition-all duration-300',
         className
       )}
     >

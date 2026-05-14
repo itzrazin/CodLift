@@ -427,30 +427,30 @@ const LessonPage = () => {
             <AnimatePresence>
               {status !== 'idle' && status !== 'running' && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0  }}
-                  exit={{   opacity: 0, y: -10 }}
-                  className={`p-4 rounded-xl border flex flex-col gap-2 mb-4 ${
+                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0  }}
+                  exit={{   opacity: 0, scale: 0.95, y: -10 }}
+                  className={`p-5 flex flex-col gap-3 mb-4 border-2 shadow-neo font-mono ${
                     status === 'success'
-                      ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                      : 'bg-red-500/10 border-red-500/30 text-red-400'
+                      ? 'bg-cyber-dark border-cyber-green text-cyber-green shadow-neo-green'
+                      : 'bg-[#1a0505] border-red-500 text-red-500 shadow-[4px_4px_0px_0px_rgba(255,0,0,1)]'
                   }`}
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3 border-b-2 border-current pb-2">
                     {status === 'success'
-                      ? <CheckCircle2 className="w-5 h-5 shrink-0" />
-                      : <AlertCircle  className="w-5 h-5 shrink-0" />}
-                    <p className="font-bold text-sm">
-                      {status === 'success' ? 'Correct! 🎉' : 'Almost there 💪'}
+                      ? <CheckCircle2 className="w-6 h-6 shrink-0 animate-pulse" />
+                      : <AlertCircle  className="w-6 h-6 shrink-0 animate-[ping_1s_ease-in-out_3]" />}
+                    <p className="font-black text-sm uppercase tracking-[0.2em]">
+                      {status === 'success' ? 'VICTORY SECURED' : 'CRITICAL DAMAGE'}
                     </p>
                   </div>
                   {/* Render markdown feedback safely */}
-                  <p className="text-xs opacity-90 leading-relaxed whitespace-pre-line">
-                    {String(message).replace(/^###\s*[✅❌⚠️]\s*/gm, '').replace(/^-\s+/gm, '• ')}
-                  </p>
+                  <div className="text-xs opacity-90 leading-relaxed whitespace-pre-line overflow-y-auto max-h-[200px] custom-scrollbar">
+                    {String(message).replace(/^###\s*[✅❌⚠️]\s*/gm, '').replace(/^-\s+/gm, '> ')}
+                  </div>
                   {status === 'success' && (
-                    <Button size="sm" className="mt-2 w-full" onClick={() => setShowModal(true)}>
-                      View Results <ChevronRight className="w-4 h-4 ml-1" />
+                    <Button variant="secondary" size="sm" className="mt-2 w-full border-black text-black" onClick={() => setShowModal(true)}>
+                      View Loot <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>
                   )}
                 </motion.div>
