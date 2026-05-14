@@ -27,7 +27,7 @@ router.post('/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const result = await db.query(
-      'INSERT INTO users (email, password, username, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, xp, streak',
+      'INSERT INTO users (email, password, username, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, xp_total, streak',
       [email, hashedPassword, username]
     );
 
@@ -88,7 +88,7 @@ router.post('/login', async (req, res) => {
     }
 
     const updateResult = await db.query(
-      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, xp, streak',
+      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, xp_total, streak',
       [streak, user.id]
     );
     const updatedUser = updateResult.rows[0];

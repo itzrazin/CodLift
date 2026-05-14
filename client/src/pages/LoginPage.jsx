@@ -33,7 +33,7 @@ const LoginPage = () => {
     setLoading(true);
     try {
       const data = await login(email, password);
-      navigate(data.is_new_user ? '/onboarding' : '/dashboard');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');
     } finally {

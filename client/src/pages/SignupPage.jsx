@@ -53,7 +53,7 @@ const SignupPage = () => {
     setLoading(true);
     try {
       await signup(username.trim(), email.trim().toLowerCase(), password);
-      navigate('/onboarding');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Signup failed. Please try again.');
     } finally {

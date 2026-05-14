@@ -35,7 +35,7 @@ const OAuthCallbackPage = () => {
         await loginWithToken(token);
         setStatus('success');
         setMessage(isNew ? 'Welcome to CodLift! Setting up your profile...' : 'Welcome back! Redirecting...');
-        setTimeout(() => navigate(isNew ? '/onboarding' : '/dashboard'), 1500);
+        setTimeout(() => navigate('/dashboard'), 1500);
       } catch {
         setStatus('error');
         setMessage('Authentication failed. Please try again.');

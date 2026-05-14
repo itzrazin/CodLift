@@ -61,7 +61,7 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ email, password }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Login failed');
+    if (!res.ok) throw new Error(data.error || data.message || 'Login failed');
 
     persistAuth(data.token, data.user);
     setToken(data.token);
@@ -76,7 +76,7 @@ export const AuthProvider = ({ children }) => {
       body: JSON.stringify({ username, email, password }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Signup failed');
+    if (!res.ok) throw new Error(data.error || data.message || 'Signup failed');
 
     persistAuth(data.token, data.user);
     setToken(data.token);
