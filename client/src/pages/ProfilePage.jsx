@@ -88,11 +88,11 @@ const ProfilePage = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-yellow" />
-                <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">{user?.current_streak || 0} Days</span></span>
+                <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">{user?.streak || 0} Days</span></span>
               </div>
               <div className="flex items-center gap-2">
                 <Rocket className="w-4 h-4 text-purple-400" />
-                <span className="text-gray-400">Lessons Completed <span className="text-purple-400 font-bold">{user?.lessons_completed || 0}</span></span>
+                <span className="text-gray-400">Lessons Completed <span className="text-purple-400 font-bold">{user?.streak || 0}</span></span>
               </div>
             </div>
           </div>

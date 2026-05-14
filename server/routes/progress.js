@@ -5,7 +5,7 @@ const auth = require('../middleware/auth');
 
 // ─── GET: User progress summary ───────────────────────────────────────────────
 // Used by the dashboard to determine which lessons are unlocked.
-router.get('/user/progress', auth, async (req, res) => {
+router.get('/progress', auth, async (req, res) => {
   try {
     const result = await db.query(
       'SELECT lesson_id, exercise_id, code_content, is_completed FROM progress WHERE user_id = $1',
@@ -32,7 +32,7 @@ router.get('/user/progress', auth, async (req, res) => {
 
 // ─── POST: Record a completed exercise & award XP ─────────────────────────────
 // XP is computed entirely server-side; the client's xp_earned value is IGNORED.
-router.post('/user/update-progress', auth, async (req, res) => {
+router.post('/update-progress', auth, async (req, res) => {
   try {
     const { lesson_id, exercise_id, code_submitted, solve_time_ms } = req.body;
 

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
   Search, Filter, ChevronRight, Star,
-  Bug, Scissors, Rocket, Sword
+  Bug, Scissors, Rocket, Sword, Trophy, Gamepad2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

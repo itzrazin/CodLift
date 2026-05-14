@@ -114,7 +114,7 @@ const Dashboard = () => {
   const completedCount = skillTree.filter(n => n.status === 'completed').length;
 
   const stats = [
-    { label: 'Day Streak', value: user.current_streak || 0, icon: Flame, color: 'text-yellow' },
+    { label: 'Day Streak', value: user.streak || 0, icon: Flame, color: 'text-yellow' },
     { label: 'Lessons Done', value: completedCount, icon: Trophy, color: 'text-purple-400' },
   ];
 
@@ -198,18 +198,7 @@ const Dashboard = () => {
               Welcome back, <span className="text-gradient-purple">{user.username}</span>!
             </h1>
             
-            {/* ── Gamified Rank HUD ── */}
-            {rankInfo && (
-              <div className="mt-4 max-w-md">
-                <div className="flex items-end justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-2xl">{rankInfo.current.badge}</span>
-                    <span className="font-bold text-lg text-purple-light">{rankInfo.current.title}</span>
-                  </div>
-                </div>
-              </div>
-            )}
-            {!rankInfo && <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>}
+            <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>
           </div>
           <div className="flex flex-col sm:flex-row items-end sm:items-center gap-3">
             {stats.map(s => (

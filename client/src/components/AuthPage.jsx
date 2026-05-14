@@ -1,20 +1,26 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Mail, Lock, User as UserIcon, 
+  ArrowRight, Github, Chrome, AlertCircle,
+  Eye, EyeOff
+} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL } from '../utils/config';
+import { Button, GlassCard } from './ui/Core';
+import { Logo } from './ui/Logo';
 
-/* ─────────────────────────────────────────────
-   Sub-component: InputField
-   Renders a labelled input with a left Material Symbol icon
-   and an optional password-visibility toggle eye on the right.
-───────────────────────────────────────────── */
-const InputField = ({ type, placeholder, icon, value, onChange, name, required, minLength }) => {
+const InputField = ({ type, placeholder, icon: Icon, value, onChange, name, required, minLength }) => {
   const [isPasswordShown, setIsPasswordShown] = useState(false);
   const isPassword = type === 'password';
 
   return (
-    <div style={styles.inputWrapper}>
+    <div className="relative group mb-6">
+      <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-cyber-cyan transition-colors">
+        <Icon size={20} />
+      </div>
       <input
         type={isPassword && isPasswordShown ? 'text' : type}
         placeholder={placeholder}
@@ -23,72 +29,21 @@ const InputField = ({ type, placeholder, icon, value, onChange, name, required, 
         onChange={onChange}
         required={required}
         minLength={minLength}
-        autoComplete={isPassword ? 'current-password' : 'email'}
-        style={styles.inputField}
-        /* focus styles applied via className + global CSS injected below */
-        className="auth-input-field"
+        className="w-full bg-navy-light border-2 border-white/10 p-4 pl-12 rounded-xl outline-none focus:border-cyber-cyan focus:shadow-[0_0_15px_rgba(0,255,255,0.2)] transition-all font-mono text-white placeholder:text-gray-600"
       />
-      {/* Left icon */}
-      <i className="material-symbols-rounded" style={styles.inputIcon}>{icon}</i>
-
-      {/* Eye toggle — only visible once the field has content (CSS :valid trick) */}
       {isPassword && (
-        <i
-          className="material-symbols-rounded auth-eye-icon"
-          onClick={() => setIsPasswordShown(prev => !prev)}
-          style={styles.eyeIcon}
-          title={isPasswordShown ? 'Hide password' : 'Show password'}
+        <button
+          type="button"
+          onClick={() => setIsPasswordShown(!isPasswordShown)}
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
         >
-          {isPasswordShown ? 'visibility' : 'visibility_off'}
-        </i>
+          {isPasswordShown ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
       )}
     </div>
   );
 };
 
-/* ─────────────────────────────────────────────
-   Sub-component: SocialButton
-   A bordered button for OAuth providers.
-───────────────────────────────────────────── */
-const SocialButton = ({ label, icon, onClick, disabled }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    className="auth-social-btn"
-    style={styles.socialButton}
-  >
-    {icon}
-    <span style={{ fontFamily: 'Montserrat, sans-serif', fontSize: '0.95rem', fontWeight: 500 }}>
-      {label}
-    </span>
-  </button>
-);
-
-/* ─────────────────────────────────────────────
-   Google SVG logo
-───────────────────────────────────────────── */
-const GoogleLogo = () => (
-  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-  </svg>
-);
-
-/* ─────────────────────────────────────────────
-   Apple SVG logo
-───────────────────────────────────────────── */
-const AppleLogo = () => (
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
-    <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.42.07 2.41.74 3.23.8.97-.2 1.89-.77 3.19-.83 1.52.06 2.65.6 3.4 1.6-3.12 1.87-2.38 5.98.48 7.13-.5 1.42-1.16 2.82-2.3 4.18zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-  </svg>
-);
-
-/* ─────────────────────────────────────────────
-   MAIN COMPONENT
-───────────────────────────────────────────── */
 const AuthPage = () => {
   const [isLogin, setIsLogin]   = useState(true);
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -98,7 +53,6 @@ const AuthPage = () => {
   const { login } = useAuth();
   const navigate  = useNavigate();
 
-  /* ── handlers ─────────────────────────────── */
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
     if (error) setError(null);
@@ -129,402 +83,138 @@ const AuthPage = () => {
     window.location.href = `${API_URL}/auth/google`;
   };
 
-  const switchMode = () => {
-    setIsLogin(prev => !prev);
-    setFormData({ username: '', email: '', password: '' });
-    setError(null);
-  };
-
-  /* ── render ───────────────────────────────── */
   return (
-    <>
-      {/* Scoped styles — injected once, no external file needed */}
-      <style>{SCOPED_CSS}</style>
+    <div className="min-h-screen bg-background flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Decorative background elements */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-cyber-pink/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyber-cyan/10 blur-[120px] rounded-full" />
+      </div>
 
-      <div style={styles.pageWrapper}>
-        <div style={styles.card} className="auth-card">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="w-full max-w-md z-10"
+      >
+        <div className="flex flex-col items-center mb-8">
+          <Logo className="w-16 h-16 mb-4" />
+          <h1 className="text-3xl font-syne font-extrabold tracking-tighter text-white">
+            {isLogin ? 'WELCOME BACK' : 'JOIN THE MISSION'}
+          </h1>
+          <p className="text-gray-500 font-mono text-sm mt-1 uppercase tracking-widest">
+            {isLogin ? 'Authorized access only' : 'Create your operative account'}
+          </p>
+        </div>
 
-          {/* Title */}
-          <h2 style={styles.formTitle}>
-            {isLogin ? 'Log in with' : 'Sign up with'}
-          </h2>
+        <GlassCard className="p-8 border-white/5 bg-navy/40 backdrop-blur-xl">
+          <form onSubmit={handleSubmit}>
+            <AnimatePresence mode="wait">
+              {!isLogin && (
+                <motion.div
+                  key="username-field"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <InputField
+                    type="text"
+                    name="username"
+                    placeholder="OPERATIVE NAME"
+                    icon={UserIcon}
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          {/* Social buttons */}
-          <div style={styles.socialRow}>
-            <SocialButton
-              label="Google"
-              icon={<GoogleLogo />}
-              onClick={handleGoogleLogin}
-            />
-            <SocialButton
-              label="Apple"
-              icon={<AppleLogo />}
-              disabled
-              onClick={() => {}}
-            />
-          </div>
-
-          {/* OR separator */}
-          <div style={styles.separatorWrapper} className="auth-separator">
-            <span style={styles.separatorSpan}>or</span>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} noValidate>
-
-            {/* Username — signup only */}
-            {!isLogin && (
-              <InputField
-                type="text"
-                name="username"
-                placeholder="Username"
-                icon="person"
-                value={formData.username}
-                onChange={handleChange}
-                required
-              />
-            )}
-
-            {/* Email */}
             <InputField
               type="email"
               name="email"
-              placeholder="Email address"
-              icon="mail"
+              placeholder="EMAIL ADDRESS"
+              icon={Mail}
               value={formData.email}
               onChange={handleChange}
               required
             />
 
-            {/* Password */}
             <InputField
               type="password"
               name="password"
-              placeholder="Password"
-              icon="lock"
+              placeholder="SECURE PASSWORD"
+              icon={Lock}
               value={formData.password}
               onChange={handleChange}
               required
               minLength={!isLogin ? 8 : undefined}
             />
 
-            {/* Forgot password — login only */}
-            {isLogin && (
-              <a href="#" style={styles.forgotLink} tabIndex={0}
-                onClick={e => e.preventDefault()}>
-                Forgot password?
-              </a>
-            )}
-
-            {/* Error message */}
             {error && (
-              <div style={styles.errorBox} role="alert">
-                <i className="material-symbols-rounded" style={{ fontSize: '1rem', flexShrink: 0 }}>
-                  error
-                </i>
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex items-center gap-2 p-4 mb-6 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs font-bold uppercase tracking-widest"
+              >
+                <AlertCircle size={16} />
                 {error}
-              </div>
+              </motion.div>
             )}
 
-            {/* Submit button */}
-            <button
+            <Button
               type="submit"
               disabled={loading}
-              style={styles.loginButton}
-              className="auth-login-btn"
+              className="w-full mb-6"
+              variant={isLogin ? 'primary' : 'secondary'}
             >
-              {loading ? (
-                <span style={styles.spinner} className="auth-spinner" />
-              ) : (
-                isLogin ? 'Log In' : 'Create Account'
-              )}
-            </button>
+              {loading ? 'PROCESSING...' : (isLogin ? 'INITIALIZE LOGIN' : 'RECRUIT OPERATIVE')}
+              {!loading && <ArrowRight size={18} />}
+            </Button>
           </form>
 
-          {/* Footer switch */}
-          <p style={styles.signupPrompt}>
-            {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-            <button
-              type="button"
-              onClick={switchMode}
-              style={styles.switchBtn}
-              className="auth-switch-btn"
-            >
-              {isLogin ? 'Sign up' : 'Log in'}
-            </button>
-          </p>
+          <div className="relative my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t-2 border-white/5"></div>
+            </div>
+            <div className="relative flex justify-center text-[10px] uppercase font-black tracking-[0.3em] text-gray-600">
+              <span className="bg-cyber-dark px-4">Direct Connection</span>
+            </div>
+          </div>
 
-        </div>
-      </div>
-    </>
+          <div className="grid grid-cols-2 gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleGoogleLogin}
+              className="border-white/10 text-white hover:border-cyber-cyan"
+            >
+              <Chrome size={18} />
+              GOOGLE
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled
+              className="border-white/10 text-white opacity-50 grayscale"
+            >
+              <Github size={18} />
+              GITHUB
+            </Button>
+          </div>
+        </GlassCard>
+
+        <p className="text-center mt-8 text-gray-500 font-mono text-xs uppercase tracking-widest">
+          {isLogin ? "New operative?" : "Already recruited?"}{' '}
+          <button
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-cyber-cyan hover:text-white transition-colors font-black underline underline-offset-4"
+          >
+            {isLogin ? 'SIGN UP NOW' : 'LOG IN HERE'}
+          </button>
+        </p>
+      </motion.div>
+    </div>
   );
 };
-
-/* ─────────────────────────────────────────────
-   Inline style objects  (pixel-perfect to tutorial)
-───────────────────────────────────────────── */
-const PRIMARY = '#5F41E4';
-const PRIMARY_DARK = '#4320df';
-const BORDER_COLOR = '#D5CBFF';
-
-const styles = {
-  pageWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    minHeight: '100vh',
-    background: PRIMARY,
-    padding: '0.75rem',
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  card: {
-    width: '100%',
-    maxWidth: '410px',
-    padding: '2rem 1.75rem',
-    borderRadius: '0.5rem',
-    background: '#fff',
-    boxShadow: '0 10px 28px rgba(0, 0, 0, 0.15)',
-  },
-  formTitle: {
-    textAlign: 'center',
-    fontSize: '1.35rem',
-    fontWeight: 600,
-    color: '#1a1a2e',
-    marginBottom: '1.75rem',
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  socialRow: {
-    display: 'flex',
-    gap: '1.25rem',
-  },
-  socialButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '0.65rem',
-    width: '100%',
-    padding: '0.7rem 0',
-    borderRadius: '0.3rem',
-    border: `1px solid ${BORDER_COLOR}`,
-    background: '#F9F8FF',
-    cursor: 'pointer',
-    transition: 'all 0.25s ease',
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  separatorWrapper: {
-    position: 'relative',
-    margin: '1.5rem 0',
-    textAlign: 'center',
-  },
-  separatorSpan: {
-    position: 'relative',
-    zIndex: 1,
-    display: 'inline-block',
-    background: '#fff',
-    padding: '0 0.9rem',
-    color: '#6652BE',
-    fontWeight: 500,
-    fontSize: '1rem',
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  inputWrapper: {
-    position: 'relative',
-    height: '54px',
-    width: '100%',
-    marginBottom: '1.4rem',
-  },
-  inputField: {
-    width: '100%',
-    height: '100%',
-    outline: 'none',
-    fontSize: '1rem',
-    borderRadius: '0.3rem',
-    border: `1px solid ${BORDER_COLOR}`,
-    padding: '0 3rem 0 3rem',
-    transition: 'border-color 0.2s ease',
-    fontFamily: "'Montserrat', sans-serif",
-    color: '#1a1a2e',
-    background: '#fff',
-  },
-  inputIcon: {
-    position: 'absolute',
-    top: '50%',
-    left: '0.9rem',
-    transform: 'translateY(-50%)',
-    color: '#a395e0',
-    fontSize: '1.3rem',
-    pointerEvents: 'none',
-    userSelect: 'none',
-    transition: 'color 0.2s ease',
-    fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-  },
-  eyeIcon: {
-    position: 'absolute',
-    top: '50%',
-    right: '0.9rem',
-    transform: 'translateY(-50%)',
-    color: '#917DE8',
-    fontSize: '1.2rem',
-    cursor: 'pointer',
-    userSelect: 'none',
-    transition: 'color 0.2s ease',
-    fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
-  },
-  forgotLink: {
-    display: 'block',
-    textAlign: 'right',
-    marginTop: '-0.5rem',
-    marginBottom: '0.5rem',
-    color: PRIMARY,
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    textDecoration: 'none',
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  errorBox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginTop: '0.25rem',
-    marginBottom: '0.75rem',
-    padding: '0.75rem 1rem',
-    borderRadius: '0.3rem',
-    background: '#fff0f0',
-    border: '1px solid #fca5a5',
-    color: '#b91c1c',
-    fontSize: '0.875rem',
-    fontWeight: 500,
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  loginButton: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '54px',
-    marginTop: '1.75rem',
-    border: 'none',
-    outline: 'none',
-    borderRadius: '0.3rem',
-    background: PRIMARY,
-    color: '#fff',
-    fontSize: '1.1rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'background 0.25s ease',
-    fontFamily: "'Montserrat', sans-serif",
-    letterSpacing: '0.02em',
-  },
-  spinner: {
-    display: 'inline-block',
-    width: '22px',
-    height: '22px',
-    borderRadius: '50%',
-    border: '3px solid rgba(255,255,255,0.3)',
-    borderTopColor: '#fff',
-    animation: 'auth-spin 0.7s linear infinite',
-  },
-  signupPrompt: {
-    textAlign: 'center',
-    marginTop: '1.75rem',
-    fontSize: '0.95rem',
-    fontWeight: 500,
-    color: '#4a4a6a',
-    fontFamily: "'Montserrat', sans-serif",
-  },
-  switchBtn: {
-    background: 'none',
-    border: 'none',
-    padding: 0,
-    color: PRIMARY,
-    fontWeight: 600,
-    fontSize: '0.95rem',
-    cursor: 'pointer',
-    fontFamily: "'Montserrat', sans-serif",
-    textDecoration: 'none',
-  },
-};
-
-/* ─────────────────────────────────────────────
-   Scoped CSS — handles pseudo-selectors and
-   animations that can't be done with inline styles.
-───────────────────────────────────────────── */
-const SCOPED_CSS = `
-  /* spinner animation */
-  @keyframes auth-spin {
-    to { transform: rotate(360deg); }
-  }
-
-  /* card entrance */
-  .auth-card {
-    animation: auth-card-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  @keyframes auth-card-in {
-    from { opacity: 0; transform: translateY(24px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0)    scale(1); }
-  }
-
-  /* input focus border */
-  .auth-input-field:focus {
-    border-color: #5F41E4 !important;
-    box-shadow: 0 0 0 3px rgba(95, 65, 228, 0.12);
-  }
-  .auth-input-field::placeholder {
-    color: #9284c8;
-  }
-
-  /* social button hover */
-  .auth-social-btn:hover:not(:disabled) {
-    border-color: #5F41E4 !important;
-    background: #f1eff9 !important;
-  }
-  .auth-social-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-
-  /* login button hover */
-  .auth-login-btn:hover:not(:disabled) {
-    background: #4320df !important;
-  }
-  .auth-login-btn:disabled {
-    opacity: 0.75;
-    cursor: not-allowed;
-  }
-
-  /* switch button hover */
-  .auth-switch-btn:hover {
-    text-decoration: underline;
-  }
-
-  /* forgot password hover */
-  .auth-forgot:hover {
-    text-decoration: underline;
-  }
-
-  /* separator line via pseudo-element */
-  .auth-separator::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 50%;
-    height: 1px;
-    width: 100%;
-    background: #bfb3f2;
-    z-index: 0;
-  }
-
-  /* Page background override — ensures the page is fully purple */
-  body {
-    background: #5F41E4 !important;
-  }
-
-  /* Responsive padding on small screens */
-  @media (max-width: 440px) {
-    .auth-card {
-      padding: 1.75rem 1.25rem !important;
-    }
-  }
-`;
 
 export default AuthPage;

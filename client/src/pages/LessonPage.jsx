@@ -5,7 +5,7 @@ import { Button, GlassCard } from '../components/ui/Core';
 import {
   ArrowLeft, Play, Send, Lightbulb,
   ChevronLeft, ChevronRight, CheckCircle2, AlertCircle,
-  Terminal, Globe, Sparkles, BookOpen
+  Terminal, Globe, Sparkles, BookOpen, Rocket
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
