@@ -54,7 +54,7 @@ const ProfilePage = () => {
     <div className="min-h-screen bg-background">
       <SEO 
         title="My Developer Profile | CodLift"
-        description="View my coding stats, streak, XP, and public projects on CodLift."
+        description="View my coding stats, streak, and public projects on CodLift."
         url="/profile"
       />
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -65,9 +65,6 @@ const ProfilePage = () => {
               <div className="w-full h-full rounded-[1.4rem] bg-navy flex items-center justify-center overflow-hidden">
                 <User className="w-16 h-16 text-gray-700" />
               </div>
-            </div>
-            <div className="absolute -bottom-2 -right-2 w-10 h-10 rounded-full bg-yellow flex items-center justify-center border-4 border-navy">
-              <span className="text-black font-black text-xs">Lvl 8</span>
             </div>
           </div>
 
@@ -94,8 +91,8 @@ const ProfilePage = () => {
                 <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">{user?.current_streak || 0} Days</span></span>
               </div>
               <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-purple" />
-                <span className="text-gray-400">Total XP <span className="text-purple font-bold">{user?.xp_total || 0}</span></span>
+                <Rocket className="w-4 h-4 text-purple-400" />
+                <span className="text-gray-400">Lessons Completed <span className="text-purple-400 font-bold">{user?.lessons_completed || 0}</span></span>
               </div>
             </div>
           </div>

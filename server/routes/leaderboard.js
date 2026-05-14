@@ -14,15 +14,7 @@ router.get('/', async (req, res) => {
         SELECT 
           u.id, u.username, u.avatar, u.level,
           u.streak, u.longest_streak,
-          COALESCE(SUM(p.xp_earned), 0) as weekly_xp,
-          u.xp_total,
-          COUNT(DISTINCT p.lesson_id || '-' || p.exercise_id) as lessons_completed
-        FROM users u
-        LEFT JOIN progress p ON p.user_id = u.id 
-          AND p.completed_at > NOW() - INTERVAL '7 days'
-          AND p.is_completed = true
-        GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
-        ORDER BY weekly_xp DESC, u.xp_total DESC
+        ORDER BY lessons_completed DESC, u.streak DESC
         LIMIT $1
       `;
     } else {
@@ -34,7 +26,7 @@ router.get('/', async (req, res) => {
         FROM users u
         LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true
         GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
-        ORDER BY u.xp_total DESC
+        ORDER BY lessons_completed DESC, u.streak DESC
         LIMIT $1
       `;
     }
@@ -47,7 +39,6 @@ router.get('/', async (req, res) => {
       username: row.username,
       avatar: row.avatar,
       level: row.level || 'beginner',
-      xp: period === 'weekly' ? parseInt(row.weekly_xp) : parseInt(row.xp_total),
       streak: parseInt(row.streak) || 0,
       lessons_completed: parseInt(row.lessons_completed) || 0,
     }));
@@ -58,11 +49,11 @@ router.get('/', async (req, res) => {
     // Return fallback placeholder data instead of error
     res.json({ 
       leaderboard: [
-        { rank: 1, username: 'ByteBandit', xp: 45200, level: 'master', streak: 42, lessons_completed: 87 },
-        { rank: 2, username: 'ReactRacer', xp: 38150, level: 'pro', streak: 24, lessons_completed: 71 },
-        { rank: 3, username: 'NodeNinja', xp: 32900, level: 'pro', streak: 18, lessons_completed: 63 },
-        { rank: 4, username: 'CodeKing', xp: 28400, level: 'pro', streak: 12, lessons_completed: 55 },
-        { rank: 5, username: 'AlgoAlice', xp: 22950, level: 'intermediate', streak: 8, lessons_completed: 44 },
+        { rank: 1, username: 'ByteBandit', level: 'master', streak: 42, lessons_completed: 87 },
+        { rank: 2, username: 'ReactRacer', level: 'pro', streak: 24, lessons_completed: 71 },
+        { rank: 3, username: 'NodeNinja', level: 'pro', streak: 18, lessons_completed: 63 },
+        { rank: 4, username: 'CodeKing', level: 'pro', streak: 12, lessons_completed: 55 },
+        { rank: 5, username: 'AlgoAlice', level: 'intermediate', streak: 8, lessons_completed: 44 },
       ],
       period: req.query.period || 'all-time',
       total: 5,

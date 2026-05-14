@@ -117,8 +117,8 @@ const LeaderboardPage = () => {
                 <h3 className="font-bold mb-1 truncate">{p?.username}</h3>
                 <p className={`text-[10px] uppercase font-black tracking-widest mb-3 ${levelColors[p?.level] || 'text-gray-500'}`}>{p?.level}</p>
                 <div className="flex justify-center gap-4 text-xs">
-                  <span className="flex items-center gap-1 text-purple font-bold"><Zap className="w-3 h-3" />{(p?.xp || 0).toLocaleString()}</span>
                   <span className="flex items-center gap-1 text-yellow font-bold"><Flame className="w-3 h-3" />{p?.streak}d</span>
+                  <span className="flex items-center gap-1 text-purple-400 font-bold"><Trophy className="w-3 h-3" />{p?.lessons_completed}</span>
                 </div>
               </GlassCard>
             </motion.div>
@@ -138,9 +138,8 @@ const LeaderboardPage = () => {
                 <tr className="bg-white/5 text-[10px] uppercase tracking-widest text-gray-500 font-bold">
                   <th className="px-6 py-4">Rank</th>
                   <th className="px-6 py-4">Learner</th>
-                  <th className="px-6 py-4">XP</th>
+                  <th className="px-6 py-4">Lessons</th>
                   <th className="px-6 py-4 hidden md:table-cell">Streak</th>
-                  <th className="px-6 py-4 hidden md:table-cell">Lessons</th>
                 </tr>
               </thead>
               <tbody>
@@ -175,16 +174,13 @@ const LeaderboardPage = () => {
                     </td>
                     <td className="px-6 py-5">
                       <span className="font-bold text-white flex items-center gap-1">
-                        <Zap className="w-3 h-3 text-purple" />{(row.xp || 0).toLocaleString()}
+                        <Trophy className="w-3 h-3 text-purple" />{row.lessons_completed}
                       </span>
                     </td>
                     <td className="px-6 py-5 hidden md:table-cell">
                       <span className="text-gray-400 text-sm flex items-center gap-1">
                         <Flame className="w-3 h-3 text-yellow" />{row.streak} days
                       </span>
-                    </td>
-                    <td className="px-6 py-5 hidden md:table-cell text-gray-400 text-sm">
-                      {row.lessons_completed}
                     </td>
                   </motion.tr>
                 ))}

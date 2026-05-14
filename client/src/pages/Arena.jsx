@@ -2,7 +2,6 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
-  Gamepad2, Trophy, Clock, Zap, 
   Search, Filter, ChevronRight, Star,
   Bug, Scissors, Rocket, Sword
 } from 'lucide-react';
@@ -25,8 +24,8 @@ const ChallengeCard = ({ title, type, difficulty, xp, icon: Icon, color }) => (
     
     <div className="flex items-center justify-between pt-6 border-t border-white/5">
       <div className="flex items-center gap-2">
-        <Zap className="w-4 h-4 text-purple" />
-        <span className="text-sm font-bold text-purple">+{xp} XP</span>
+        <Trophy className="w-4 h-4 text-purple" />
+        <span className="text-sm font-bold text-purple">Win Pride</span>
       </div>
       <Button size="sm" variant="ghost" className="group-hover:bg-purple group-hover:text-black group-hover:border-purple">
         Battle <ChevronRight className="w-4 h-4 ml-1" />
@@ -117,7 +116,7 @@ const Arena = () => {
               <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center mb-2">
                 <Trophy className="w-6 h-6 text-gray-400" />
               </div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Unlock at Level 10</p>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Coming Soon</p>
             </div>
             <div className="mb-6 p-4 rounded-2xl bg-gray-800 w-fit">
               <Rocket className="w-8 h-8 text-gray-600" />
@@ -142,15 +141,14 @@ const Arena = () => {
                   <th className="px-8 py-4 font-bold">User</th>
                   <th className="px-8 py-4 font-bold">Challenges Won</th>
                   <th className="px-8 py-4 font-bold">Win Rate</th>
-                  <th className="px-8 py-4 font-bold">XP</th>
                 </tr>
               </thead>
               <tbody className="text-sm">
                 {[
-                  { rank: 1, user: "ByteBandit", won: 142, rate: "94%", xp: "45,200", color: "text-yellow" },
-                  { rank: 2, user: "ReactRacer", won: 128, rate: "89%", xp: "38,150", color: "text-gray-300" },
-                  { rank: 3, user: "NodeNinja", won: 115, rate: "82%", xp: "32,900", color: "text-orange-400" },
-                  { rank: 4, user: "CodeKing", won: 98, rate: "78%", xp: "28,400", color: "text-white" },
+                  { rank: 1, user: "ByteBandit", won: 142, rate: "94%", color: "text-yellow" },
+                  { rank: 2, user: "ReactRacer", won: 128, rate: "89%", color: "text-gray-300" },
+                  { rank: 3, user: "NodeNinja", won: 115, rate: "82%", color: "text-orange-400" },
+                  { rank: 4, user: "CodeKing", won: 98, rate: "78%", color: "text-white" },
                 ].map((row, i) => (
                   <tr key={i} className="border-t border-white/5 hover:bg-white/5 transition-colors group">
                     <td className={`px-8 py-6 font-bold ${row.color}`}>#{row.rank}</td>
@@ -162,7 +160,6 @@ const Arena = () => {
                     </td>
                     <td className="px-8 py-6 text-gray-400">{row.won}</td>
                     <td className="px-8 py-6 text-gray-400">{row.rate}</td>
-                    <td className="px-8 py-6 font-bold text-white">{row.xp}</td>
                   </tr>
                 ))}
               </tbody>

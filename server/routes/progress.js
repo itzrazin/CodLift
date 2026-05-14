@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const auth = require('../middleware/auth');
-const { calculateXP, getRankForXP, getNextRank } = require('../utils/xpEngine');
 
 // ─── GET: User progress summary ───────────────────────────────────────────────
 // Used by the dashboard to determine which lessons are unlocked.
@@ -23,10 +22,7 @@ router.get('/user/progress', auth, async (req, res) => {
 
     res.json({
       completed_lessons: completedLessonIds,
-      progress_data:     completedExercises,
-      current_xp:        currentXP,
-      rank:              getRankForXP(currentXP),
-      next_rank:         getNextRank(currentXP)
+      progress_data:     completedExercises
     });
   } catch (error) {
     console.error('Error fetching user progress:', error);
@@ -55,15 +51,9 @@ router.post('/user/update-progress', auth, async (req, res) => {
     );
     const alreadyCompleted = existing.rows.length > 0;
 
-    // Server-side XP calculation — never trust client
-    const { xp: xpEarned, breakdown } = alreadyCompleted
-      ? { xp: 0, breakdown: {} }
-      : calculateXP({
-          exerciseId:  exercise_id,
-          lessonId:    lesson_id,
-          solveTimeMs: solve_time_ms || null,
-          streakDays
-        });
+    // Server-side logic - just record completion
+    const xpEarned = 0;
+    const breakdown = {};
 
     // Upsert progress row
     await db.query(
@@ -87,12 +77,8 @@ router.post('/user/update-progress', auth, async (req, res) => {
 
     res.json({
       success:       true,
-      xp_awarded:    xpEarned,
-      current_xp:    currentXP,
       already_done:  alreadyCompleted,
-      breakdown,
-      rank:          getRankForXP(currentXP),
-      next_rank:     getNextRank(currentXP)
+      lessons_completed: parseInt(streakDays) // example replacement value if needed
     });
   } catch (error) {
     console.error('Error updating user progress:', error);

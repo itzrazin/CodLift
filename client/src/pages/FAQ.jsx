@@ -53,7 +53,7 @@ const FAQ = () => {
     },
     {
       question: "Can I track my progress?",
-      answer: "Absolutely. CodLift features a gamified dashboard where you can track your XP (Experience Points), daily streaks, and skill tree level. Your progress is synced across devices, allowing you to resume your learning journey exactly where you left off."
+      answer: "Absolutely. CodLift features a gamified dashboard where you can track your daily streaks and skill tree progress. Your progress is synced across devices, allowing you to resume your learning journey exactly where you left off."
     },
     {
       question: "Does CodLift provide a certificate?",

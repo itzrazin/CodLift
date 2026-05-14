@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, ChevronRight, Zap, Trophy, X } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Trophy, X } from 'lucide-react';
 
 // ─── Confetti Particle ─────────────────────────────────────────────────────────
 const COLORS  = ['#a855f7', '#ffd60a', '#22d3ee', '#f472b6', '#4ade80', '#fb923c'];
@@ -162,49 +162,7 @@ export function SuccessModal({
                 <p className="text-gray-400 text-sm">Proof of correctness verified ✅</p>
               </motion.div>
 
-              {/* XP Badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1   }}
-                transition={{ delay: 0.35, type: 'spring' }}
-                className="flex justify-center mb-6"
-              >
-                <div className="flex items-center gap-3 bg-purple/10 border border-purple/30 px-6 py-3 rounded-2xl shadow-[0_0_20px_rgba(168,85,247,0.2)]">
-                  <Zap className="w-6 h-6 text-purple" />
-                  <span className="text-3xl font-syne font-extrabold text-white">
-                    +{xpEarned} <span className="text-purple text-lg">XP</span>
-                  </span>
-                </div>
-              </motion.div>
 
-              {/* XP Breakdown (only shown when interesting) */}
-              {(breakdown.speedBonus > 0 || (breakdown.streakMultiplier && breakdown.streakMultiplier > 1) || (breakdown.difficultyMultiplier && breakdown.difficultyMultiplier > 1)) && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.45 }}
-                  className="mb-6 bg-white/3 rounded-xl p-3 text-xs text-gray-400 space-y-1 border border-white/5"
-                >
-                  {breakdown.difficultyMultiplier > 1 && (
-                    <div className="flex justify-between">
-                      <span>Difficulty bonus</span>
-                      <span className="text-yellow font-bold">×{breakdown.difficultyMultiplier}</span>
-                    </div>
-                  )}
-                  {breakdown.streakMultiplier > 1 && (
-                    <div className="flex justify-between">
-                      <span>🔥 Streak multiplier ({breakdown.streakDays}d)</span>
-                      <span className="text-orange-400 font-bold">×{breakdown.streakMultiplier}</span>
-                    </div>
-                  )}
-                  {breakdown.speedBonus > 0 && (
-                    <div className="flex justify-between">
-                      <span>⚡ Speed bonus</span>
-                      <span className="text-cyan-400 font-bold">+{breakdown.speedBonus}</span>
-                    </div>
-                  )}
-                </motion.div>
-              )}
 
               {/* CTA Button */}
               <motion.button

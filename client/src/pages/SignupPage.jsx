@@ -21,7 +21,7 @@ const perks = [
   'Free forever — no credit card',
   'Monaco IDE (same as VS Code)',
   'AI-powered feedback on your code',
-  'XP, streaks & leaderboard'
+  'Streaks & leaderboard'
 ];
 
 const SignupPage = () => {

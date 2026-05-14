@@ -56,7 +56,6 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
   const [progress, setProgress]     = useState([]);
-  const [rankInfo, setRankInfo]     = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar toggle
 
   useEffect(() => {
@@ -72,13 +71,7 @@ const Dashboard = () => {
         const data = await res.json();
         // data.completed_lessons is an array of lesson IDs
         setProgress(data.completed_lessons || []);
-        if (data.rank) {
-          setRankInfo({
-            current: data.rank,
-            next: data.next_rank,
-            xp: data.current_xp || 0
-          });
-        }
+
       } else {
         // Fallback to local
         const local = JSON.parse(localStorage.getItem('codlift_progress_lessons') || '[]');
@@ -143,14 +136,13 @@ const Dashboard = () => {
   const completedCount = skillTree.filter(n => n.status === 'completed').length;
 
   const stats = [
-    { label: 'Total XP', value: (user.xp_total || 0).toLocaleString(), icon: Zap, color: 'text-purple' },
     { label: 'Day Streak', value: user.current_streak || 0, icon: Flame, color: 'text-yellow' },
     { label: 'Lessons Done', value: completedCount, icon: Trophy, color: 'text-purple-400' },
   ];
 
   return (
     <div className="min-h-screen bg-background flex text-white font-sans">
-      <SEO title="Dashboard | CodLift" description="Track your coding progress, XP, and continue learning." url="/dashboard" />
+      <SEO title="Dashboard | CodLift" description="Track your coding progress, streaks, and continue learning." url="/dashboard" />
 
       {/* ── Mobile sidebar overlay ──────────────────────────────────────── */}
       <AnimatePresence>
@@ -228,7 +220,7 @@ const Dashboard = () => {
               Welcome back, <span className="text-gradient-purple">{user.username}</span>!
             </h1>
             
-            {/* ── Gamified Rank & XP Bar HUD ── */}
+            {/* ── Gamified Rank HUD ── */}
             {rankInfo && (
               <div className="mt-4 max-w-md">
                 <div className="flex items-end justify-between mb-2">
@@ -236,36 +228,7 @@ const Dashboard = () => {
                     <span className="text-2xl">{rankInfo.current.badge}</span>
                     <span className="font-bold text-lg text-purple-light">{rankInfo.current.title}</span>
                   </div>
-                  {rankInfo.next && (
-                    <span className="text-xs text-gray-400 font-mono">
-                      {rankInfo.xp} / {rankInfo.next.xp_required} XP
-                    </span>
-                  )}
                 </div>
-                
-                {rankInfo.next ? (
-                  <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden shadow-[inset_0_2px_4px_rgba(0,0,0,0.4)]">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min(100, Math.max(0, ((rankInfo.xp - rankInfo.current.xp_required) / (rankInfo.next.xp_required - rankInfo.current.xp_required)) * 100))}%` }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-purple to-cyan-400 rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)] relative"
-                    >
-                      {/* Shine effect */}
-                      <div className="absolute top-0 right-0 bottom-0 left-0 bg-gradient-to-r from-transparent via-white/40 to-transparent w-10 animate-[slide_2s_ease-in-out_infinite]" />
-                    </motion.div>
-                  </div>
-                ) : (
-                  <div className="w-full bg-white/10 h-2.5 rounded-full overflow-hidden flex items-center justify-center relative">
-                     <div className="absolute inset-0 bg-gradient-to-r from-yellow to-orange-500 opacity-80" />
-                     <span className="relative z-10 text-[8px] font-black tracking-widest text-black">MAX RANK ACHIEVED</span>
-                  </div>
-                )}
-                {rankInfo.next && (
-                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-2">
-                    {rankInfo.next.xp_required - rankInfo.xp} XP to {rankInfo.next.title} {rankInfo.next.badge}
-                  </p>
-                )}
               </div>
             )}
             {!rankInfo && <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>}

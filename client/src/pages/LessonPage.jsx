@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { XPAnimation }  from '../components/ui/XPAnimation';
 import { SuccessModal } from '../components/ui/SuccessModal';
 import { SEO }          from '../utils/SEO';
 import { API_URL }      from '../utils/config';
@@ -26,9 +25,6 @@ const LessonPage = () => {
   const [hintText, setHintText]   = useState('');
   const [status, setStatus]       = useState('idle'); // idle | running | success | error
   const [message, setMessage]     = useState('');
-  const [showXP, setShowXP]       = useState(false);
-  const [xpEarned, setXpEarned]   = useState(0);
-  const [xpBreakdown, setXpBreakdown] = useState({});
   const [showModal, setShowModal] = useState(false);
 
   // Track when the user starts editing so we can send solve_time_ms to the server
@@ -218,10 +214,10 @@ const LessonPage = () => {
         if (isFirstPass) {
           localStorage.setItem(completedKey, '1');
 
-          // Sync to backend — backend computes XP server-side, we use its result
+          // Sync to backend
           if (token) {
             try {
-              const progressRes = await fetch(`${API_URL}/user/update-progress`, {
+              await fetch(`${API_URL}/user/update-progress`, {
                 method:  'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -232,24 +228,9 @@ const LessonPage = () => {
                   exercise_id:  exercise.number.toString(),
                   code_submitted: code,
                   solve_time_ms: solveTimeMs
-                  // NOTE: xp_earned is intentionally NOT sent — server computes it
                 })
               });
-
-              if (progressRes.ok) {
-                const progressData = await progressRes.json();
-                const earnedXP     = progressData.xp_awarded || 0;
-
-                if (earnedXP > 0) {
-                  // Update local user XP from server's authoritative value
-                  updateProgress(earnedXP);
-                  setXpEarned(earnedXP);
-                  setXpBreakdown(progressData.breakdown || {});
-                  setShowXP(true);
-                  setTimeout(() => setShowXP(false), 3000);
-                }
-              }
-            } catch { /* non-blocking — progress sync failed silently */ }
+            } catch { /* non-blocking */ }
           }
         }
 
@@ -299,14 +280,11 @@ const LessonPage = () => {
         url={`/learn/${level}/${slug}/${exerciseId}`}
       />
 
-      {/* XP float animation */}
-      {showXP && <XPAnimation amount={xpEarned} />}
+
 
       {/* Challenge Complete Modal */}
       <SuccessModal
         isOpen={showModal}
-        xpEarned={xpEarned}
-        breakdown={xpBreakdown}
         exerciseTitle={exercise.title}
         isLastExercise={exercise.number >= exercise.total}
         onNext={goNext}
@@ -348,8 +326,8 @@ const LessonPage = () => {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="px-3 py-1 rounded-full bg-yellow/10 border border-yellow/20 text-yellow text-xs font-bold flex items-center gap-1">
-            <Sparkles className="w-3 h-3" /> {user?.xp_total || 0} XP
+          <div className="px-3 py-1 rounded-full bg-purple/10 border border-purple/20 text-purple text-xs font-bold flex items-center gap-1">
+            <Rocket className="w-3 h-3" /> {user?.lessons_completed || 0} Lessons
           </div>
           <div className="hidden md:flex items-center gap-1">
             {exercise.number > 1 && (
