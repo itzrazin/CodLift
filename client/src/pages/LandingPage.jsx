@@ -22,8 +22,8 @@ const CTA = () => {
             INITIATE SEQUENCE IN <span className="text-gradient-purple drop-shadow-[0_0_15px_rgba(255,0,255,0.5)]">60 SECONDS.</span>
           </h2>
           <p className="text-lg text-gray-400 mb-12 max-w-2xl mx-auto font-mono">
-            > SYSTEM READY. NO CREDIT CARD REQUIRED. 
-            <br />> PURE GAMIFIED LEARNING ENGINE ONLINE.
+            &gt; SYSTEM READY. NO CREDIT CARD REQUIRED. 
+            <br />&gt; PURE GAMIFIED LEARNING ENGINE ONLINE.
           </p>
           <Button size="lg" className="mx-auto" onClick={() => navigate(localStorage.getItem('codlift_token') ? '/dashboard' : '/signup')}>
             {localStorage.getItem('codlift_token') ? 'RESUME QUEST' : 'START QUEST'} <ArrowRight className="w-6 h-6" />

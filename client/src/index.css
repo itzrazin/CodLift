@@ -95,6 +95,7 @@
     z-index: 50;
     pointer-events: none;
   }
+}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {

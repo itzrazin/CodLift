@@ -22,8 +22,8 @@ export const Footer = () => {
               <span className="text-xl font-syne font-extrabold tracking-widest text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">CODLIFT</span>
             </div>
             <p className="text-gray-400 font-mono max-w-sm mb-8 text-sm uppercase leading-relaxed">
-              > THE WORLD'S MOST ENGAGING LEARNING ENGINE.
-              <br />> GAMIFIED TO THE MAX. POWERED BY REAL PROJECTS.
+              &gt; THE WORLD'S MOST ENGAGING LEARNING ENGINE.
+              <br />&gt; GAMIFIED TO THE MAX. POWERED BY REAL PROJECTS.
             </p>
             <div className="flex gap-4">
               {/* Social icons */}
@@ -36,28 +36,28 @@ export const Footer = () => {
           <div>
             <h4 className="font-syne font-bold mb-6 uppercase text-cyber-cyan tracking-widest">Learning</h4>
             <ul className="space-y-4 text-gray-400 font-mono text-sm uppercase">
-              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> HTML & CSS</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> JavaScript</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> React & Frontend</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> Node & Backend</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">&gt; HTML & CSS</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">&gt; JavaScript</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">&gt; React & Frontend</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">&gt; Node & Backend</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-syne font-bold mb-6 uppercase text-cyber-green tracking-widest">Platform</h4>
             <ul className="space-y-4 text-gray-400 font-mono text-sm uppercase">
-              <li><Link to="/about" className="hover:text-cyber-pink transition-colors">> About Us</Link></li>
-              <li><Link to="/faq" className="hover:text-cyber-pink transition-colors">> FAQ</Link></li>
-              <li><Link to="/blog" className="hover:text-cyber-pink transition-colors">> Blog</Link></li>
-              <li><Link to="/arena" className="hover:text-cyber-pink transition-colors">> Challenges</Link></li>
-              <li><Link to="/leaderboard" className="hover:text-cyber-pink transition-colors">> Leaderboard</Link></li>
-              <li><Link to="/contact" className="hover:text-cyber-pink transition-colors">> Contact</Link></li>
+              <li><Link to="/about" className="hover:text-cyber-pink transition-colors">&gt; About Us</Link></li>
+              <li><Link to="/faq" className="hover:text-cyber-pink transition-colors">&gt; FAQ</Link></li>
+              <li><Link to="/blog" className="hover:text-cyber-pink transition-colors">&gt; Blog</Link></li>
+              <li><Link to="/arena" className="hover:text-cyber-pink transition-colors">&gt; Challenges</Link></li>
+              <li><Link to="/leaderboard" className="hover:text-cyber-pink transition-colors">&gt; Leaderboard</Link></li>
+              <li><Link to="/contact" className="hover:text-cyber-pink transition-colors">&gt; Contact</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t-2 border-white/10 text-gray-500 font-mono text-xs uppercase tracking-widest gap-4">
-          <p>> © {new Date().getFullYear()} CODLIFT PLATFORM. ALL RIGHTS RESERVED.</p>
+          <p>&gt; © {new Date().getFullYear()} CODLIFT PLATFORM. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-8">
             <Link to="/privacy-policy" className="hover:text-white transition-colors">PRIVACY POLICY</Link>
             <Link to="/terms-of-service" className="hover:text-white transition-colors">TERMS OF SERVICE</Link>

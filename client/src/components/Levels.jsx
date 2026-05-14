@@ -63,7 +63,7 @@ export const LevelProgression = () => {
                       node.status === 'locked' ? 'text-gray-600' : 'text-white'
                     }`}>
                       <p className="font-bold text-sm">{node.title}</p>
-                      {node.status === 'current' && <p className="text-xs text-cyber-cyan drop-shadow-[0_0_5px_rgba(0,255,255,0.8)] mt-1">> IN PROGRESS</p>}
+                      {node.status === 'current' && <p className="text-xs text-cyber-cyan drop-shadow-[0_0_5px_rgba(0,255,255,0.8)] mt-1">&gt; IN PROGRESS</p>}
                     </div>
                   </div>
                 ))}
