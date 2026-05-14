@@ -95,10 +95,18 @@ const Dashboard = () => {
     ];
     let foundCurrent = false;
     return beginnerLessons.slice(0, 7).map((lesson, i) => {
-      const isCompleted = completedLessons.has(lesson.id);
+      // 100% Completion Check: Are all exercises in this lesson finished?
+      const completedExercises = globalCompletedLessons[lesson.id] || {};
+      const isCompleted = lesson.exercises.every(ex => completedExercises[ex.number]);
+      
       let status = 'locked';
-      if (isCompleted) status = 'completed';
-      else if (!foundCurrent) { status = 'current'; foundCurrent = true; }
+      if (isCompleted) {
+        status = 'completed';
+      } else if (!foundCurrent) {
+        status = 'current';
+        foundCurrent = true;
+      }
+      
       return {
         title: lesson.title,
         status,

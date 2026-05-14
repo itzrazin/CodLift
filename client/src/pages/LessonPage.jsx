@@ -59,12 +59,30 @@ const LessonPage = () => {
 
   // ─── Load exercise data ───────────────────────────────────────────────────
   const fetchExercise = async () => {
+    // RESET STATE for isolation
+    setLesson(null);
+    setExercise(null);
+    setCode('');
+    setOutput('');
+    setStatus('idle');
+    setMessage('');
+    setShowHint(false);
+    setHintText('');
+    setCodeEdited(false);
+    startTimeRef.current = null;
+
     const localLesson = clientCurriculum.find(l => l.id === slug);
-    if (!localLesson) return;
+    if (!localLesson) {
+      navigate('/dashboard');
+      return;
+    }
 
     const exIdx = parseInt(exerciseId, 10) - 1;
     const ex    = localLesson.exercises[exIdx];
-    if (!ex) return;
+    if (!ex) {
+      navigate('/dashboard');
+      return;
+    }
 
     setLesson({
       id:          localLesson.id,
@@ -89,27 +107,25 @@ const LessonPage = () => {
         });
         if (res.ok) {
           const data = await res.json();
+          // Find specifically this exercise's progress
           const saved = data.progress_data?.find(
             p => p.lesson_id === slug && p.exercise_id === exerciseId.toString()
           );
           if (saved?.code_content) initialCode = saved.code_content;
         }
-      } catch { /* backend offline — use localStorage fallback */ }
+      } catch (err) { 
+        console.warn('Backend progress fetch failed, falling back to local storage', err);
+      }
     }
 
-    // Fall back to localStorage draft if backend had nothing new
-    if (initialCode === ex.initial_code) {
+    // Fall back to localStorage draft ONLY if backend had nothing
+    if (initialCode === (ex.initial_code || '')) {
       const localSaved = localStorage.getItem(`codlift_code_${level}_${slug}_${exerciseId}`);
       if (localSaved) initialCode = localSaved;
     }
 
     setCode(initialCode);
-    setStatus('idle');
-    setMessage('');
-    setShowHint(false);
-    setHintText('');
-    setCodeEdited(initialCode !== ex.initial_code);
-    startTimeRef.current = null;
+    setCodeEdited(initialCode !== (ex.initial_code || ''));
     setActiveTab(
       localLesson.language === 'html' || localLesson.language === 'css' ? 'preview' : 'console'
     );
@@ -169,14 +185,16 @@ const LessonPage = () => {
 
   // ─── Submit & Verify ──────────────────────────────────────────────────────
   const handleSubmit = async () => {
+    if (status === 'running') return;
     setStatus('running');
+    setMessage('Verifying your code...');
 
-    // Capture solve time (ms) — capped at 10 minutes
     const solveTimeMs = startTimeRef.current
       ? Math.min(Date.now() - startTimeRef.current, 600_000)
       : null;
 
     try {
+      // 1. Verify code via AI/Sandbox
       const res  = await fetch(`${API_URL}/execute/verify`, {
         method:  'POST',
         headers: {
@@ -191,11 +209,10 @@ const LessonPage = () => {
           task:       exercise.task,
           language:   lesson.language,
           test_cases: exercise.test_cases,
-          start_time: startTimeRef.current  // server uses this for speed bonus
+          start_time: startTimeRef.current
         })
       });
 
-      // Handle 429 rate limit
       if (res.status === 429) {
         const data = await res.json();
         setStatus('error');
@@ -206,23 +223,23 @@ const LessonPage = () => {
       const data = await res.json();
 
       if (data.isCorrect) {
-        // Sync to backend first, before marking success to lock UI
+        // 2. BULLETPROOF PROGRESSION: Must save to backend before marking success
         if (token) {
-          try {
-            await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
-          } catch (err) {
-            console.error('Failed to save progress', err);
-            // We can optionally show a warning toast here, but we still allow them to proceed
+          setMessage('Saving progress to mainframe...');
+          const saveResult = await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
+          
+          if (!saveResult.success) {
+            setStatus('error');
+            setMessage(`Correct code, but failed to sync progress: ${saveResult.error}. Please try again.`);
+            return;
           }
         } else {
-          // Fallback for non-logged in users (though protected route)
-          const completedKey = `codlift_completed_${slug}_${exercise.number}`;
-          localStorage.setItem(completedKey, '1');
+          // Local fallback
+          localStorage.setItem(`codlift_completed_${slug}_${exercise.number}`, '1');
         }
 
-        // Clear the draft from local storage since it's successfully submitted
+        // 3. SUCCESS STATE: Only reached if everything above passed
         localStorage.removeItem(`codlift_code_${level}_${slug}_${exerciseId}`);
-
         setStatus('success');
         setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
         setShowModal(true);
@@ -230,9 +247,10 @@ const LessonPage = () => {
         setStatus('error');
         setMessage(data.feedback || 'Not quite right. Try again! 💪');
       }
-    } catch {
+    } catch (err) {
+      console.error('Submission error:', err);
       setStatus('error');
-      setMessage('Verification failed. Check your connection and try again.');
+      setMessage('Network error during verification. Please check your connection.');
     }
   };
 
@@ -293,12 +311,16 @@ const LessonPage = () => {
               <BookOpen className="w-3 h-3 text-black" />
             </div>
           <div className="flex flex-col">
-            <nav className="flex text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-0.5 items-center space-x-1.5">
-              <span className="capitalize hidden sm:inline-block">{lesson.level} Track</span>
-              <ChevronRight className="w-3 h-3 hidden sm:inline-block" />
-              <span className="hidden sm:inline-block">{lesson.title}</span>
-              <ChevronRight className="w-3 h-3 hidden sm:inline-block" />
-              <span className="text-purple truncate max-w-[200px]">{exercise.title}</span>
+            <nav className="flex text-[10px] text-gray-500 uppercase tracking-widest font-black mb-0.5 items-center space-x-1.5">
+              <Link to="/dashboard" className="hover:text-white transition-colors capitalize hidden sm:inline-block">
+                {level} Track
+              </Link>
+              <ChevronRight className="w-2.5 h-2.5 hidden sm:inline-block opacity-30" />
+              <span className="hidden sm:inline-block text-gray-400">{lesson.title}</span>
+              <ChevronRight className="w-2.5 h-2.5 hidden sm:inline-block opacity-30" />
+              <span className="text-cyber-cyan truncate max-w-[200px] border-b border-cyber-cyan/30">
+                {exercise.title}
+              </span>
             </nav>
             <p className="text-xs text-gray-400 font-medium">
               Exercise {exercise.number} of {exercise.total}
@@ -499,6 +521,23 @@ const LessonPage = () => {
           </div>
 
           <div className="flex-1 overflow-hidden relative bg-[#080b10]">
+            {/* Loading Overlay for State Isolation */}
+            <AnimatePresence>
+              {(!code && !codeEdited) && (
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 bg-navy/80 z-20 flex items-center justify-center backdrop-blur-md"
+                >
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-8 h-8 border-2 border-cyber-cyan border-t-transparent rounded-full animate-spin" />
+                    <span className="text-[10px] text-cyber-cyan font-mono animate-pulse uppercase tracking-widest">Inhibiting State Bleed...</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {status === 'running' && (
               <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center backdrop-blur-sm">
                 <div className="flex flex-col items-center gap-3">
@@ -508,7 +547,7 @@ const LessonPage = () => {
               </div>
             )}
             <Editor
-              key={`${slug}-${exerciseId}`}
+              key={`editor-${slug}-${exerciseId}`}
               height="100%"
               language={editorLang}
               theme="vs-dark"
@@ -524,6 +563,7 @@ const LessonPage = () => {
                 lineNumbers:           'on',
                 renderLineHighlight:   'gutter',
                 tabSize:               2,
+                automaticLayout:       true,
               }}
             />
           </div>

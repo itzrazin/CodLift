@@ -49,7 +49,7 @@ export const LessonProvider = ({ children }) => {
 
   // Centralized updateUserProgress function
   const submitProgress = async (trackId, exerciseId, codeSubmitted, solveTimeMs) => {
-    if (!token) return false;
+    if (!token) return { success: false, error: 'No authentication token' };
     
     try {
       const res = await axios.post(`${API_URL}/user/update-progress`, {
@@ -62,21 +62,20 @@ export const LessonProvider = ({ children }) => {
       });
 
       if (res.data.success) {
-        // Optimistic UI update
-        setCompletedLessons(prev => ({
-          ...prev,
-          [trackId]: {
-            ...(prev[trackId] || {}),
-            [exerciseId]: true
-          }
-        }));
+        // Strict state update to ensure "Session Gatekeeping" works immediately
+        setCompletedLessons(prev => {
+          const updated = { ...prev };
+          if (!updated[trackId]) updated[trackId] = {};
+          updated[trackId][exerciseId] = true;
+          return updated;
+        });
         
-        return true;
+        return { success: true };
       }
-      return false;
+      return { success: false, error: res.data.error || 'Unknown server error' };
     } catch (err) {
       console.error('Failed to update progress', err);
-      throw err;
+      return { success: false, error: err.message };
     }
   };
 
