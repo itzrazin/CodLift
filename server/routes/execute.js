@@ -133,7 +133,7 @@ router.post('/verify', auth, async (req, res) => {
     if (manualResult && !manualResult.isCorrect) {
       return res.json(manualResult); // Fast-fail — wrong
     }
-    if (manualResult && manualResult.isCorrect && !test_cases?.force_ai) {
+    if (manualResult && manualResult.isCorrect) {
       return res.json(manualResult); // Fast-accept — correct
     }
   }
@@ -174,90 +174,29 @@ router.post('/verify', auth, async (req, res) => {
     actualOutput = code;
   }
 
-  // ── Step 3: AI Semantic Verification ─────────────────────────────────────
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
-  if (!apiKey || apiKey === 'your_openrouter_key_here') {
-    // No AI key — fall back to expected_output string match
-    const expected = test_cases?.expected_output || '';
-    const success  = code.toLowerCase().includes(String(expected).toLowerCase());
-    return res.json({
-      isCorrect: success,
-      feedback:  success
-        ? '### ✅ Accepted\n\nYour code contains the required output. (AI validator offline)'
-        : `### ❌ Rejected\n\nYour code must include: \`${expected}\``
-    });
+  // ── Step 3: Deterministic Fallback Verification (AI Removed) ─────────────
+  const expected = test_cases?.expected_output || '';
+  const solutionText = test_cases?.solution || '';
+  
+  let isCorrect = false;
+  
+  if (expected) {
+    isCorrect = code.toLowerCase().includes(String(expected).toLowerCase()) || actualOutput.toLowerCase().includes(String(expected).toLowerCase());
+  } else if (solutionText) {
+    // Normalise whitespace to compare structures
+    const normCode = code.replace(/\s+/g, '').toLowerCase();
+    const normSol = solutionText.replace(/\s+/g, '').toLowerCase();
+    isCorrect = normCode.includes(normSol);
+  } else {
+    isCorrect = true; // Fallback to true if no tests specified
   }
-
-  try {
-    const aiRes = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
-      model: 'anthropic/claude-3.5-sonnet',
-      messages: [
-        {
-          role: 'system',
-          content: `You are the CodLift Master Validator — an EXTREMELY STRICT but fair coding judge.
-
-EVALUATION CRITERIA:
-1. SYNTAX: Reject malformed tags, unclosed brackets, invalid HTML.
-2. STRUCTURE: Tags must be properly nested. No stray elements.
-3. LOGIC: Code must exactly fulfill the Specific Task — no more, no less.
-4. COMPARISON: Structurally match any provided solution (whitespace OK, content must match).
-5. QUALITY: Even if the required output is present, broken surrounding code → WRONG.
-
-RESPONSE FORMAT: Raw JSON ONLY — no markdown wrapper:
-{"isCorrect": true/false, "feedback": "Markdown-formatted report"}
-
-FEEDBACK FORMAT:
-- Start with "### ✅ Submission Accepted" or "### ❌ Submission Rejected"
-- If wrong: precise bulleted list of each specific error with the exact tag/line
-- Tone: firm, professional, encouraging. Use emojis sparingly. 🔍 🛠️`
-        },
-        {
-          role: 'user',
-          content: `Exercise Topic: ${topic}
-Language: ${language}
-Specific Task: ${task}
-Instruction Context: ${instruction}
-Test Requirements: ${JSON.stringify(test_cases)}
-
-Student Submission:
-\`\`\`${language}
-${code}
-\`\`\`
-
-Actual Execution Output: "${actualOutput}"
-
-Perform a strict line-by-line verification. Is every requirement met?`
-        }
-      ],
-      max_tokens:      800,
-      temperature:     0,
-      response_format: { type: 'json_object' }
-    }, {
-      timeout: 20000,
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'HTTP-Referer': 'https://codlift.site',
-        'X-Title':      'CodLift'
-      }
-    });
-
-    const raw     = aiRes.data.choices[0].message.content.trim();
-    const clean   = raw.replace(/^```json\s*|```\s*$/g, '').trim();
-    const parsed  = JSON.parse(clean);
-
-    return res.json({
-      isCorrect: !!parsed.isCorrect,
-      feedback:  parsed.feedback
-    });
-
-  } catch (err) {
-    console.error('AI verification failed:', err.response?.data || err.message);
-    return res.json({
-      isCorrect: false,
-      feedback:  '### ⚠️ Verification Unavailable\n\nThe AI validator is temporarily busy. Please try again in 30 seconds. Your progress is safe.'
-    });
-  }
+  
+  return res.json({
+    isCorrect,
+    feedback: isCorrect
+      ? '### ✅ Accepted\n\nYour code successfully fulfills the requirements.'
+      : `### ❌ Rejected\n\nYour code must include the required output: \`${expected}\``
+  });
 });
 
 module.exports = router;

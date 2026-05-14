@@ -20,6 +20,12 @@ function htmlGlobal(code, id) {
   if (opens !== closes)
     errs.push(`Syntax Pitfall: Mismatched angle brackets. You have ${opens} \`<\` and ${closes} \`>\`. Every tag needs both to form a complete element.`);
   
+  if (code.match(/<html[^>]*>/i) && !code.match(/<\/html>/i))
+    errs.push('Syntax Pitfall: You opened an `<html>` tag but forgot to close it with `</html>`.');
+    
+  if (code.match(/<body[^>]*>/i) && !code.match(/<\/body>/i))
+    errs.push('Syntax Pitfall: You opened a `<body>` tag but forgot to close it with `</body>`.');
+  
   const badTag = code.match(/<[a-zA-Z][a-zA-Z0-9]*[^a-zA-Z0-9\s\/>'"=\-_.#:]/);
   if (badTag) errs.push(`Syntax Pitfall: Malformed tag \`${badTag[0]}\`. Ensure there are no stray symbols inside your tags.`);
   
