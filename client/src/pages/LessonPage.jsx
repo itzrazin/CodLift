@@ -304,6 +304,7 @@ const LessonPage = () => {
               Exercise {exercise.number} of {exercise.total}
             </p>
           </div>
+          </div>
         </div>
 
         {/* Progress bar — hidden on very small screens */}
