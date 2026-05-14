@@ -4,7 +4,7 @@ import { Footer } from '../components/Footer';
 import { SEO } from '../utils/SEO';
 import { motion } from 'framer-motion';
 import { GlassCard } from '../components/ui/Core';
-import { HelpCircle, ChevronRight, Zap, Globe, ShieldCheck, Trophy, Sparkles } from 'lucide-react';
+import { HelpCircle, ChevronRight, Globe, ShieldCheck, Trophy } from 'lucide-react';
 
 const FAQItem = ({ question, answer }) => (
   <motion.div 
@@ -92,7 +92,7 @@ const FAQ = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-purple/10 border border-purple/20 text-purple text-xs font-bold mb-6"
             >
-              <Sparkles className="w-3 h-3" /> HELP CENTER
+              <Trophy className="w-3 h-3" /> HELP CENTER
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-syne font-extrabold tracking-tight mb-8">
               Common <span className="text-gradient-purple">Questions</span>
