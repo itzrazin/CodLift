@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLesson } from '../context/LessonContext';
 import { SuccessModal } from '../components/ui/SuccessModal';
 import { SEO }          from '../utils/SEO';
 import { API_URL }      from '../utils/config';
@@ -32,7 +33,8 @@ const LessonPage = () => {
 
   const navigate = useNavigate();
   const { level, slug, exerciseId = '1' } = useParams();
-  const { user, token, updateProgress } = useAuth();
+  const { user, token } = useAuth();
+  const { submitProgress } = useLesson();
 
   useEffect(() => {
     fetchExercise();
@@ -204,37 +206,25 @@ const LessonPage = () => {
       const data = await res.json();
 
       if (data.isCorrect) {
-        setStatus('success');
-        setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
-
-        // Guard: only award XP on first completion (localStorage acts as cache)
-        const completedKey  = `codlift_completed_${slug}_${exercise.number}`;
-        const isFirstPass   = !localStorage.getItem(completedKey);
-
-        if (isFirstPass) {
-          localStorage.setItem(completedKey, '1');
-
-          // Sync to backend
-          if (token) {
-            try {
-              await fetch(`${API_URL}/user/update-progress`, {
-                method:  'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization:  `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                  lesson_id:    lesson.id,
-                  exercise_id:  exercise.number.toString(),
-                  code_submitted: code,
-                  solve_time_ms: solveTimeMs
-                })
-              });
-            } catch { /* non-blocking */ }
+        // Sync to backend first, before marking success to lock UI
+        if (token) {
+          try {
+            await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
+          } catch (err) {
+            console.error('Failed to save progress', err);
+            // We can optionally show a warning toast here, but we still allow them to proceed
           }
+        } else {
+          // Fallback for non-logged in users (though protected route)
+          const completedKey = `codlift_completed_${slug}_${exercise.number}`;
+          localStorage.setItem(completedKey, '1');
         }
 
-        // Show the success modal regardless of XP (re-completion still deserves celebration)
+        // Clear the draft from local storage since it's successfully submitted
+        localStorage.removeItem(`codlift_code_${level}_${slug}_${exerciseId}`);
+
+        setStatus('success');
+        setMessage(data.feedback || 'Excellent! Challenge complete! 🎉');
         setShowModal(true);
       } else {
         setStatus('error');
@@ -302,12 +292,17 @@ const LessonPage = () => {
             <div className="w-6 h-6 bg-purple rounded flex items-center justify-center">
               <BookOpen className="w-3 h-3 text-black" />
             </div>
-            <div>
-              <h2 className="text-sm font-bold tracking-tight leading-none">{lesson.title}</h2>
-              <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold">
-                Exercise {exercise.number} / {exercise.total}
-              </p>
-            </div>
+          <div className="flex flex-col">
+            <nav className="flex text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-0.5 items-center space-x-1.5">
+              <span className="capitalize hidden sm:inline-block">{lesson.level} Track</span>
+              <ChevronRight className="w-3 h-3 hidden sm:inline-block" />
+              <span className="hidden sm:inline-block">{lesson.title}</span>
+              <ChevronRight className="w-3 h-3 hidden sm:inline-block" />
+              <span className="text-purple truncate max-w-[200px]">{exercise.title}</span>
+            </nav>
+            <p className="text-xs text-gray-400 font-medium">
+              Exercise {exercise.number} of {exercise.total}
+            </p>
           </div>
         </div>
 
@@ -486,9 +481,18 @@ const LessonPage = () => {
                 size="sm"
                 onClick={handleSubmit}
                 disabled={status === 'running' || status === 'success'}
-                className="h-7 text-xs px-3"
+                className="h-7 text-xs px-3 min-w-[80px]"
               >
-                <Send className="w-3 h-3 mr-1" /> Submit
+                {status === 'running' ? (
+                  <>
+                    <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin mr-1" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3 h-3 mr-1" /> Submit
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -503,6 +507,7 @@ const LessonPage = () => {
               </div>
             )}
             <Editor
+              key={`${slug}-${exerciseId}`}
               height="100%"
               language={editorLang}
               theme="vs-dark"

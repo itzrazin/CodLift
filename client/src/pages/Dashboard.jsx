@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLesson } from '../context/LessonContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
 import { Logo } from '../components/ui/Logo';
@@ -55,33 +56,8 @@ const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [progress, setProgress]     = useState([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false); // mobile sidebar toggle
-
-  useEffect(() => {
-    fetchProgress();
-  }, []);
-
-  const fetchProgress = async () => {
-    try {
-      const res = await fetch(`${API_URL}/user/progress`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('codlift_token')}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        // data.completed_lessons is an array of lesson IDs
-        setProgress(data.completed_lessons || []);
-
-      } else {
-        // Fallback to local
-        const local = JSON.parse(localStorage.getItem('codlift_progress_lessons') || '[]');
-        setProgress(local);
-      }
-    } catch {
-      const local = JSON.parse(localStorage.getItem('codlift_progress_lessons') || '[]');
-      setProgress(local);
-    }
-  };
+  const { completedLessons: globalCompletedLessons, loadingProgress } = useLesson();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleResume = async () => {
     try {
@@ -99,11 +75,13 @@ const Dashboard = () => {
     }
   };
 
-  if (!user) return null;
+  if (!user || loadingProgress) return null;
 
   // Build dynamic skill tree from curriculum
   const beginnerLessons = clientCurriculum.filter(l => l.level === 'beginner');
-  const completedLessons = new Set(progress);
+  // Compute progress array (lesson IDs that have at least one completed exercise)
+  const progressArray = Object.keys(globalCompletedLessons);
+  const completedLessons = new Set(progressArray);
 
   const buildSkillTree = () => {
     const positions = [

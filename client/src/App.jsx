@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { LessonProvider } from './context/LessonContext';
 import { Footer } from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 
@@ -110,7 +111,9 @@ function App() {
       <ErrorBoundary>
         <Router>
           <AuthProvider>
-            <AppRoutes />
+            <LessonProvider>
+              <AppRoutes />
+            </LessonProvider>
           </AuthProvider>
         </Router>
       </ErrorBoundary>
