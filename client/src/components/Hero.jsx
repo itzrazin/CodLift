@@ -30,18 +30,18 @@ const CodeMockup = () => {
   }, []);
 
   return (
-    <div className="relative group">
-      <div className="absolute -inset-1 bg-gradient-to-r from-purple to-blue-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000"></div>
-      <div className="relative glass-purple rounded-xl p-1">
-        <div className="bg-navy p-4 rounded-lg font-mono text-sm h-64 overflow-hidden">
+    <div className="relative group perspective-1000">
+      <div className="absolute -inset-2 bg-gradient-to-r from-cyber-pink to-cyber-cyan rounded-xl blur-lg opacity-70 group-hover:opacity-100 transition duration-1000 animate-pulse"></div>
+      <div className="relative bg-cyber-dark border-4 border-cyber-pink rounded-xl p-2 shadow-neo z-10 transform group-hover:rotate-y-12 transition-transform duration-500">
+        <div className="bg-navy p-4 rounded-lg font-mono text-sm h-64 overflow-hidden border-2 border-white/10 scanlines">
           <div className="flex gap-2 mb-4">
-            <div className="w-3 h-3 rounded-full bg-red-500/50"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow/50"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500/50"></div>
+            <div className="w-3 h-3 rounded-none bg-red-500"></div>
+            <div className="w-3 h-3 rounded-none bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-none bg-cyber-green"></div>
           </div>
-          <pre className="text-purple">
+          <pre className="text-cyber-cyan drop-shadow-[0_0_5px_rgba(0,255,255,0.8)]">
             <code>{code}</code>
-            <span className="animate-pulse">|</span>
+            <span className="animate-pulse bg-cyber-pink w-2 inline-block h-4 ml-1"></span>
           </pre>
         </div>
         
@@ -49,28 +49,28 @@ const CodeMockup = () => {
         <motion.div 
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-10 -right-8 glass p-3 rounded-xl shadow-xl flex items-center gap-2 border-yellow/30"
+          className="absolute top-10 -right-8 bg-cyber-dark p-3 border-2 border-orange-500 shadow-[4px_4px_0px_0px_rgba(255,69,0,1)] flex items-center gap-2"
         >
-          <div className="bg-yellow/20 p-2 rounded-lg">
-            <Flame className="w-5 h-5 text-yellow" />
+          <div className="bg-orange-500/20 p-2">
+            <Flame className="w-5 h-5 text-orange-500 drop-shadow-[0_0_5px_rgba(255,69,0,0.8)]" />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase">Streak</p>
-            <p className="text-sm font-bold">14 Days</p>
+            <p className="text-[10px] text-gray-400 uppercase font-black">Streak</p>
+            <p className="text-sm font-bold text-white">14 Days</p>
           </div>
         </motion.div>
 
         <motion.div 
           animate={{ y: [0, 10, 0] }}
           transition={{ duration: 5, repeat: Infinity, delay: 0.5 }}
-          className="absolute bottom-10 -left-8 glass p-3 rounded-xl shadow-xl flex items-center gap-2 border-purple/30"
+          className="absolute bottom-10 -left-8 bg-cyber-dark p-3 border-2 border-cyber-green shadow-neo-green flex items-center gap-2"
         >
-          <div className="bg-purple/20 p-2 rounded-lg">
-            <Zap className="w-5 h-5 text-purple" />
+          <div className="bg-cyber-green/20 p-2">
+            <Zap className="w-5 h-5 text-cyber-green drop-shadow-[0_0_5px_rgba(173,255,47,0.8)]" />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase">Earned</p>
-            <p className="text-sm font-bold">+250 XP</p>
+            <p className="text-[10px] text-gray-400 uppercase font-black">Earned</p>
+            <p className="text-sm font-bold text-white">+250 XP</p>
           </div>
         </motion.div>
       </div>
@@ -141,8 +141,8 @@ export const Hero = () => {
       </div>
       
       {/* Background Glows */}
-      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-purple/10 blur-[120px] rounded-full -z-10"></div>
-      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-yellow/5 blur-[120px] rounded-full -z-10"></div>
+      <div className="absolute top-1/4 -left-20 w-96 h-96 bg-cyber-pink/20 blur-[120px] rounded-full -z-10 animate-pulse"></div>
+      <div className="absolute bottom-1/4 -right-20 w-96 h-96 bg-cyber-cyan/20 blur-[120px] rounded-full -z-10 animate-pulse"></div>
     </section>
   );
 };

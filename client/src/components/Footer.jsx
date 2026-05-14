@@ -12,17 +12,18 @@ export const Footer = () => {
   if (isHidden) return null;
 
   return (
-    <footer className="py-20 border-t border-white/5 bg-background">
-      <div className="container mx-auto px-6">
+    <footer className="py-20 border-t-4 border-cyber-pink bg-cyber-dark relative scanlines overflow-hidden">
+      <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-cyber-pink/10 blur-[100px] rounded-full pointer-events-none"></div>
+      <div className="container mx-auto px-6 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-2 mb-6">
-              <Logo className="w-7 h-7" />
-              <span className="text-xl font-syne font-extrabold">CODLIFT</span>
+            <div className="flex items-center gap-2 mb-6 group cursor-pointer">
+              <Logo className="w-7 h-7 transition-transform group-hover:scale-110 group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+              <span className="text-xl font-syne font-extrabold tracking-widest text-white group-hover:drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-all">CODLIFT</span>
             </div>
-            <p className="text-gray-500 max-w-sm mb-8">
-              The world's most engaging free platform for learning full-stack development.
-              Gamified to the max, powered by real projects.
+            <p className="text-gray-400 font-mono max-w-sm mb-8 text-sm uppercase leading-relaxed">
+              > THE WORLD'S MOST ENGAGING LEARNING ENGINE.
+              <br />> GAMIFIED TO THE MAX. POWERED BY REAL PROJECTS.
             </p>
             <div className="flex gap-4">
               {/* Social icons */}
@@ -33,34 +34,34 @@ export const Footer = () => {
           </div>
 
           <div>
-            <h4 className="font-bold mb-6">Learning</h4>
-            <ul className="space-y-4 text-gray-500 text-sm">
-              <li><Link to="/#curriculum" className="hover:text-purple">HTML & CSS</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-purple">JavaScript</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-purple">React & Frontend</Link></li>
-              <li><Link to="/#curriculum" className="hover:text-purple">Node & Backend</Link></li>
+            <h4 className="font-syne font-bold mb-6 uppercase text-cyber-cyan tracking-widest">Learning</h4>
+            <ul className="space-y-4 text-gray-400 font-mono text-sm uppercase">
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> HTML & CSS</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> JavaScript</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> React & Frontend</Link></li>
+              <li><Link to="/#curriculum" className="hover:text-cyber-pink transition-colors">> Node & Backend</Link></li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-bold mb-6">Platform</h4>
-            <ul className="space-y-4 text-gray-500 text-sm">
-              <li><Link to="/about" className="hover:text-purple">About Us</Link></li>
-              <li><Link to="/faq" className="hover:text-purple">FAQ</Link></li>
-              <li><Link to="/blog" className="hover:text-purple">Blog</Link></li>
-              <li><Link to="/arena" className="hover:text-purple">Challenges</Link></li>
-              <li><Link to="/leaderboard" className="hover:text-purple">Leaderboard</Link></li>
-              <li><Link to="/contact" className="hover:text-purple">Contact</Link></li>
+            <h4 className="font-syne font-bold mb-6 uppercase text-cyber-green tracking-widest">Platform</h4>
+            <ul className="space-y-4 text-gray-400 font-mono text-sm uppercase">
+              <li><Link to="/about" className="hover:text-cyber-pink transition-colors">> About Us</Link></li>
+              <li><Link to="/faq" className="hover:text-cyber-pink transition-colors">> FAQ</Link></li>
+              <li><Link to="/blog" className="hover:text-cyber-pink transition-colors">> Blog</Link></li>
+              <li><Link to="/arena" className="hover:text-cyber-pink transition-colors">> Challenges</Link></li>
+              <li><Link to="/leaderboard" className="hover:text-cyber-pink transition-colors">> Leaderboard</Link></li>
+              <li><Link to="/contact" className="hover:text-cyber-pink transition-colors">> Contact</Link></li>
             </ul>
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t border-white/5 text-gray-600 text-sm gap-4">
-          <p>© {new Date().getFullYear()} CodLift Platform. All rights reserved.</p>
+        <div className="flex flex-col md:flex-row items-center justify-between pt-8 border-t-2 border-white/10 text-gray-500 font-mono text-xs uppercase tracking-widest gap-4">
+          <p>> © {new Date().getFullYear()} CODLIFT PLATFORM. ALL RIGHTS RESERVED.</p>
           <div className="flex gap-8">
-            <Link to="/privacy-policy" className="hover:text-white">Privacy Policy</Link>
-            <Link to="/terms-of-service" className="hover:text-white">Terms of Service</Link>
-            <Link to="/about" className="hover:text-white">About</Link>
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">PRIVACY POLICY</Link>
+            <Link to="/terms-of-service" className="hover:text-white transition-colors">TERMS OF SERVICE</Link>
+            <Link to="/about" className="hover:text-white transition-colors">ABOUT</Link>
           </div>
         </div>
       </div>
@@ -75,7 +76,7 @@ const SocialIcon = ({ href, icon }) => {
     linkedin: <><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></>
   };
   return (
-    <a href={href} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:text-purple transition-colors cursor-pointer">
+    <a href={href} className="w-10 h-10 border-2 border-cyber-pink shadow-neo flex items-center justify-center hover:bg-cyber-pink hover:-translate-y-1 transition-all text-white hover:text-black cursor-pointer bg-cyber-dark">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         {icons[icon]}
       </svg>
