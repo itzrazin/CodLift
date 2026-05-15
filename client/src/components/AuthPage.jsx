@@ -181,7 +181,7 @@ const AuthPage = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4">
             <Button
               variant="ghost"
               size="sm"
@@ -190,15 +190,6 @@ const AuthPage = () => {
             >
               <Chrome size={18} />
               GOOGLE
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              disabled
-              className="border-white/10 text-white opacity-50 grayscale"
-            >
-              <Github size={18} />
-              GITHUB
             </Button>
           </div>
         </GlassCard>
