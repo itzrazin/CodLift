@@ -92,31 +92,39 @@ router.get('/resume', auth, async (req, res) => {
   try {
     const curriculum = require('../data/curriculum');
     const result = await db.query(
-      'SELECT lesson_id, exercise_id FROM progress WHERE user_id = $1 ORDER BY completed_at DESC LIMIT 1',
+      'SELECT lesson_id, exercise_id FROM progress WHERE user_id = $1 AND is_completed = true',
       [req.user.id]
     );
 
-    if (result.rows.length === 0) {
-      const first = curriculum[0];
-      return res.json({
-        nextLesson: {
-          level:      first.level?.toLowerCase() || 'beginner',
-          slug:       first.id,
-          exerciseId: 1
+    const completedSet = new Set(result.rows.map(r => `${r.lesson_id}:${r.exercise_id}`));
+
+    let nextLesson = null;
+    let nextExerciseId = 1;
+
+    for (const lesson of curriculum) {
+      for (let i = 0; i < lesson.exercises.length; i++) {
+        const exNum = i + 1;
+        if (!completedSet.has(`${lesson.id}:${exNum}`)) {
+          nextLesson = lesson;
+          nextExerciseId = exNum;
+          break;
         }
-      });
+      }
+      if (nextLesson) break;
     }
 
-    const last    = result.rows[0];
-    const lastIdx = curriculum.findIndex(l => l.id === last.lesson_id);
-    const nextIdx = (lastIdx + 1 < curriculum.length) ? lastIdx + 1 : lastIdx;
-    const next    = curriculum[nextIdx];
+    if (!nextLesson) {
+      // Completed everything
+      const last = curriculum[curriculum.length - 1];
+      nextLesson = last;
+      nextExerciseId = last.exercises.length;
+    }
 
     res.json({
       nextLesson: {
-        level:      next.level?.toLowerCase() || 'beginner',
-        slug:       next.id,
-        exerciseId: 1
+        level:      nextLesson.level?.toLowerCase() || 'beginner',
+        slug:       nextLesson.id,
+        exerciseId: nextExerciseId
       }
     });
   } catch (error) {

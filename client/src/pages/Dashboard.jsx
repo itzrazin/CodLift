@@ -97,7 +97,7 @@ const Dashboard = () => {
     return beginnerLessons.slice(0, 7).map((lesson, i) => {
       // 100% Completion Check: Are all exercises in this lesson finished?
       const completedExercises = globalCompletedLessons[lesson.id] || {};
-      const isCompleted = lesson.exercises.every(ex => completedExercises[ex.number]);
+      const isCompleted = lesson.exercises.every((ex, idx) => completedExercises[idx + 1]);
       
       let status = 'locked';
       if (isCompleted) {
