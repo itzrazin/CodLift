@@ -6,10 +6,17 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('codelift_token') || null);
+  const [token, setToken] = useState(localStorage.getItem('codlift_token') || localStorage.getItem('codelift_token') || null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Migrate legacy token key if it exists
+    const legacyToken = localStorage.getItem('codelift_token');
+    if (legacyToken) {
+      localStorage.setItem('codlift_token', legacyToken);
+      localStorage.removeItem('codelift_token');
+    }
+
     const verifyToken = async () => {
       if (!token) {
         setLoading(false);
@@ -23,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
       } catch (error) {
         console.error('Session expired or invalid token:', error);
-        localStorage.removeItem('codelift_token');
+        localStorage.removeItem('codlift_token');
         setToken(null);
         setUser(null);
       } finally {
@@ -35,7 +42,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = (newToken, userData) => {
-    localStorage.setItem('codelift_token', newToken);
+    localStorage.setItem('codlift_token', newToken);
     setToken(newToken);
     setUser(userData);
   };
@@ -46,6 +53,7 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
+      localStorage.removeItem('codlift_token');
       localStorage.removeItem('codelift_token');
       setToken(null);
       setUser(null);

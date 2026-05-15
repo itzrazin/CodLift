@@ -58,6 +58,7 @@ pool.query('SELECT NOW()', async (err, res) => {
         -- Crucial fix: Add UNIQUE constraint so ON CONFLICT works in UPSERTs
         ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_user_lesson_exercise_key;
         ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_user_id_lesson_id_exercise_id_key;
+        ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_user_id_lesson_id_key;
         ALTER TABLE progress ADD CONSTRAINT progress_user_lesson_exercise_key UNIQUE(user_id, lesson_id, exercise_id);
       `);
       console.log('✅ Database schema verified/updated.');
