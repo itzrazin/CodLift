@@ -3,6 +3,14 @@
 
 <head>
   <meta charset="UTF-8" />
+  <!-- Standard Favicon Sizes for Google Search & Devices -->
+  <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
+  <link rel="icon" type="image/png" sizes="144x144" href="/favicon-144.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+  <!-- Apple Touch Icon -->
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <!-- SVG Favicon for modern browsers -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
@@ -82,6 +90,10 @@
 </head>
 
 <body class="bg-[#000000] text-white">
+  <!-- SEO: Visually hidden h1 for static crawlers -->
+  <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;">
+    CodLift - Free Coding Website for Beginners. Master coding with interactive lessons and AI-powered feedback.
+  </h1>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
