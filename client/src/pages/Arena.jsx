@@ -3,12 +3,13 @@ import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
   Search, Filter, ChevronRight, Star,
-  Bug, Scissors, Rocket, Sword, Trophy, Gamepad2
+  Bug, Scissors, Rocket, Sword, Trophy, Gamepad2, CheckCircle2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { arenaChallenges } from '../data/challenges';
+import { useLesson } from '../context/LessonContext';
 
-const ChallengeCard = ({ id, title, type, difficulty, xp, icon: Icon, color }) => {
+const ChallengeCard = ({ id, title, type, difficulty, icon: Icon, color, isCompleted }) => {
   const navigate = useNavigate();
   return (
     <GlassCard 
@@ -30,11 +31,19 @@ const ChallengeCard = ({ id, title, type, difficulty, xp, icon: Icon, color }) =
       
       <div className="flex items-center justify-between pt-6 border-t border-white/5">
         <div className="flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-purple" />
-          <span className="text-sm font-bold text-purple">{xp} XP</span>
+          {isCompleted ? (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span className="text-xs font-bold uppercase tracking-wider">Solved</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-gray-400">
+              <span className="text-xs font-bold uppercase tracking-wider">Unsolved</span>
+            </div>
+          )}
         </div>
         <Button size="sm" variant="ghost" className="group-hover:bg-purple group-hover:text-black group-hover:border-purple">
-          Battle <ChevronRight className="w-4 h-4 ml-1" />
+          {isCompleted ? 'Replay' : 'Battle'} <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     </GlassCard>
@@ -44,6 +53,9 @@ const ChallengeCard = ({ id, title, type, difficulty, xp, icon: Icon, color }) =
 const Arena = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { completedLessons, loadingProgress } = useLesson();
+
+  if (loadingProgress) return null;
 
   const filteredChallenges = arenaChallenges.filter(c => 
     c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -88,9 +100,10 @@ const Arena = () => {
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredChallenges.map((c, i) => (
-            <ChallengeCard key={i} {...c} />
-          ))}
+          {filteredChallenges.map((c, i) => {
+            const isCompleted = c.exercises.every((ex, idx) => completedLessons[c.id]?.[idx + 1]);
+            return <ChallengeCard key={i} {...c} isCompleted={isCompleted} />;
+          })}
           
           {/* Locked Challenges */}
           <GlassCard className="p-6 border-white/5 opacity-50 relative overflow-hidden group">

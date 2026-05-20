@@ -36,8 +36,8 @@ export const Features = () => {
     },
     {
       icon: <Trophy className="w-8 h-8 text-yellow" />,
-      title: "XP + Daily Streaks",
-      desc: "Stay motivated like Duolingo. Earn XP and keep your streak alive."
+      title: "Interactive Progress",
+      desc: "Track completed exercises and solves dynamically with direct visual indicators."
     },
     {
       icon: <Rocket className="w-8 h-8 text-purple" />,
@@ -54,7 +54,7 @@ export const Features = () => {
   return (
     <section className="py-24 relative scanlines">
       <div className="container mx-auto px-6 text-center">
-        <h2 className="text-4xl lg:text-5xl mb-16 font-syne font-extrabold uppercase tracking-tight">Everything you need to <span className="text-gradient-purple drop-shadow-[0_0_10px_rgba(255,0,255,0.5)]">Level Up.</span></h2>
+        <h2 className="text-4xl lg:text-5xl mb-16 font-syne font-extrabold uppercase tracking-tight">Everything you need to <span className="text-gradient-purple drop-shadow-[0_0_10px_rgba(255,0,255,0.5)]">Master Coding.</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((f, i) => (
             <GlassCard key={i} className="text-left group border-4 hover:border-cyber-cyan hover:-translate-y-2 transition-all">

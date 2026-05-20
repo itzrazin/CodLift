@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
-import { Trophy, Medal, Crown, ArrowUpRight, User, Flame, Zap, ArrowLeft } from 'lucide-react';
+import { Trophy, Medal, Crown, User, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { SEO } from '../utils/SEO';
 
 const PLACEHOLDER = [
-  { rank: 1, username: 'ByteBandit',   xp: 45200, level: 'master',       streak: 42, lessons_completed: 87 },
-  { rank: 2, username: 'ReactRacer',   xp: 38150, level: 'pro',          streak: 24, lessons_completed: 71 },
-  { rank: 3, username: 'NodeNinja',    xp: 32900, level: 'pro',          streak: 18, lessons_completed: 63 },
-  { rank: 4, username: 'CodeKing',     xp: 28400, level: 'pro',          streak: 12, lessons_completed: 55 },
-  { rank: 5, username: 'AlgoAlice',    xp: 22950, level: 'intermediate', streak: 8,  lessons_completed: 44 },
-  { rank: 6, username: 'PythonPete',   xp: 19800, level: 'intermediate', streak: 31, lessons_completed: 38 },
-  { rank: 7, username: 'CSSChampion', xp: 17500, level: 'beginner',     streak: 14, lessons_completed: 29 },
-  { rank: 8, username: 'GitGud',       xp: 15200, level: 'beginner',     streak: 10, lessons_completed: 22 },
+  { rank: 1, username: 'ByteBandit',   level: 'master',       lessons_completed: 87 },
+  { rank: 2, username: 'ReactRacer',   level: 'pro',          lessons_completed: 71 },
+  { rank: 3, username: 'NodeNinja',    level: 'pro',          lessons_completed: 63 },
+  { rank: 4, username: 'CodeKing',     level: 'pro',          lessons_completed: 55 },
+  { rank: 5, username: 'AlgoAlice',    level: 'intermediate', lessons_completed: 44 },
+  { rank: 6, username: 'PythonPete',   level: 'intermediate', lessons_completed: 38 },
+  { rank: 7, username: 'CSSChampion', level: 'beginner',     lessons_completed: 29 },
+  { rank: 8, username: 'GitGud',       level: 'beginner',     lessons_completed: 22 },
 ];
 
 const levelColors = {
@@ -113,9 +113,11 @@ const LeaderboardPage = () => {
                 </div>
                 <h3 className="font-bold mb-1 truncate">{p?.username}</h3>
                 <p className={`text-[10px] uppercase font-black tracking-widest mb-3 ${levelColors[p?.level] || 'text-gray-500'}`}>{p?.level}</p>
-                <div className="flex justify-center gap-4 text-xs">
-                  <span className="flex items-center gap-1 text-yellow font-bold"><Flame className="w-3 h-3" />{p?.streak}d</span>
-                  <span className="flex items-center gap-1 text-purple-400 font-bold"><Trophy className="w-3 h-3" />{p?.lessons_completed}</span>
+                <div className="flex justify-center text-xs">
+                  <span className="flex items-center gap-1.5 text-purple-400 font-bold">
+                    <Trophy className="w-3.5 h-3.5" />
+                    {p?.lessons_completed} Lessons
+                  </span>
                 </div>
               </GlassCard>
             </motion.div>
@@ -136,7 +138,6 @@ const LeaderboardPage = () => {
                   <th className="px-6 py-4">Rank</th>
                   <th className="px-6 py-4">Learner</th>
                   <th className="px-6 py-4">Lessons</th>
-                  <th className="px-6 py-4 hidden md:table-cell">Streak</th>
                 </tr>
               </thead>
               <tbody>
@@ -172,11 +173,6 @@ const LeaderboardPage = () => {
                     <td className="px-6 py-5">
                       <span className="font-bold text-white flex items-center gap-1">
                         <Trophy className="w-3 h-3 text-purple" />{row.lessons_completed}
-                      </span>
-                    </td>
-                    <td className="px-6 py-5 hidden md:table-cell">
-                      <span className="text-gray-400 text-sm flex items-center gap-1">
-                        <Flame className="w-3 h-3 text-yellow" />{row.streak} days
                       </span>
                     </td>
                   </motion.tr>

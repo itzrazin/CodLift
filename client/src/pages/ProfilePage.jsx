@@ -4,12 +4,14 @@ import { Button, GlassCard } from '../components/ui/Core';
 import { 
   User, Share2, 
   ExternalLink,
-  Calendar, Zap, Flame, Award,
+  Calendar, Zap, Award, Trophy,
   Code2, Layout, Database, Terminal, Rocket,
   CheckCircle2, Lock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useLesson } from '../context/LessonContext';
+import { arenaChallenges } from '../data/challenges';
 import { SEO } from '../utils/SEO';
 
 const Badge = ({ icon: Icon, title, color }) => (
@@ -49,12 +51,28 @@ const ProjectCard = ({ title, tech, image, date }) => (
 const ProfilePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { completedLessons } = useLesson();
+
+  // Calculate exercises solved
+  let exercisesSolved = 0;
+  if (completedLessons) {
+    Object.values(completedLessons).forEach(exercisesMap => {
+      if (exercisesMap) {
+        exercisesSolved += Object.keys(exercisesMap).length;
+      }
+    });
+  }
+
+  // Calculate Arena Solves
+  const arenaCompletedCount = completedLessons ? arenaChallenges.filter(challenge => {
+    return challenge.exercises.every((ex, idx) => completedLessons[challenge.id]?.[idx + 1]);
+  }).length : 0;
 
   return (
     <div className="min-h-screen bg-background">
       <SEO 
         title="My Developer Profile | CodLift"
-        description="View my coding stats, streak, and public projects on CodLift."
+        description="View my coding stats and public projects on CodLift."
         url="/profile"
       />
       <div className="max-w-6xl mx-auto px-6 py-12">
@@ -87,12 +105,12 @@ const ProfilePage = () => {
                 <span className="text-gray-400">Joined <span className="text-white font-bold">Today</span></span>
               </div>
               <div className="flex items-center gap-2">
-                <Flame className="w-4 h-4 text-yellow" />
-                <span className="text-gray-400">Max Streak <span className="text-yellow font-bold">{user?.streak || 0} Days</span></span>
+                <Trophy className="w-4 h-4 text-yellow" />
+                <span className="text-gray-400">Arena Solves <span className="text-yellow font-bold">{arenaCompletedCount}</span></span>
               </div>
               <div className="flex items-center gap-2">
                 <Rocket className="w-4 h-4 text-purple-400" />
-                <span className="text-gray-400">Lessons Completed <span className="text-purple-400 font-bold">{user?.streak || 0}</span></span>
+                <span className="text-gray-400">Exercises Solved <span className="text-purple-400 font-bold">{exercisesSolved}</span></span>
               </div>
             </div>
           </div>
@@ -106,7 +124,7 @@ const ProfilePage = () => {
                 <Award className="w-5 h-5 text-yellow" /> Achievements
               </h3>
               <div className="grid grid-cols-3 gap-y-8">
-                <Badge icon={Flame} title="HOT STREAK" color="text-yellow" />
+                <Badge icon={Trophy} title="GLADIATOR" color="text-yellow" />
                 <Badge icon={Code2} title="CLEAN CODER" color="text-purple" />
                 <Badge icon={Rocket} title="FAST SHIP" color="text-purple-400" />
                 <Badge icon={Terminal} title="SHELL MASTER" color="text-green-400" />

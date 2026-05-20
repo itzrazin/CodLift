@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Core';
-import { Play, Code, Zap, Flame } from 'lucide-react';
+import { Play, Code, Zap, Trophy, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CodeMockup = () => {
@@ -12,8 +12,8 @@ const CodeMockup = () => {
   
   while(isLearning) {
     buildProject();
-    earnXP();
-    levelUp();
+    runValidator();
+    buildSkills();
   }
   
   return "Ready to code!";
@@ -49,14 +49,14 @@ const CodeMockup = () => {
         <motion.div 
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 4, repeat: Infinity }}
-          className="absolute top-10 -right-8 bg-cyber-dark p-3 border-2 border-orange-500 shadow-[4px_4px_0px_0px_rgba(255,69,0,1)] flex items-center gap-2"
+          className="absolute top-10 -right-8 bg-cyber-dark p-3 border-2 border-yellow shadow-[4px_4px_0px_0px_rgba(255,214,10,1)] flex items-center gap-2"
         >
-          <div className="bg-orange-500/20 p-2">
-            <Flame className="w-5 h-5 text-orange-500 drop-shadow-[0_0_5px_rgba(255,69,0,0.8)]" />
+          <div className="bg-yellow/20 p-2">
+            <Trophy className="w-5 h-5 text-yellow drop-shadow-[0_0_5px_rgba(255,214,10,0.8)]" />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase font-black">Streak</p>
-            <p className="text-sm font-bold text-white">14 Days</p>
+            <p className="text-[10px] text-gray-400 uppercase font-black">Status</p>
+            <p className="text-sm font-bold text-white">100% Solved</p>
           </div>
         </motion.div>
 
@@ -66,11 +66,11 @@ const CodeMockup = () => {
           className="absolute bottom-10 -left-8 bg-cyber-dark p-3 border-2 border-cyber-green shadow-neo-green flex items-center gap-2"
         >
           <div className="bg-cyber-green/20 p-2">
-            <Zap className="w-5 h-5 text-cyber-green drop-shadow-[0_0_5px_rgba(173,255,47,0.8)]" />
+            <CheckCircle2 className="w-5 h-5 text-cyber-green drop-shadow-[0_0_5px_rgba(0,255,127,0.8)]" />
           </div>
           <div>
-            <p className="text-[10px] text-gray-400 uppercase font-black">Earned</p>
-            <p className="text-sm font-bold text-white">+250 XP</p>
+            <p className="text-[10px] text-gray-400 uppercase font-black">Validator</p>
+            <p className="text-sm font-bold text-white">Code Passed</p>
           </div>
         </motion.div>
       </div>
@@ -96,7 +96,7 @@ export const Hero = () => {
               </h1>
               <p className="text-xl text-gray-400 mb-10 max-w-2xl">
                 No setup. No confusion. No cost. Open browser and start building today. 
-                Experience the most gamified way to master full-stack development.
+                Experience the most interactive and practice-driven way to master full-stack development.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                 {localStorage.getItem('codlift_token') ? (

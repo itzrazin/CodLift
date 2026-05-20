@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_URL } from '../utils/config';
 
 const api = axios.create({
-  baseURL: 'https://codlift.onrender.com/api',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
   }

@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
         FROM users u
         LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true AND p.completed_at >= NOW() - INTERVAL '7 days'
         GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
-        ORDER BY lessons_completed DESC, u.streak DESC
+        ORDER BY lessons_completed DESC, u.username ASC
         LIMIT $1
       `;
     } else {
@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
         FROM users u
         LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true
         GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
-        ORDER BY lessons_completed DESC, u.streak DESC
+        ORDER BY lessons_completed DESC, u.username ASC
         LIMIT $1
       `;
     }
@@ -43,7 +43,6 @@ router.get('/', async (req, res) => {
       username: row.username,
       avatar: row.avatar,
       level: row.level || 'beginner',
-      streak: parseInt(row.streak) || 0,
       lessons_completed: parseInt(row.lessons_completed) || 0,
     }));
 
@@ -53,11 +52,11 @@ router.get('/', async (req, res) => {
     // Return fallback placeholder data instead of error
     res.json({ 
       leaderboard: [
-        { rank: 1, username: 'ByteBandit', level: 'master', streak: 42, lessons_completed: 87 },
-        { rank: 2, username: 'ReactRacer', level: 'pro', streak: 24, lessons_completed: 71 },
-        { rank: 3, username: 'NodeNinja', level: 'pro', streak: 18, lessons_completed: 63 },
-        { rank: 4, username: 'CodeKing', level: 'pro', streak: 12, lessons_completed: 55 },
-        { rank: 5, username: 'AlgoAlice', level: 'intermediate', streak: 8, lessons_completed: 44 },
+        { rank: 1, username: 'ByteBandit', level: 'master', lessons_completed: 87 },
+        { rank: 2, username: 'ReactRacer', level: 'pro', lessons_completed: 71 },
+        { rank: 3, username: 'NodeNinja', level: 'pro', lessons_completed: 63 },
+        { rank: 4, username: 'CodeKing', level: 'pro', lessons_completed: 55 },
+        { rank: 5, username: 'AlgoAlice', level: 'intermediate', lessons_completed: 44 },
       ],
       period: req.query.period || 'all-time',
       total: 5,

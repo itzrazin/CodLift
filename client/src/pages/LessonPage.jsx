@@ -27,8 +27,6 @@ const LessonPage = () => {
   const [hintText, setHintText]   = useState('');
   const [status, setStatus]       = useState('idle'); // idle | running | success | error
   const [message, setMessage]     = useState('');
-  const [xpEarned, setXpEarned]   = useState(0);
-  const [breakdown, setBreakdown] = useState({});
   const [showModal, setShowModal] = useState(false);
 
   // Track when the user starts editing so we can send solve_time_ms to the server
@@ -196,11 +194,7 @@ const LessonPage = () => {
         // 2. Try to save progress — but NEVER block the user if it fails
         if (token) {
           try {
-            const progressRes = await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
-            if (progressRes && progressRes.success) {
-              setXpEarned(progressRes.xpEarned || 0);
-              setBreakdown(progressRes.breakdown || {});
-            }
+            await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
           } catch (err) {
             // Progress save failed (e.g. server down) — log but don't block
             console.warn('Progress sync failed (non-blocking):', err);
@@ -275,8 +269,6 @@ const LessonPage = () => {
         isLastExercise={exercise.number >= exercise.total}
         onNext={goNext}
         onClose={() => setShowModal(false)}
-        xpEarned={xpEarned}
-        breakdown={breakdown}
       />
 
       {/* ─── Header ───────────────────────────────────────────────────────── */}
@@ -426,7 +418,7 @@ const LessonPage = () => {
                   </div>
                   {status === 'success' && (
                     <Button variant="secondary" size="sm" className="mt-2 w-full border-black text-black" onClick={() => setShowModal(true)}>
-                      View Loot <ChevronRight className="w-4 h-4 ml-1" />
+                      Continue <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>
                   )}
                 </motion.div>

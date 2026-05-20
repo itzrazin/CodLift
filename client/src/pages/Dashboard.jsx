@@ -10,6 +10,7 @@ import { useAuth } from '../context/AuthContext';
 import { useLesson } from '../context/LessonContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
+import { arenaChallenges } from '../data/challenges';
 import { Logo } from '../components/ui/Logo';
 import api from '../api/axios';
 
@@ -127,10 +128,13 @@ const Dashboard = () => {
   const currentLesson = skillTree.find(n => n.status === 'current') || skillTree[0];
   const completedCount = skillTree.filter(n => n.status === 'completed').length;
 
+  const arenaCompletedCount = arenaChallenges.filter(challenge => {
+    return challenge.exercises.every((ex, idx) => globalCompletedLessons[challenge.id]?.[idx + 1]);
+  }).length;
+
   const stats = [
-    { label: 'Total XP', value: user.xp_total || 0, icon: Zap, color: 'text-cyber-cyan' },
-    { label: 'Day Streak', value: user.streak || 0, icon: Flame, color: 'text-yellow' },
-    { label: 'Lessons Done', value: completedCount, icon: Trophy, color: 'text-purple-400' },
+    { label: 'Lessons Done', value: completedCount, icon: BookOpen, color: 'text-purple-400' },
+    { label: 'Arena Solves', value: arenaCompletedCount, icon: Trophy, color: 'text-yellow' },
   ];
 
   return (
@@ -263,7 +267,7 @@ const Dashboard = () => {
         )}
 
         {/* Stats Row */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           {stats.map(s => (
             <GlassCard key={s.label} className="p-5 text-center border-white/5">
               <s.icon className={`w-8 h-8 mx-auto mb-2 ${s.color}`} />

@@ -25,7 +25,7 @@ export const blogPosts = [
       <p>Frameworks come and go, but the fundamentals are forever. Spend time deeply understanding how the DOM works, the intricacies of the JavaScript Event Loop, and the principles of clean CSS. When you understand the "why" behind the technology, learning the next trendy framework becomes trivial. In 2026, the most versatile developers are those who haven't neglected the basics of computer science.</p>
 
       <h2>5. Consistency Over Intensity</h2>
-      <p>Learning to code is a marathon, not a sprint. It is far better to code for 30 minutes every day than to binge-code for 10 hours once a week. Use platforms with streak tracking and XP systems to keep yourself motivated. The compounding effect of daily practice is the secret weapon of every senior developer. Stay consistent, stay curious, and keep shipping.</p>
+      <p>Learning to code is a marathon, not a sprint. It is far better to code for 30 minutes every day than to binge-code for 10 hours once a week. Use platforms with clear progression and structured milestones to keep yourself motivated. The compounding effect of daily practice is the secret weapon of every senior developer. Stay consistent, stay curious, and keep shipping.</p>
     `
   },
   {
@@ -67,8 +67,8 @@ export const blogPosts = [
       <h2>The Consistency Gap</h2>
       <p>Most people who start learning to code quit within the first three months. It's not because they aren't smart enough; it's because they lose momentum. Coding requires a level of focus and frustration-tolerance that can be draining. However, by applying a few psychological principles, you can make consistency your default state.</p>
 
-      <h2>1. Gamify Your Progress</h2>
-      <p>Human brains are wired to love progression. This is why CodLift uses XP, levels, and badges. By turning your learning journey into a game, you tap into the dopamine system that keeps you coming back. Celebrate every small win—every lesson completed is a step toward your new career. Don't look at the mountain; look at the next step.</p>
+      <h2>1. Track Your Progress</h2>
+      <p>Human brains are wired to love progression. This is why CodLift uses clear progression paths and hands-on milestones. By turning your learning journey into a structured sequence of achievements, you tap into the dopamine system that keeps you coming back. Celebrate every small win—every lesson completed is a step toward your new career. Don't look at the mountain; look at the next step.</p>
 
       <h2>2. The "Non-Zero Day" Rule</h2>
       <p>Commit to a "Non-Zero Day." Even on your busiest, most exhausting day, commit to writing just one line of code or completing one small exercise. Usually, once you start, you'll do more. But even if you don't, you've kept the habit alive. Consistency is about the chain, and the Non-Zero Day rule ensures the chain never breaks.</p>

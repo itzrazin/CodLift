@@ -29,7 +29,7 @@ const FAQ = () => {
   const faqs = [
     {
       question: "What is CodLift?",
-      answer: "CodLift is a premium, interactive coding platform designed to help beginners master full-stack development. Unlike traditional platforms that focus on video lectures, CodLift emphasizes 'learning by doing' through an integrated, gamified IDE and AI-powered feedback system."
+      answer: "CodLift is a premium, interactive coding platform designed to help beginners master full-stack development. Unlike traditional platforms that focus on video lectures, CodLift emphasizes 'learning by doing' through an integrated, interactive IDE and AI-powered feedback system."
     },
     {
       question: "How does CodLift help me learn faster?",
@@ -53,11 +53,11 @@ const FAQ = () => {
     },
     {
       question: "Can I track my progress?",
-      answer: "Absolutely. CodLift features a gamified dashboard where you can track your daily streaks and skill tree progress. Your progress is synced across devices, allowing you to resume your learning journey exactly where you left off."
+      answer: "Absolutely. CodLift features an interactive dashboard where you can track your skill tree progress and coding stats. Your progress is synced across devices, allowing you to resume your learning journey exactly where you left off."
     },
     {
       question: "Does CodLift provide a certificate?",
-      answer: "While we focus on skill-based progression, completing major tracks increases your global Rank and unlocks 'Mastery Badges' on your profile. These verifiable achievements serve as a testament to your hands-on coding proficiency."
+      answer: "While we focus on skill-based progression, completing major tracks unlocks 'Mastery Badges' on your profile. These verifiable achievements serve as a testament to your hands-on coding proficiency."
     }
   ];
 
