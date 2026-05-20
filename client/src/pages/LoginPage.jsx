@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Core';
 import { API_URL } from '../utils/config';
-import { Mail, Lock, Eye, EyeOff, Zap, Flame } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Zap, CheckCircle2 } from 'lucide-react';
 import { Logo } from '../components/ui/Logo';
 import { SEO } from '../utils/SEO';
 
@@ -68,7 +68,7 @@ const LoginPage = () => {
         <div className="glass rounded-3xl p-8 border border-white/10">
           <div className="mb-8">
             <h1 className="text-3xl font-syne font-extrabold mb-2">Welcome back</h1>
-            <p className="text-gray-400 text-sm">Continue your learning streak 🔥</p>
+            <p className="text-gray-400 text-sm">Continue your learning journey 🚀</p>
           </div>
 
           {/* Google OAuth */}
@@ -164,7 +164,7 @@ const LoginPage = () => {
             <Zap className="w-3 h-3 text-purple" /> 10,000+ learners
           </span>
           <span className="flex items-center gap-1.5">
-            <Flame className="w-3 h-3 text-yellow" /> 100% Free forever
+            <CheckCircle2 className="w-3 h-3 text-purple" /> 100% Free forever
           </span>
         </div>
       </motion.div>

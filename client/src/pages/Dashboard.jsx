@@ -139,7 +139,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-background flex text-white font-sans">
-      <SEO title="Dashboard | CodLift" description="Track your coding progress, streaks, and continue learning." url="/dashboard" />
+      <SEO title="Dashboard | CodLift" description="Track your coding progress, solve challenges, and continue learning." url="/dashboard" />
 
       {/* ── Mobile sidebar overlay ──────────────────────────────────────── */}
       <AnimatePresence>

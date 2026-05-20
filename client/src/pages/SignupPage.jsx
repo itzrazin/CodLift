@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/Core';
 import { API_URL } from '../utils/config';
-import { Mail, Lock, User, Eye, EyeOff, Zap, Flame, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, Zap, CheckCircle2 } from 'lucide-react';
 import { Logo } from '../components/ui/Logo';
 import { SEO } from '../utils/SEO';
 
@@ -21,7 +21,7 @@ const perks = [
   'Free forever — no credit card',
   'Monaco IDE (same as VS Code)',
   'AI-powered feedback on your code',
-  'Streaks & leaderboard'
+  'Exercises & leaderboard'
 ];
 
 const SignupPage = () => {
