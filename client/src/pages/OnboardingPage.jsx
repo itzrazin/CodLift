@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { GlassCard, Button } from '../components/ui/Core';
 import { Rocket, Code2, Zap, Terminal } from 'lucide-react';
-import { API_URL } from '../utils/config';
+import api from '../api/axios';
 
 const levels = [
   { id: 'beginner', title: 'BEGINNER', icon: Rocket, color: 'text-green-400', bg: 'bg-green-400/10', border: 'border-green-400/30', desc: 'New to coding? Start from HTML and work your way up.' },
@@ -23,17 +23,9 @@ const OnboardingPage = () => {
     if (!selected) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const res = await fetch(`${API_URL}/auth/level`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ level: selected })
-      });
+      const res = await api.put('/auth/level', { level: selected });
       
-      if (res.ok) {
+      if (res.status === 200 || res.status === 204 || res.data?.success) {
         setUser({ ...user, level: selected });
         navigate('/dashboard');
       }

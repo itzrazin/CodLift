@@ -47,7 +47,7 @@ router.post('/signup', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const result = await db.query(
-      'INSERT INTO users (username, email, password, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, streak',
+      'INSERT INTO users (username, email, password, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, streak, level, xp_total',
       [username, email, hashedPassword]
     );
 
@@ -116,7 +116,7 @@ router.post('/login', async (req, res) => {
     }
 
     const updateResult = await db.query(
-      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, streak',
+      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, streak, level, xp_total',
       [streak, user.id]
     );
     const updatedUser = updateResult.rows[0];
@@ -150,7 +150,7 @@ router.get('/google/callback', passport.authenticate('google', { session: false,
 
 router.get('/me', auth, async (req, res) => {
   try {
-    const result = await db.query('SELECT id, email, username, streak FROM users WHERE id = $1', [req.user.id]);
+    const result = await db.query('SELECT id, email, username, streak, level, xp_total FROM users WHERE id = $1', [req.user.id]);
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
@@ -163,6 +163,26 @@ router.get('/me', auth, async (req, res) => {
 
 router.post('/logout', (req, res) => {
   res.json({ success: true, message: 'Logged out successfully' });
+});
+
+router.put('/level', auth, async (req, res) => {
+  try {
+    const { level } = req.body;
+    if (!level) {
+      return res.status(400).json({ error: 'Level is required' });
+    }
+    const result = await db.query(
+      'UPDATE users SET level = $1 WHERE id = $2 RETURNING id, email, username, streak, level, xp_total',
+      [level, req.user.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ success: true, user: result.rows[0] });
+  } catch (error) {
+    console.error('Update level error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 module.exports = router;

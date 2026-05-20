@@ -13,7 +13,11 @@ router.get('/', async (req, res) => {
       query = `
         SELECT 
           u.id, u.username, u.avatar, u.level,
-          u.streak, u.longest_streak,
+          u.streak, u.longest_streak, u.xp_total,
+          COALESCE(COUNT(DISTINCT p.lesson_id || '-' || p.exercise_id) FILTER (WHERE p.is_completed = true), 0) as lessons_completed
+        FROM users u
+        LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true AND p.completed_at >= NOW() - INTERVAL '7 days'
+        GROUP BY u.id, u.username, u.avatar, u.level, u.streak, u.longest_streak, u.xp_total
         ORDER BY lessons_completed DESC, u.streak DESC
         LIMIT $1
       `;

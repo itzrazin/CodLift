@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import {
-  Home, BookOpen, Gamepad2, User,
+  Home, BookOpen, Gamepad2, User, LogOut,
   Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Trophy, Menu, X
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -11,7 +11,7 @@ import { useLesson } from '../context/LessonContext';
 import { SEO } from '../utils/SEO';
 import { clientCurriculum } from '../data/curriculum';
 import { Logo } from '../components/ui/Logo';
-import { API_URL } from '../utils/config';
+import api from '../api/axios';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
@@ -25,7 +25,7 @@ const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   </button>
 );
 
-const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
+const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel, firstUncompletedId }) => {
   const navigate = useNavigate();
   return (
     <motion.div
@@ -34,7 +34,7 @@ const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel }) => {
       transition={{ delay, type: 'spring' }}
       style={{ left: x, top: y }}
       className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
-      onClick={() => status !== 'locked' && slug && navigate(`/learn/${nodeLevel}/${slug}/1`)}
+      onClick={() => status !== 'locked' && slug && navigate(`/learn/${nodeLevel}/${slug}/${firstUncompletedId}`)}
     >
       <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-500 ${
         status === 'completed' ? 'bg-purple shadow-[0_0_20px_rgba(168,85,247,0.4)]' :
@@ -61,10 +61,8 @@ const Dashboard = () => {
 
   const handleResume = async () => {
     try {
-      const res = await fetch(`${API_URL}/progress/resume`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('codlift_token')}` }
-      });
-      const data = await res.json();
+      const res = await api.get('/progress/resume');
+      const data = res.data;
       if (data.nextLesson) {
         navigate(`/learn/${data.nextLesson.level}/${data.nextLesson.slug}/${data.nextLesson.exerciseId}`);
       } else {
@@ -79,9 +77,7 @@ const Dashboard = () => {
 
   // Build dynamic skill tree from curriculum
   const beginnerLessons = clientCurriculum.filter(l => l.level === 'beginner');
-  // Compute progress array (lesson IDs that have at least one completed exercise)
-  const progressArray = Object.keys(globalCompletedLessons);
-  const completedLessons = new Set(progressArray);
+  const completedLessons = new Set(Object.keys(globalCompletedLessons));
 
   const buildSkillTree = () => {
     const positions = [
@@ -95,7 +91,6 @@ const Dashboard = () => {
     ];
     let foundCurrent = false;
     return beginnerLessons.slice(0, 7).map((lesson, i) => {
-      // 100% Completion Check: Are all exercises in this lesson finished?
       const completedExercises = globalCompletedLessons[lesson.id] || {};
       const isCompleted = lesson.exercises.every((ex, idx) => completedExercises[idx + 1]);
       
@@ -106,12 +101,23 @@ const Dashboard = () => {
         status = 'current';
         foundCurrent = true;
       }
+
+      // Find the first uncompleted exercise (starting at 1)
+      let firstUncompletedId = 1;
+      const exercisesCount = lesson.exercises.length;
+      for (let exerciseNum = 1; exerciseNum <= exercisesCount; exerciseNum++) {
+        if (!completedExercises[exerciseNum]) {
+          firstUncompletedId = exerciseNum;
+          break;
+        }
+      }
       
       return {
         title: lesson.title,
         status,
         slug: lesson.id,
         level: lesson.level,
+        firstUncompletedId,
         ...(positions[i] || { x: '50%', y: `${80 + i * 150}px` }),
         delay: i * 0.1
       };
@@ -122,6 +128,7 @@ const Dashboard = () => {
   const completedCount = skillTree.filter(n => n.status === 'completed').length;
 
   const stats = [
+    { label: 'Total XP', value: user.xp_total || 0, icon: Zap, color: 'text-cyber-cyan' },
     { label: 'Day Streak', value: user.streak || 0, icon: Flame, color: 'text-yellow' },
     { label: 'Lessons Done', value: completedCount, icon: Trophy, color: 'text-purple-400' },
   ];
@@ -161,7 +168,22 @@ const Dashboard = () => {
 
         <nav className="flex-1 space-y-1.5">
           <SidebarItem icon={Home}     label="Dashboard"   active onClick={() => { setSidebarOpen(false); navigate('/dashboard'); }} />
-          <SidebarItem icon={BookOpen} label="Curriculum"  onClick={() => { setSidebarOpen(false); navigate('/dashboard'); }} />
+          <SidebarItem 
+            icon={BookOpen} 
+            label="Curriculum"  
+            onClick={() => { 
+              setSidebarOpen(false);
+              const skillTreeEl = document.getElementById('skill-tree');
+              if (skillTreeEl) {
+                skillTreeEl.scrollIntoView({ behavior: 'smooth' });
+              } else {
+                navigate('/dashboard');
+                setTimeout(() => {
+                  document.getElementById('skill-tree')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+              }
+            }} 
+          />
           <SidebarItem icon={Gamepad2} label="Arena"       onClick={() => { setSidebarOpen(false); navigate('/arena'); }} />
           <SidebarItem icon={Trophy}   label="Leaderboard" onClick={() => { setSidebarOpen(false); navigate('/leaderboard'); }} />
           <SidebarItem icon={User}     label="Profile"     onClick={() => { setSidebarOpen(false); navigate('/profile'); }} />
@@ -176,7 +198,7 @@ const Dashboard = () => {
             onClick={() => { logout(); navigate('/'); }}
             className="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-500 hover:text-red-400 hover:bg-red-400/5 transition-all text-sm"
           >
-            <User className="w-4 h-4" />
+            <LogOut className="w-4 h-4" />
             <span className="font-medium">Log Out</span>
           </button>
         </div>
@@ -252,23 +274,42 @@ const Dashboard = () => {
         </div>
 
         {/* Skill Tree */}
-        <div className="glass rounded-[2rem] p-8 min-h-[780px] relative overflow-hidden bg-navy/40">
+        <div id="skill-tree" className="glass rounded-[2rem] p-8 min-h-[780px] relative overflow-hidden bg-navy/40">
           <div className="flex items-center gap-2 mb-6">
             <Star className="w-5 h-5 text-purple" />
             <h3 className="font-syne font-extrabold text-lg">Beginner Skill Tree</h3>
             <span className="text-xs text-gray-500 ml-auto">{completedCount}/{beginnerLessons.length} lessons</span>
           </div>
 
-          {/* Connector lines */}
+          {/* Dynamic Connector lines */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-15">
-            <path d="M 50% 80 L 30% 220"  stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 50% 80 L 70% 220"  stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 30% 220 L 50% 360" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 70% 220 L 50% 360" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 50% 360 L 25% 500" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 50% 360 L 75% 500" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 25% 500 L 50% 640" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
-            <path d="M 75% 500 L 50% 640" stroke="white" strokeWidth="2" strokeDasharray="5,5" fill="none"/>
+            {[
+              [0, 1],
+              [0, 2],
+              [1, 3],
+              [2, 3],
+              [3, 4],
+              [3, 5],
+              [4, 6],
+              [5, 6]
+            ].map(([startIdx, endIdx], idx) => {
+              if (startIdx < skillTree.length && endIdx < skillTree.length) {
+                const startNode = skillTree[startIdx];
+                const endNode = skillTree[endIdx];
+                const dPath = `M ${startNode.x} ${startNode.y} L ${endNode.x} ${endNode.y}`;
+                return (
+                  <path
+                    key={idx}
+                    d={dPath}
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeDasharray="5,5"
+                    fill="none"
+                  />
+                );
+              }
+              return null;
+            })}
           </svg>
 
           {skillTree.map((node, i) => <SkillNode key={i} {...node} />)}

@@ -141,6 +141,38 @@ const V = {
     if (!code.match(/i\+\+/)) e.push('Logical Error: Missing incrementer `i++`. This will cause an infinite loop.');
     if (!code.includes('console.log')) e.push('Missing `console.log` to print the iteration value.');
     return e;
+  },
+
+  'fix-the-counter'(code) {
+    const e = [];
+    if (code.includes('count + 10')) e.push('Logical Error: You are still incrementing the count by 10 instead of 1.');
+    if (!code.includes('count + 1') && !code.includes('count+1')) e.push('Logical Error: The counter increment must add exactly 1 to the current count.');
+    return e;
+  },
+
+  'array-compressor'(code) {
+    const e = [];
+    if (!code.match(/function\s+compress/)) e.push('Missing function declaration for `compress`.');
+    if (!code.includes('filter')) e.push('Concept Misunderstanding: You should use `.filter()` to keep only odd numbers.');
+    if (!code.includes('sort')) e.push('Concept Misunderstanding: You should use `.sort()` to sort the array in ascending order.');
+    if (code.includes('% 2 === 0') || code.includes('% 2 == 0')) e.push('Logical Error: You are keeping even numbers instead of odd numbers.');
+    return e;
+  },
+
+  'auth-logic-101'(code) {
+    const e = [];
+    if (!code.match(/function\s+authorize/)) e.push('Missing function declaration for `authorize`.');
+    if (!code.includes('is_verified')) e.push('Logical Error: You must verify that `user.is_verified` is true.');
+    if (!code.includes('admin')) e.push('Logical Error: Admin role should bypass all role restrictions.');
+    if (!code.includes('role') && !code.includes('requiredRole')) e.push('Logical Error: The role must match the `requiredRole` (or user.role === requiredRole).');
+    return e;
+  },
+
+  'algorithm-duel'(code) {
+    const e = [];
+    if (!code.match(/function\s+singleNonDuplicate/)) e.push('Missing function declaration for `singleNonDuplicate`.');
+    if (!code.includes('while') || !code.includes('mid')) e.push('Logical Error: High-performance O(log n) search requires binary search logic.');
+    return e;
   }
 };
 

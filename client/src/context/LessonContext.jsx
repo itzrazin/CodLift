@@ -1,12 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 import { useAuth } from './AuthContext';
-import { API_URL } from '../utils/config';
 
 const LessonContext = createContext(null);
 
 export const LessonProvider = ({ children }) => {
-  const { token, user } = useAuth();
+  const { token, user, setUser } = useAuth();
   
   // completedLessons structure: { 'html-basics': { '1': true, '2': true }, 'css-flexbox': { '1': true } }
   const [completedLessons, setCompletedLessons] = useState({});
@@ -19,9 +18,7 @@ export const LessonProvider = ({ children }) => {
     }
     
     try {
-      const res = await axios.get(`${API_URL}/user/progress`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/user/progress');
       
       const progressData = res.data.progress_data || [];
       const newCompleted = {};
@@ -52,13 +49,11 @@ export const LessonProvider = ({ children }) => {
     if (!token) return { success: false, error: 'No authentication token' };
     
     try {
-      const res = await axios.post(`${API_URL}/user/update-progress`, {
+      const res = await api.post('/user/update-progress', {
         lesson_id: trackId,
         exercise_id: exerciseId.toString(),
         code_submitted: codeSubmitted,
         solve_time_ms: solveTimeMs
-      }, {
-        headers: { Authorization: `Bearer ${token}` }
       });
 
       if (res.data.success) {
@@ -69,8 +64,24 @@ export const LessonProvider = ({ children }) => {
           updated[trackId][exerciseId] = true;
           return updated;
         });
+
+        // Dynamically update user stats with the new xp_total from backend in real-time!
+        if (res.data.xp_total !== undefined) {
+          setUser(prevUser => {
+            if (!prevUser) return null;
+            return {
+              ...prevUser,
+              xp_total: res.data.xp_total
+            };
+          });
+        }
         
-        return { success: true };
+        return {
+          success: true,
+          xpEarned: res.data.xp_earned || 0,
+          breakdown: res.data.breakdown || {},
+          alreadyDone: res.data.already_done
+        };
       }
       return { success: false, error: res.data.error || 'Unknown server error' };
     } catch (err) {

@@ -162,6 +162,47 @@ export function SuccessModal({
                 <p className="text-gray-400 text-sm">Proof of correctness verified ✅</p>
               </motion.div>
 
+              {/* Premium XP Breakdown Card */}
+              {xpEarned > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35 }}
+                  className="mb-8 p-4 rounded-2xl bg-white/5 border border-white/10 text-center"
+                >
+                  <div className="flex items-center justify-center gap-1 text-purple mb-1">
+                    <span className="text-4xl font-extrabold text-gradient-purple">+{xpEarned}</span>
+                    <span className="text-xl font-bold uppercase tracking-wider">XP</span>
+                  </div>
+                  <p className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-3">Loot Earned</p>
+
+                  <div className="text-xs text-gray-400 space-y-2 text-left border-t border-white/5 pt-3">
+                    <div className="flex justify-between">
+                      <span>Base XP:</span>
+                      <span className="font-bold text-white">+{breakdown.baseXP || 10} XP</span>
+                    </div>
+                    {breakdown.difficultyMultiplier && breakdown.difficultyMultiplier > 1 && (
+                      <div className="flex justify-between">
+                        <span>Difficulty Multiplier ({breakdown.difficulty}):</span>
+                        <span className="font-bold text-purple">x{breakdown.difficultyMultiplier}</span>
+                      </div>
+                    )}
+                    {breakdown.streakMultiplier && breakdown.streakMultiplier > 1 && (
+                      <div className="flex justify-between">
+                        <span>Streak Multiplier ({breakdown.streakDays}d streak):</span>
+                        <span className="font-bold text-yellow">x{breakdown.streakMultiplier}</span>
+                      </div>
+                    )}
+                    {breakdown.speedBonus && breakdown.speedBonus > 0 ? (
+                      <div className="flex justify-between text-cyber-cyan">
+                        <span>⚡ Speed Bonus:</span>
+                        <span className="font-bold font-mono">+{breakdown.speedBonus} XP</span>
+                      </div>
+                    ) : null}
+                  </div>
+                </motion.div>
+              )}
+
 
 
               {/* CTA Button */}

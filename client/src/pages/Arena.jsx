@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
@@ -6,72 +6,52 @@ import {
   Bug, Scissors, Rocket, Sword, Trophy, Gamepad2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { arenaChallenges } from '../data/challenges';
 
-const ChallengeCard = ({ title, type, difficulty, xp, icon: Icon, color }) => (
-  <GlassCard className="p-6 group cursor-pointer border-white/5 hover:border-purple/30">
-    <div className="flex justify-between items-start mb-6">
-      <div className={`p-4 rounded-2xl ${color} bg-opacity-10 text-opacity-100 group-hover:scale-110 transition-transform`}>
-        <Icon className="w-8 h-8" />
+const ChallengeCard = ({ id, title, type, difficulty, xp, icon: Icon, color }) => {
+  const navigate = useNavigate();
+  return (
+    <GlassCard 
+      onClick={() => navigate(`/learn/arena/${id}/1`)}
+      className="p-6 group cursor-pointer border-white/5 hover:border-purple/30"
+    >
+      <div className="flex justify-between items-start mb-6">
+        <div className={`p-4 rounded-2xl ${color} bg-opacity-10 text-opacity-100 group-hover:scale-110 transition-transform`}>
+          <Icon className="w-8 h-8" />
+        </div>
+        <div className="flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full border border-white/10">
+          <Star className="w-3 h-3 text-yellow" />
+          <span className="text-[10px] font-bold text-gray-400">{difficulty}</span>
+        </div>
       </div>
-      <div className="flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full border border-white/10">
-        <Star className="w-3 h-3 text-yellow" />
-        <span className="text-[10px] font-bold text-gray-400">{difficulty}</span>
+      
+      <h3 className="text-xl font-bold mb-2 group-hover:text-purple transition-colors">{title}</h3>
+      <p className="text-sm text-gray-500 mb-6 uppercase tracking-widest font-bold">{type}</p>
+      
+      <div className="flex items-center justify-between pt-6 border-t border-white/5">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-purple" />
+          <span className="text-sm font-bold text-purple">{xp} XP</span>
+        </div>
+        <Button size="sm" variant="ghost" className="group-hover:bg-purple group-hover:text-black group-hover:border-purple">
+          Battle <ChevronRight className="w-4 h-4 ml-1" />
+        </Button>
       </div>
-    </div>
-    
-    <h3 className="text-xl font-bold mb-2 group-hover:text-purple transition-colors">{title}</h3>
-    <p className="text-sm text-gray-500 mb-6 uppercase tracking-widest font-bold">{type}</p>
-    
-    <div className="flex items-center justify-between pt-6 border-t border-white/5">
-      <div className="flex items-center gap-2">
-        <Trophy className="w-4 h-4 text-purple" />
-        <span className="text-sm font-bold text-purple">Win Pride</span>
-      </div>
-      <Button size="sm" variant="ghost" className="group-hover:bg-purple group-hover:text-black group-hover:border-purple">
-        Battle <ChevronRight className="w-4 h-4 ml-1" />
-      </Button>
-    </div>
-  </GlassCard>
-);
+    </GlassCard>
+  );
+};
 
 const Arena = () => {
-  const challenges = [
-    {
-      title: "Fix the Counter",
-      type: "Fix the Bug",
-      difficulty: "BEGINNER",
-      xp: 250,
-      icon: Bug,
-      color: "text-red-400 bg-red-400"
-    },
-    {
-      title: "Array Compressor",
-      type: "Code Golf",
-      difficulty: "PRO",
-      xp: 500,
-      icon: Scissors,
-      color: "text-yellow bg-yellow"
-    },
-    {
-      title: "Auth Logic 101",
-      type: "Build in 15",
-      difficulty: "MASTER",
-      xp: 750,
-      icon: Rocket,
-      color: "text-purple bg-purple"
-    },
-    {
-      title: "Algorithm Duel",
-      type: "Coding Battle",
-      difficulty: "MASTER",
-      xp: 1000,
-      icon: Sword,
-      color: "text-purple-400 bg-purple-400"
-    }
-  ];
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const filteredChallenges = arenaChallenges.filter(c => 
+    c.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.type.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-background text-white">
       {/* Reusing Sidebar Logic or just Layout */}
       {/* For brevity, I'll assume the Dashboard layout is a wrapper, but for this file I'll make it standalone or use components */}
       
@@ -96,6 +76,8 @@ const Arena = () => {
               <input 
                 type="text" 
                 placeholder="Search challenges..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="bg-navy border border-white/10 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-yellow/50 transition-colors w-64"
               />
             </div>
@@ -106,7 +88,7 @@ const Arena = () => {
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {challenges.map((c, i) => (
+          {filteredChallenges.map((c, i) => (
             <ChallengeCard key={i} {...c} />
           ))}
           

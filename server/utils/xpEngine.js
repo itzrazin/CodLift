@@ -27,7 +27,13 @@ function getDifficultyForExercise(exerciseId, lessonId) {
   const lesson = curriculum.find(l =>
     l.id === lessonId || l.exercises.some(e => e.id === exerciseId)
   );
-  if (!lesson) return 'beginner';
+  if (!lesson) {
+    if (lessonId === 'fix-the-counter' || exerciseId === 'fix-the-counter') return 'beginner';
+    if (lessonId === 'array-compressor' || exerciseId === 'array-compressor') return 'pro';
+    if (lessonId === 'auth-logic-101' || exerciseId === 'auth-logic-101') return 'master';
+    if (lessonId === 'algorithm-duel' || exerciseId === 'algorithm-duel') return 'master';
+    return 'beginner';
+  }
   return lesson.level || 'beginner';
 }
 

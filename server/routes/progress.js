@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const auth = require('../middleware/auth');
+const { calculateXP } = require('../utils/xpEngine');
 
 // ─── GET: User progress summary ───────────────────────────────────────────────
 // Used by the dashboard to determine which lessons are unlocked.
@@ -51,16 +52,26 @@ router.post('/update-progress', auth, async (req, res) => {
     );
     const alreadyCompleted = existing.rows.length > 0;
 
-    // Server-side logic - just record completion
-    const xpEarned = 0;
-    const breakdown = {};
+    let xpEarned = 0;
+    let breakdown = {};
+
+    if (!alreadyCompleted) {
+      const xpResult = calculateXP({
+        exerciseId: exercise_id,
+        lessonId: lesson_id,
+        solveTimeMs: solve_time_ms ? parseInt(solve_time_ms) : null,
+        streakDays: parseInt(streakDays) || 0
+      });
+      xpEarned = xpResult.xp;
+      breakdown = xpResult.breakdown;
+    }
 
     // Upsert progress row
     await db.query(
       `INSERT INTO progress (user_id, lesson_id, exercise_id, code_content, xp_earned, is_completed)
        VALUES ($1, $2, $3, $4, $5, true)
        ON CONFLICT (user_id, lesson_id, exercise_id)
-       DO UPDATE SET is_completed = true, code_content = $4, completed_at = NOW()`,
+       DO UPDATE SET is_completed = true, code_content = $4, xp_earned = CASE WHEN progress.is_completed = true THEN progress.xp_earned ELSE $5 END, completed_at = NOW()`,
       [req.user.id, lesson_id, exercise_id, code_submitted, xpEarned]
     );
 
@@ -69,7 +80,7 @@ router.post('/update-progress', auth, async (req, res) => {
     if (!alreadyCompleted && xpEarned > 0) {
       // Award XP only on first correct completion
       const updated = await db.query(
-        'UPDATE users SET xp_total = COALESCE(xp_total, 0) + $1 WHERE id = $2 RETURNING xp_total',
+        'UPDATE users SET xp_total = COALESCE(xp_total, 0) + $1, xp = COALESCE(xp, 0) + $1 WHERE id = $2 RETURNING xp_total',
         [xpEarned, req.user.id]
       );
       currentXP = updated.rows[0].xp_total;
@@ -78,7 +89,9 @@ router.post('/update-progress', auth, async (req, res) => {
     res.json({
       success:       true,
       already_done:  alreadyCompleted,
-      lessons_completed: parseInt(streakDays) // example replacement value if needed
+      xp_earned:     xpEarned,
+      xp_total:      currentXP,
+      breakdown:     breakdown
     });
   } catch (error) {
     console.error('Error updating user progress:', error);

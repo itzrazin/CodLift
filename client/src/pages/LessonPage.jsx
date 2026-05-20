@@ -12,8 +12,9 @@ import { useAuth } from '../context/AuthContext';
 import { useLesson } from '../context/LessonContext';
 import { SuccessModal } from '../components/ui/SuccessModal';
 import { SEO }          from '../utils/SEO';
-import { API_URL }      from '../utils/config';
+import api              from '../api/axios';
 import { clientCurriculum } from '../data/curriculum';
+import { arenaChallenges } from '../data/challenges';
 
 const LessonPage = () => {
   const [lesson, setLesson]       = useState(null);
@@ -26,6 +27,8 @@ const LessonPage = () => {
   const [hintText, setHintText]   = useState('');
   const [status, setStatus]       = useState('idle'); // idle | running | success | error
   const [message, setMessage]     = useState('');
+  const [xpEarned, setXpEarned]   = useState(0);
+  const [breakdown, setBreakdown] = useState({});
   const [showModal, setShowModal] = useState(false);
 
   // Track when the user starts editing so we can send solve_time_ms to the server
@@ -52,13 +55,19 @@ const LessonPage = () => {
     setCodeEdited(false);
     startTimeRef.current = null;
 
-    // ── 2. Find the lesson + exercise in the local curriculum ─────────────
-    const localLesson = clientCurriculum.find(l => l.id === slug);
-    if (!localLesson) { navigate('/dashboard'); return; }
+    // ── 2. Find the lesson + exercise in the local curriculum or arena ─────────────
+    let localLesson;
+    if (level === 'arena') {
+      localLesson = arenaChallenges.find(c => c.id === slug);
+    } else {
+      localLesson = clientCurriculum.find(l => l.id === slug);
+    }
+    
+    if (!localLesson) { navigate(level === 'arena' ? '/arena' : '/dashboard'); return; }
 
     const exIdx = parseInt(exerciseId, 10) - 1;
     const ex    = localLesson.exercises[exIdx];
-    if (!ex) { navigate('/dashboard'); return; }
+    if (!ex) { navigate(level === 'arena' ? '/arena' : '/dashboard'); return; }
 
     setLesson({
       id:          localLesson.id,
@@ -74,18 +83,14 @@ const LessonPage = () => {
 
     if (token) {
       try {
-        const res = await fetch(`${API_URL}/user/progress`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const saved = data.progress_data?.find(
-            p => p.lesson_id === slug && p.exercise_id === exerciseId.toString()
-          );
-          // Only load saved code if not yet completed (allow retry with fresh code)
-          if (saved?.code_content && !saved?.is_completed) {
-            initialCode = saved.code_content;
-          }
+        const res = await api.get('/user/progress');
+        const data = res.data;
+        const saved = data.progress_data?.find(
+          p => p.lesson_id === slug && p.exercise_id === exerciseId.toString()
+        );
+        // Only load saved code if not yet completed (allow retry with fresh code)
+        if (saved?.code_content && !saved?.is_completed) {
+          initialCode = saved.code_content;
         }
       } catch (err) {
         console.warn('Backend progress fetch failed, falling back to localStorage', err);
@@ -126,18 +131,13 @@ const LessonPage = () => {
     setHintText('Thinking...');
     setShowHint(true);
     try {
-      const res  = await fetch(`${API_URL}/ai/hint`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({
-          instruction: exercise.instruction,
-          task:        exercise.task,
-          topic:       exercise.title,
-          language:    lesson.language
-        })
+      const res  = await api.post('/ai/hint', {
+        instruction: exercise.instruction,
+        task:        exercise.task,
+        topic:       exercise.title,
+        language:    lesson.language
       });
-      const data = await res.json();
-      setHintText(data.hint);
+      setHintText(res.data.hint);
     } catch {
       setHintText('💡 Try breaking the problem into smaller steps!');
     }
@@ -155,12 +155,8 @@ const LessonPage = () => {
         setStatus('idle');
         return;
       }
-      const res  = await fetch(`${API_URL}/execute`, {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ language: lesson.language, code })
-      });
-      const data = await res.json();
+      const res  = await api.post('/execute', { language: lesson.language, code });
+      const data = res.data;
       if (data.renderInPreview) { setActiveTab('preview'); setStatus('idle'); return; }
       setOutput(data.run?.output || 'No output');
       setActiveTab('console');
@@ -183,38 +179,28 @@ const LessonPage = () => {
 
     try {
       // 1. Verify code via AI/Sandbox
-      const res = await fetch(`${API_URL}/execute/verify`, {
-        method:  'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(token ? { Authorization: `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({
-          id:          exercise.id,
-          code,
-          topic:       exercise.title,
-          instruction: exercise.instruction,
-          task:        exercise.task,
-          language:    lesson.language,
-          test_cases:  exercise.test_cases,
-          start_time:  startTimeRef.current
-        })
+      const res = await api.post('/execute/verify', {
+        id:          exercise.id,
+        code,
+        topic:       exercise.title,
+        instruction: exercise.instruction,
+        task:        exercise.task,
+        language:    lesson.language,
+        test_cases:  exercise.test_cases,
+        start_time:  startTimeRef.current
       });
 
-      if (res.status === 429) {
-        const data = await res.json();
-        setStatus('error');
-        setMessage(data.feedback || 'Submitting too fast. Please wait a moment.');
-        return;
-      }
-
-      const data = await res.json();
+      const data = res.data;
 
       if (data.isCorrect) {
         // 2. Try to save progress — but NEVER block the user if it fails
         if (token) {
           try {
-            await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
+            const progressRes = await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
+            if (progressRes && progressRes.success) {
+              setXpEarned(progressRes.xpEarned || 0);
+              setBreakdown(progressRes.breakdown || {});
+            }
           } catch (err) {
             // Progress save failed (e.g. server down) — log but don't block
             console.warn('Progress sync failed (non-blocking):', err);
@@ -235,7 +221,11 @@ const LessonPage = () => {
     } catch (err) {
       console.error('Submission error:', err);
       setStatus('error');
-      setMessage('Network error during verification. Please check your connection.');
+      if (err.response?.status === 429) {
+        setMessage(err.response.data?.feedback || 'Submitting too fast. Please wait a moment.');
+      } else {
+        setMessage('Network error during verification. Please check your connection.');
+      }
     }
   };
 
@@ -246,7 +236,11 @@ const LessonPage = () => {
     if (exercise.number < exercise.total) {
       navigate(`/learn/${level}/${slug}/${exercise.number + 1}`);
     } else {
-      navigate('/dashboard');
+      if (level === 'arena') {
+        navigate('/arena');
+      } else {
+        navigate('/dashboard');
+      }
     }
   };
 
@@ -274,8 +268,6 @@ const LessonPage = () => {
         url={`/learn/${level}/${slug}/${exerciseId}`}
       />
 
-
-
       {/* Challenge Complete Modal */}
       <SuccessModal
         isOpen={showModal}
@@ -283,12 +275,14 @@ const LessonPage = () => {
         isLastExercise={exercise.number >= exercise.total}
         onNext={goNext}
         onClose={() => setShowModal(false)}
+        xpEarned={xpEarned}
+        breakdown={breakdown}
       />
 
       {/* ─── Header ───────────────────────────────────────────────────────── */}
       <header className="h-14 border-b border-white/5 px-4 flex items-center justify-between bg-navy/50 backdrop-blur-md shrink-0">
         <div className="flex items-center gap-3">
-          <Link to="/dashboard" className="p-2 hover:bg-white/5 rounded-lg transition-colors">
+          <Link to={level === 'arena' ? '/arena' : '/dashboard'} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
             <ArrowLeft className="w-5 h-5 text-gray-400" />
           </Link>
           <div className="h-6 w-px bg-white/10" />
@@ -298,7 +292,7 @@ const LessonPage = () => {
             </div>
           <div className="flex flex-col">
             <nav className="flex text-[10px] text-gray-500 uppercase tracking-widest font-black mb-0.5 items-center space-x-1.5">
-              <Link to="/dashboard" className="hover:text-white transition-colors capitalize hidden sm:inline-block">
+              <Link to={level === 'arena' ? '/arena' : '/dashboard'} className="hover:text-white transition-colors capitalize hidden sm:inline-block">
                 {level} Track
               </Link>
               <ChevronRight className="w-2.5 h-2.5 hidden sm:inline-block opacity-30" />

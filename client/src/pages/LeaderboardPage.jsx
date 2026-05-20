@@ -4,7 +4,7 @@ import { Button, GlassCard } from '../components/ui/Core';
 import { Trophy, Medal, Crown, ArrowUpRight, User, Flame, Zap, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { API_URL } from '../utils/config';
+import api from '../api/axios';
 import { SEO } from '../utils/SEO';
 
 const PLACEHOLDER = [
@@ -41,11 +41,8 @@ const LeaderboardPage = () => {
     const fetchLeaderboard = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`${API_URL}/leaderboard?period=${filter}`);
-        if (res.ok) {
-          const json = await res.json();
-          if (json.leaderboard?.length > 0) setData(json.leaderboard);
-        }
+        const res = await api.get(`/leaderboard?period=${filter}`);
+        if (res.data.leaderboard?.length > 0) setData(res.data.leaderboard);
       } catch {
         // Use placeholder on error
       } finally {
