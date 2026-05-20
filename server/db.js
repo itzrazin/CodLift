@@ -34,6 +34,10 @@ pool.query('SELECT NOW()', async (err, res) => {
         ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_total INTEGER DEFAULT 0;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS streak INTEGER DEFAULT 0;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS progress_data JSONB DEFAULT '{"completed_lessons": [], "current_xp": 0}';
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS bio TEXT DEFAULT 'Building the future, one semi-colon at a time. Full-stack enthusiast and CSS wizard in training.';
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS github_username VARCHAR(100);
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin_username VARCHAR(100);
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar VARCHAR(100) DEFAULT 'User:purple';
         
         -- Create progress table if missing (with VARCHAR lesson_id)
         CREATE TABLE IF NOT EXISTS progress (

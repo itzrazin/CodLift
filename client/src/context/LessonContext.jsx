@@ -28,7 +28,10 @@ export const LessonProvider = ({ children }) => {
           newCompleted[item.lesson_id] = {};
         }
         if (item.is_completed) {
-          newCompleted[item.lesson_id][item.exercise_id] = true;
+          newCompleted[item.lesson_id][item.exercise_id] = {
+            completed: true,
+            code: item.code_content
+          };
         }
       });
       
@@ -61,7 +64,10 @@ export const LessonProvider = ({ children }) => {
         setCompletedLessons(prev => {
           const updated = { ...prev };
           if (!updated[trackId]) updated[trackId] = {};
-          updated[trackId][exerciseId] = true;
+          updated[trackId][exerciseId] = {
+            completed: true,
+            code: codeSubmitted
+          };
           return updated;
         });
 
