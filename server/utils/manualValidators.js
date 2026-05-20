@@ -42,7 +42,7 @@ function jsGlobal(code) {
     errs.push(`Logical Error: \`while (true)\` detected. This creates an infinite loop and crashes the browser. Provide a breakout condition.`);
   
   // Syntax pitfalls
-  if (code.match(/function\s+[a-zA-Z0-9_]+\s*\([^)]*\)\s*[^\{]/) && !code.includes('=>'))
+  if (code.match(/function\s+[a-zA-Z0-9_]+\s*\([^)]*\)(?!\s*\{)/) && !code.includes('=>'))
     errs.push(`Syntax Pitfall: Missing \`{\` after function declaration. Functions require a block body.`);
   
   // Assignment vs Comparison

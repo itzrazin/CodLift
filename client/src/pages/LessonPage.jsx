@@ -35,7 +35,7 @@ const LessonPage = () => {
   const navigate = useNavigate();
   const { level, slug, exerciseId = '1' } = useParams();
   const { user, token } = useAuth();
-  const { submitProgress } = useLesson();
+  const { submitProgress, completedLessons } = useLesson();
 
   // ─── Load exercise data ─────────────────────────────────────────────────────
   // Wrapped in useCallback so the useEffect always gets a fresh reference
@@ -317,7 +317,17 @@ const LessonPage = () => {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <div className="px-3 py-1 rounded-full bg-purple/10 border border-purple/20 text-purple text-xs font-bold flex items-center gap-1">
-            <Rocket className="w-3 h-3" /> {user?.lessons_completed || 0} Lessons
+            <Rocket className="w-3 h-3" /> {
+              (() => {
+                let solved = 0;
+                if (completedLessons) {
+                  Object.values(completedLessons).forEach(map => {
+                    if (map) solved += Object.keys(map).length;
+                  });
+                }
+                return solved;
+              })()
+            } Solved
           </div>
           <div className="hidden md:flex items-center gap-1">
             {exercise.number > 1 && (
