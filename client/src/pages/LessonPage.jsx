@@ -15,6 +15,7 @@ import { SEO }          from '../utils/SEO';
 import api              from '../api/axios';
 import { clientCurriculum } from '../data/curriculum';
 import { arenaChallenges } from '../data/challenges';
+import ArenaPlayground from '../components/ArenaPlayground';
 
 const LessonPage = () => {
   const [lesson, setLesson]       = useState(null);
@@ -581,7 +582,9 @@ const LessonPage = () => {
               </div>
             ) : (
               <div className="w-full h-full">
-                {lesson.language === 'html' || lesson.language === 'css' ? (
+                {level === 'arena' ? (
+                  <ArenaPlayground challengeId={slug} code={code} />
+                ) : lesson.language === 'html' || lesson.language === 'css' ? (
                   codeEdited || code !== exercise?.initial_code ? (
                     <iframe
                       title="preview"
