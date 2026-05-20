@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -45,13 +45,22 @@ const InputField = ({ type, placeholder, icon: Icon, value, onChange, name, requ
 };
 
 const AuthPage = () => {
-  const [isLogin, setIsLogin]   = useState(true);
+  const location = useLocation();
+  const [isLogin, setIsLogin]   = useState(location.pathname !== '/signup');
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [error, setError]       = useState(null);
   const [loading, setLoading]   = useState(false);
 
-  const { login } = useAuth();
+  const { login, signup } = useAuth();
   const navigate  = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === '/signup') {
+      setIsLogin(false);
+    } else if (location.pathname === '/login') {
+      setIsLogin(true);
+    }
+  }, [location.pathname]);
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -64,16 +73,14 @@ const AuthPage = () => {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? `${API_URL}/auth/login` : `${API_URL}/auth/signup`;
-      const payload  = isLogin
-        ? { email: formData.email, password: formData.password }
-        : formData;
-
-      const response = await axios.post(endpoint, payload);
-      login(response.data.token, response.data.user);
+      if (isLogin) {
+        await login(formData.email, formData.password);
+      } else {
+        await signup(formData.username.trim(), formData.email.trim().toLowerCase(), formData.password);
+      }
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'An unexpected error occurred. Please try again.');
+      setError(err.message || 'An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -196,12 +203,12 @@ const AuthPage = () => {
 
         <p className="text-center mt-8 text-gray-500 font-mono text-xs uppercase tracking-widest">
           {isLogin ? "New operative?" : "Already recruited?"}{' '}
-          <button
-            onClick={() => setIsLogin(!isLogin)}
+          <Link
+            to={isLogin ? '/signup' : '/login'}
             className="text-cyber-cyan hover:text-white transition-colors font-black underline underline-offset-4"
           >
             {isLogin ? 'SIGN UP NOW' : 'LOG IN HERE'}
-          </button>
+          </Link>
         </p>
       </motion.div>
     </div>

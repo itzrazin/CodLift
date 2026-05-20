@@ -41,10 +41,45 @@ export const AuthProvider = ({ children }) => {
     verifyToken();
   }, [token]);
 
-  const login = (newToken, userData) => {
-    localStorage.setItem('codlift_token', newToken);
-    setToken(newToken);
-    setUser(userData);
+  const login = async (param1, param2) => {
+    // If param2 is an object, it is the OAuth token callback flow
+    if (param2 && typeof param2 === 'object') {
+      const newToken = param1;
+      const userData = param2;
+      localStorage.setItem('codlift_token', newToken);
+      setToken(newToken);
+      setUser(userData);
+      return userData;
+    }
+
+    // Otherwise, it is the regular email/password login flow
+    const email = param1;
+    const password = param2;
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const { token: newToken, user: userData } = response.data;
+      localStorage.setItem('codlift_token', newToken);
+      setToken(newToken);
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw new Error(error.response?.data?.error || 'Login failed. Please try again.');
+    }
+  };
+
+  const signup = async (username, email, password) => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/signup`, { username, email, password });
+      const { token: newToken, user: userData } = response.data;
+      localStorage.setItem('codlift_token', newToken);
+      setToken(newToken);
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      console.error('Signup error:', error);
+      throw new Error(error.response?.data?.error || 'Signup failed. Please try again.');
+    }
   };
 
   const logout = async () => {
@@ -54,14 +89,13 @@ export const AuthProvider = ({ children }) => {
       console.error('Logout error:', err);
     } finally {
       localStorage.removeItem('codlift_token');
-      localStorage.removeItem('codelift_token');
       setToken(null);
       setUser(null);
     }
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, token, login, signup, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
