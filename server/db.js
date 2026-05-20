@@ -30,6 +30,7 @@ pool.query('SELECT NOW()', async (err, res) => {
         -- Add OAuth and Progress columns if missing
         ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255) UNIQUE;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS github_id VARCHAR(255) UNIQUE;
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS level VARCHAR(20) DEFAULT 'beginner';
         ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_total INTEGER DEFAULT 0;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS streak INTEGER DEFAULT 0;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS progress_data JSONB DEFAULT '{"completed_lessons": [], "current_xp": 0}';
