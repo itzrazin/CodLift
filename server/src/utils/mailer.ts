@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // 1. Centralized Transporter Configuration
 const transporter = nodemailer.createTransport({
@@ -7,13 +7,13 @@ const transporter = nodemailer.createTransport({
   secure: true,
   auth: {
     user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASS, // Reminder: This MUST be an App Password
+    pass: process.env.GMAIL_PASS || process.env.GMAIL_APP_PASSWORD, // This MUST be an App Password
   },
   // Default 'from' so you don't repeat it in every function
   defaults: {
     from: '"CodLift" <noreply@codlift.site>'
   }
-});
+} as any);
 
 // Verify connection on startup
 transporter.verify((error, success) => {
@@ -27,7 +27,7 @@ transporter.verify((error, success) => {
 /**
  * Sends a high-energy welcome email to new users
  */
-const sendWelcomeEmail = async (email, username) => {
+export const sendWelcomeEmail = async (email: string, username: string) => {
   const mailOptions = {
     to: email,
     subject: 'Welcome to CodLift! 🚀',
@@ -39,7 +39,7 @@ const sendWelcomeEmail = async (email, username) => {
           Get ready for a gamified, high-energy learning experience.
         </p>
         <div style="text-align: center; margin: 40px 0;">
-          <a href="https://codelift.site/dashboard" style="background-color: #00f5d4; color: #080b10; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 18px; display: inline-block; transition: transform 0.2s;">Start Your First Lesson</a>
+          <a href="https://codlift.site/dashboard" style="background-color: #00f5d4; color: #080b10; padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 18px; display: inline-block; transition: transform 0.2s;">Start Your First Lesson</a>
         </div>
         <p style="color: #64748b; font-size: 13px; text-align: center; margin-top: 50px; border-top: 1px solid #1a1e26; padding-top: 20px;">
           Keep the streak alive! 🔥<br>
@@ -61,7 +61,7 @@ const sendWelcomeEmail = async (email, username) => {
 /**
  * Security alert for new logins
  */
-const sendLoginAlert = async (email, username) => {
+export const sendLoginAlert = async (email: string, username: string) => {
   const mailOptions = {
     from: '"CodLift Security" <security@codlift.site>', // Overriding default 'from'
     to: email,
@@ -81,5 +81,3 @@ const sendLoginAlert = async (email, username) => {
     console.error('❌ Error sending login alert:', error);
   }
 };
-
-module.exports = { sendWelcomeEmail, sendLoginAlert };

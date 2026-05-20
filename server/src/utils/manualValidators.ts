@@ -1,14 +1,14 @@
 /**
  * CodLift Manual Verification Library - The "Universal Error Mapping" Engine
  * Covers: Beginner, Pro, Master tracks
- * Predicts Logical Errors, Syntax Pitfalls, and Concept Misunderstandings.
+ * Predicts Logical Errors, Syntax Pitfalls, and Concept Misunderstanding.
  */
 
 const FULL_DOC = new Set(['html_1_1', 'dom_1_1', 'dom_1_2', 'events_1_1', 'events_1_2']);
 
 // ─── CORE HELPERS (Syntax & Concept Checks) ──────────────────────────────────
-function htmlGlobal(code, id) {
-  const errs = [];
+function htmlGlobal(code: string, id: string): string[] {
+  const errs: string[] = [];
   if (!FULL_DOC.has(id)) {
     ['<html>', '</html>', '<body>', '</body>', '<head>', '</head>'].forEach(t => {
       if (code.toLowerCase().includes(t))
@@ -35,8 +35,8 @@ function htmlGlobal(code, id) {
   return errs;
 }
 
-function jsGlobal(code) {
-  const errs = [];
+function jsGlobal(code: string): string[] {
+  const errs: string[] = [];
   // Predict infinite loops
   if (code.match(/while\s*\(\s*true\s*\)/))
     errs.push(`Logical Error: \`while (true)\` detected. This creates an infinite loop and crashes the browser. Provide a breakout condition.`);
@@ -57,11 +57,11 @@ function jsGlobal(code) {
 }
 
 // ─── VALIDATORS (Predictive Mappings) ─────────────────────────────────────────
-const V = {
+const V: Record<string, (code: string) => string[]> = {
 
   // ── BEGINNER: HTML Basics ──
-  html_1_1(code) {
-    const e = [];
+  html_1_1(code: string) {
+    const e: string[] = [];
     if (!code.match(/<h1/i)) {
       if (code.match(/<H1/)) e.push('Syntax Pitfall: While HTML is case-insensitive, best practice requires lowercase tags like `<h1>`.');
       else e.push('Missing `<h1>` tag entirely. Start by wrapping your text in `<h1>` and `</h1>`.');
@@ -71,8 +71,8 @@ const V = {
     return e;
   },
 
-  html_1_2(code) {
-    const e = [];
+  html_1_2(code: string) {
+    const e: string[] = [];
     if (code.match(/<P/)) e.push('Syntax Pitfall: Use lowercase `<p>` instead of `<P>`.');
     if (!code.match(/<p\s*>/i)) e.push('Missing `<p>` opening tag.');
     if (!code.match(/<\/p>/i))  e.push('Missing closing `</p>` tag.');
@@ -80,8 +80,8 @@ const V = {
     return e;
   },
 
-  html_1_3(code) {
-    const e = [];
+  html_1_3(code: string) {
+    const e: string[] = [];
     if (!code.match(/<a\s/i)) return ['Concept Misunderstanding: Missing anchor tag `<a>`. Use it to create hyperlinks.'];
     if (!code.includes('href=')) e.push('Syntax Pitfall: Missing `href` attribute. How will the link know where to go?');
     if (code.includes('href="www.')) e.push('Logical Error: URLs in `href` must start with `https://`, not just `www.`');
@@ -91,8 +91,8 @@ const V = {
   },
 
   // ── BEGINNER: HTML Structure ──
-  html_2_1(code) {
-    const e = [];
+  html_2_1(code: string) {
+    const e: string[] = [];
     if (!code.match(/<header[\s>]/i)) e.push('Missing `<header>` element to contain the page title.');
     if (!code.match(/<main[\s>]/i))   e.push('Missing `<main>` element to contain the primary content.');
     if (code.match(/<header[\s>]/i) && !code.match(/<header[\s>][\s\S]*?<h1[\s>]/i))
@@ -103,8 +103,8 @@ const V = {
   },
 
   // ── BEGINNER: CSS Styling ──
-  css_1_1(code) {
-    const e = [];
+  css_1_1(code: string) {
+    const e: string[] = [];
     if (!code.includes('h1 {') && !code.includes('h1{')) e.push('Syntax Pitfall: Missing the `h1` CSS selector followed by `{`.');
     if (!code.includes('color:')) e.push('Concept Misunderstanding: Use the `color:` property to change text color, not `background-color:` or `text-color:`.');
     if (!code.includes('cyan') && !code.includes('purple')) e.push('Logical Error: The assigned color value is incorrect based on the task requirements.');
@@ -113,8 +113,8 @@ const V = {
   },
 
   // ── BEGINNER: JS Fundamentals ──
-  js_1_1(code) {
-    const e = [];
+  js_1_1(code: string) {
+    const e: string[] = [];
     if (!code.includes('let ')) {
       if (code.includes('const ')) e.push('Logical Error: Use `let` instead of `const` if the variable might change later (even if it does not here, follow the prompt).');
       else e.push('Syntax Pitfall: You must declare the variable using the `let` keyword.');
@@ -125,8 +125,8 @@ const V = {
     return e;
   },
 
-  js_1_2(code) {
-    const e = [];
+  js_1_2(code: string) {
+    const e: string[] = [];
     if (!code.match(/function\s+greetUser/)) e.push('Missing function declaration for `greetUser`.');
     if (!code.match(/\(\s*name\s*\)/)) e.push('Logical Error: The function must accept a parameter exactly named `name`.');
     if (!code.includes('return')) e.push('Concept Misunderstanding: The function must `return` the value, not just `console.log` it.');
@@ -134,8 +134,8 @@ const V = {
     return e;
   },
 
-  js_1_5(code) {
-    const e = [];
+  js_1_5(code: string) {
+    const e: string[] = [];
     if (code.match(/for\s*\(\s*[a-zA-Z]+\s*=\s*1\s*;/)) e.push('Syntax Pitfall: Missing `let` in the for loop initialization (e.g., `let i = 1`).');
     if (code.match(/i\s*<\s*5/)) e.push('Logical Error: Off-by-one error! `i < 5` stops at 4. Use `i <= 5` to include 5.');
     if (!code.match(/i\+\+/)) e.push('Logical Error: Missing incrementer `i++`. This will cause an infinite loop.');
@@ -143,15 +143,15 @@ const V = {
     return e;
   },
 
-  'fix-the-counter'(code) {
-    const e = [];
+  'fix-the-counter'(code: string) {
+    const e: string[] = [];
     if (code.includes('count + 10')) e.push('Logical Error: You are still incrementing the count by 10 instead of 1.');
     if (!code.includes('count + 1') && !code.includes('count+1')) e.push('Logical Error: The counter increment must add exactly 1 to the current count.');
     return e;
   },
 
-  'array-compressor'(code) {
-    const e = [];
+  'array-compressor'(code: string) {
+    const e: string[] = [];
     if (!code.match(/function\s+compress/)) e.push('Missing function declaration for `compress`.');
     if (!code.includes('filter')) e.push('Concept Misunderstanding: You should use `.filter()` to keep only odd numbers.');
     if (!code.includes('sort')) e.push('Concept Misunderstanding: You should use `.sort()` to sort the array in ascending order.');
@@ -159,8 +159,8 @@ const V = {
     return e;
   },
 
-  'auth-logic-101'(code) {
-    const e = [];
+  'auth-logic-101'(code: string) {
+    const e: string[] = [];
     if (!code.match(/function\s+authorize/)) e.push('Missing function declaration for `authorize`.');
     if (!code.includes('is_verified')) e.push('Logical Error: You must verify that `user.is_verified` is true.');
     if (!code.includes('admin')) e.push('Logical Error: Admin role should bypass all role restrictions.');
@@ -168,8 +168,8 @@ const V = {
     return e;
   },
 
-  'algorithm-duel'(code) {
-    const e = [];
+  'algorithm-duel'(code: string) {
+    const e: string[] = [];
     if (!code.match(/function\s+singleNonDuplicate/)) e.push('Missing function declaration for `singleNonDuplicate`.');
     if (!code.includes('while') || !code.includes('mid')) e.push('Logical Error: High-performance O(log n) search requires binary search logic.');
     return e;
@@ -177,8 +177,8 @@ const V = {
 };
 
 // ─── MAIN EXPORT ───────────────────────────────────────────────────────────────
-const validateExercise = (id, code, language) => {
-  let errors = [];
+export const validateExercise = (id: string, code: string, language: string) => {
+  let errors: string[] = [];
 
   // 1. Universal Checks
   if (language === 'html') {
@@ -210,5 +210,3 @@ const validateExercise = (id, code, language) => {
   // Fallback for AI verification
   return null;
 };
-
-module.exports = { validateExercise };

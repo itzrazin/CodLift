@@ -1,13 +1,16 @@
-const express = require('express');
+import express, { Request, Response } from 'express';
+import * as db from '../db';
+
 const router = express.Router();
-const db = require('../db');
 
 // GET /api/leaderboard?period=weekly|all-time
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   try {
-    const { period = 'all-time', limit = 50 } = req.query;
+    const period = typeof req.query.period === 'string' ? req.query.period : 'all-time';
+    const limitParam = typeof req.query.limit === 'string' ? req.query.limit : '50';
+    const limit = Math.min(parseInt(limitParam) || 50, 100);
     
-    let query;
+    let query: string;
     if (period === 'weekly') {
       // Weekly: XP earned in last 7 days via progress completions
       query = `
@@ -35,9 +38,9 @@ router.get('/', async (req, res) => {
       `;
     }
 
-    const result = await db.query(query, [Math.min(parseInt(limit) || 50, 100)]);
+    const result = await db.query(query, [limit]);
     
-    const ranked = result.rows.map((row, index) => ({
+    const ranked = result.rows.map((row: any, index: number) => ({
       rank: index + 1,
       id: row.id,
       username: row.username,
@@ -49,6 +52,7 @@ router.get('/', async (req, res) => {
     res.json({ leaderboard: ranked, period, total: ranked.length });
   } catch (err) {
     console.error('Leaderboard error:', err);
+    const period = typeof req.query.period === 'string' ? req.query.period : 'all-time';
     // Return fallback placeholder data instead of error
     res.json({ 
       leaderboard: [
@@ -58,11 +62,11 @@ router.get('/', async (req, res) => {
         { rank: 4, username: 'CodeKing', level: 'pro', lessons_completed: 55 },
         { rank: 5, username: 'AlgoAlice', level: 'intermediate', lessons_completed: 44 },
       ],
-      period: req.query.period || 'all-time',
+      period,
       total: 5,
       fallback: true
     });
   }
 });
 
-module.exports = router;
+export default router;

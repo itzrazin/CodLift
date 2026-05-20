@@ -1,29 +1,24 @@
-/**
- * CodLift XP Engine
- * Single source of truth for XP calculation.
- *
- * Formula: XP = floor((BaseXP × DifficultyMultiplier × StreakMultiplier) + SpeedBonus)
- */
+import levels from '../data/levels.json';
+import curriculum from '../data/curriculum';
 
-const levels = require('../data/levels.json');
-const curriculum = require('../data/curriculum');
+export interface Rank {
+  rank: number;
+  title: string;
+  xp_required: number;
+  badge: string;
+}
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-/** Return rank object for a given total XP. */
-function getRankForXP(totalXP) {
+export function getRankForXP(totalXP: number): Rank {
   const sorted = [...levels.ranks].sort((a, b) => b.xp_required - a.xp_required);
-  return sorted.find(r => totalXP >= r.xp_required) || levels.ranks[0];
+  return (sorted.find(r => totalXP >= r.xp_required) || levels.ranks[0]) as Rank;
 }
 
-/** Return next rank (or null if already at max). */
-function getNextRank(totalXP) {
+export function getNextRank(totalXP: number): Rank | null {
   const sorted = [...levels.ranks].sort((a, b) => a.xp_required - b.xp_required);
-  return sorted.find(r => r.xp_required > totalXP) || null;
+  return (sorted.find(r => r.xp_required > totalXP) || null) as Rank | null;
 }
 
-/** Resolve the lesson-level difficulty for a given exercise id. */
-function getDifficultyForExercise(exerciseId, lessonId) {
+export function getDifficultyForExercise(exerciseId: string, lessonId: string): string {
   const lesson = curriculum.find(l =>
     l.id === lessonId || l.exercises.some(e => e.id === exerciseId)
   );
@@ -37,24 +32,19 @@ function getDifficultyForExercise(exerciseId, lessonId) {
   return lesson.level || 'beginner';
 }
 
-// ─── Main Calculator ───────────────────────────────────────────────────────────
+interface CalculateXPOpts {
+  exerciseId: string;
+  lessonId: string;
+  solveTimeMs?: number | null;
+  streakDays?: number;
+}
 
-/**
- * Calculate XP earned for a correct submission.
- *
- * @param {object} opts
- * @param {string} opts.exerciseId  - exercise slug (e.g. "html_1_1")
- * @param {string} opts.lessonId    - lesson slug  (e.g. "html-basics")
- * @param {number} opts.solveTimeMs - milliseconds taken to solve (optional)
- * @param {number} opts.streakDays  - user's current streak in days
- * @returns {{ xp: number, breakdown: object }}
- */
-function calculateXP({ exerciseId, lessonId, solveTimeMs = null, streakDays = 0 }) {
+export function calculateXP({ exerciseId, lessonId, solveTimeMs = null, streakDays = 0 }: CalculateXPOpts) {
   const baseXP = levels.base_xp.default;
 
   // 1. Difficulty multiplier
   const difficulty = getDifficultyForExercise(exerciseId, lessonId);
-  const diffMult = levels.difficulty_multipliers[difficulty] || 1.0;
+  const diffMult = (levels.difficulty_multipliers as Record<string, number>)[difficulty] || 1.0;
 
   // 2. Streak multiplier
   let streakMult = 1.0;
@@ -89,5 +79,3 @@ function calculateXP({ exerciseId, lessonId, solveTimeMs = null, streakDays = 0 
     }
   };
 }
-
-module.exports = { calculateXP, getRankForXP, getNextRank };

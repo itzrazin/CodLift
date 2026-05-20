@@ -1,15 +1,16 @@
-const express = require('express');
-const router = express.Router();
-const axios = require('axios');
+import express, { Request, Response } from 'express';
+import axios from 'axios';
 
-// Verify code submission via AI
-router.post('/verify', async (req, res) => {
+const router = express.Router();
+
+// POST /api/ai/verify — Verify code submission via AI
+router.post('/verify', async (req: Request, res: Response) => {
   const { code, topic, instruction, task, language } = req.body;
-  
+
   if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_key_here') {
-    return res.json({ 
-      correct: false, 
-      feedback: "⚠️ AI verifier is offline. Please try again shortly."
+    return res.json({
+      correct: false,
+      feedback: '⚠️ AI verifier is offline. Please try again shortly.'
     });
   }
 
@@ -17,15 +18,15 @@ router.post('/verify', async (req, res) => {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: 'anthropic/claude-3.5-sonnet',
       messages: [
-        { 
-          role: 'system', 
+        {
+          role: 'system',
           content: `You are CodLift AI, a friendly coding tutor. You verify student code submissions.
 Reply ONLY with valid JSON in this exact format: {"correct": true/false, "feedback": "message"}
 Keep feedback short (under 50 words), friendly, encouraging. Use emojis.
 If wrong, give a specific hint about what to fix without giving the full answer.`
         },
-        { 
-          role: 'user', 
+        {
+          role: 'user',
           content: `Topic/Language: ${topic || language}
 Instruction: ${instruction}
 Specific Task: ${task}
@@ -48,10 +49,9 @@ Does this code correctly solve the exercise? Reply with JSON only.`
     });
 
     const content = response.data.choices[0].message.content;
-    
+
     // Try to parse JSON from response
     try {
-      // Extract JSON from potentially wrapped response
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
@@ -70,34 +70,34 @@ Does this code correctly solve the exercise? Reply with JSON only.`
     }
 
     res.json({ correct: false, feedback: 'Could not verify. Please try again.' });
-  } catch (err) {
+  } catch (err: any) {
     console.error('AI verify error:', err.message);
-    res.json({ 
-      correct: false, 
-      feedback: "⚠️ Verification error. Please try submitting again."
+    res.json({
+      correct: false,
+      feedback: '⚠️ Verification error. Please try submitting again.'
     });
   }
 });
 
-// Generate hint for exercise
-router.post('/hint', async (req, res) => {
+// POST /api/ai/hint — Generate hint for exercise
+router.post('/hint', async (req: Request, res: Response) => {
   const { instruction, task, topic, language } = req.body;
-  
+
   if (!process.env.OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY === 'your_openrouter_key_here') {
-    return res.json({ hint: "💡 Read the instructions carefully and try one step at a time!" });
+    return res.json({ hint: '💡 Read the instructions carefully and try one step at a time!' });
   }
 
   try {
     const response = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: 'anthropic/claude-3.5-sonnet',
       messages: [
-        { 
-          role: 'system', 
-          content: 'Give a simple one-line hint for this coding exercise. Make it helpful but don\'t give away the answer. Keep it under 15 words. Be friendly and fun. Start with 💡.'
+        {
+          role: 'system',
+          content: "Give a simple one-line hint for this coding exercise. Make it helpful but don't give away the answer. Keep it under 15 words. Be friendly and fun. Start with 💡."
         },
-        { 
-          role: 'user', 
-          content: `Exercise topic: ${topic || language}\nInstruction: ${instruction}\nSpecific Task: ${task}` 
+        {
+          role: 'user',
+          content: `Exercise topic: ${topic || language}\nInstruction: ${instruction}\nSpecific Task: ${task}`
         }
       ],
       max_tokens: 100,
@@ -111,10 +111,10 @@ router.post('/hint', async (req, res) => {
     });
 
     res.json({ hint: response.data.choices[0].message.content });
-  } catch (err) {
+  } catch (err: any) {
     console.error('AI hint error:', err.message);
-    res.json({ hint: "💡 Try breaking the problem into smaller steps!" });
+    res.json({ hint: '💡 Try breaking the problem into smaller steps!' });
   }
 });
 
-module.exports = router;
+export default router;

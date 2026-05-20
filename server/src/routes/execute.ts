@@ -1,17 +1,18 @@
-const express  = require('express');
-const router   = express.Router();
-const axios    = require('axios');
-const crypto   = require('crypto');
-const auth     = require('../middleware/auth');
-const { validateExercise } = require('../utils/manualValidators');
+import express, { Request, Response } from 'express';
+import axios from 'axios';
+import crypto from 'crypto';
+import authMiddleware, { AuthenticatedRequest } from '../middleware/auth';
+import { validateExercise } from '../utils/manualValidators';
+
+const router = express.Router();
 
 // ─── Piston API config ────────────────────────────────────────────────────────
 const PISTON_URL     = (process.env.PISTON_API_URL || 'https://emkc.org/api/v2/piston').replace(/\/+$/, '');
-const PISTON_TIMEOUT = 8000; // 8 s — prevents infinite loop submissions from hanging server
+const PISTON_TIMEOUT = 8000;
 
 /** Map client language string to Piston language identifier. */
-const getPistonLang = (ext) => {
-  const map = {
+const getPistonLang = (ext: string): string => {
+  const map: Record<string, string> = {
     js: 'javascript', javascript: 'javascript',
     py: 'python',     python: 'python',
     html: 'html',     css: 'css'
@@ -20,34 +21,33 @@ const getPistonLang = (ext) => {
 };
 
 // ─── Anti-Cheat & Rate Limit Store ────────────────────────────────────────────
-// Per user+exercise: stores { lastHash, lastSubmitMs }
-// Prevents: (1) rapid-fire spam, (2) resubmitting the exact same code.
-const submissionStore = new Map();
-const RATE_LIMIT_MS   = 3000;  // 3 s between any two submissions
-const DEDUP_WINDOW_MS = 60000; // 60 s window for duplicate-code detection
+interface SubmissionRecord {
+  lastHash: string;
+  lastSubmitMs: number;
+}
 
-/** SHA-256 fingerprint of submitted code (normalised whitespace). */
-function codeHash(code) {
+const submissionStore = new Map<string, SubmissionRecord>();
+const RATE_LIMIT_MS   = 3000;
+const DEDUP_WINDOW_MS = 60000;
+
+function codeHash(code: string): string {
   const normalised = code.replace(/\s+/g, ' ').trim();
   return crypto.createHash('sha256').update(normalised).digest('hex');
 }
 
-function getStoreKey(userId, exerciseId) {
+function getStoreKey(userId: string, exerciseId: string): string {
   return `${userId}::${exerciseId}`;
 }
 
-/** Returns { blocked, reason } */
-function checkAntiCheat(userId, exerciseId, code) {
+function checkAntiCheat(userId: string, exerciseId: string, code: string): { blocked: boolean; reason?: string } {
   const key    = getStoreKey(userId, exerciseId);
   const record = submissionStore.get(key);
   const now    = Date.now();
 
   if (record) {
-    // 1. Rate limit — too fast
     if (now - record.lastSubmitMs < RATE_LIMIT_MS) {
       return { blocked: true, reason: 'rate_limit' };
     }
-    // 2. Duplicate code within dedup window
     if (now - record.lastSubmitMs < DEDUP_WINDOW_MS && codeHash(code) === record.lastHash) {
       return { blocked: true, reason: 'duplicate' };
     }
@@ -55,11 +55,10 @@ function checkAntiCheat(userId, exerciseId, code) {
   return { blocked: false };
 }
 
-function recordSubmission(userId, exerciseId, code) {
+function recordSubmission(userId: string, exerciseId: string, code: string): void {
   const key = getStoreKey(userId, exerciseId);
   submissionStore.set(key, { lastHash: codeHash(code), lastSubmitMs: Date.now() });
 
-  // Housekeeping: evict entries older than 10 min to prevent memory growth
   if (submissionStore.size > 10_000) {
     const cutoff = Date.now() - 600_000;
     for (const [k, v] of submissionStore) {
@@ -69,7 +68,7 @@ function recordSubmission(userId, exerciseId, code) {
 }
 
 // ─── POST /execute — Run code ─────────────────────────────────────────────────
-router.post('/', async (req, res) => {
+router.post('/', async (req: Request, res: Response) => {
   const { code, language, stdin = '' } = req.body;
   const lang = getPistonLang(language);
 
@@ -86,7 +85,7 @@ router.post('/', async (req, res) => {
     }, { timeout: PISTON_TIMEOUT });
 
     res.json(response.data);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
       return res.status(408).json({
         error: '⏱️ Execution timed out. Check for infinite loops in your code.'
@@ -98,8 +97,7 @@ router.post('/', async (req, res) => {
 });
 
 // ─── POST /execute/verify — Validate & gate XP ───────────────────────────────
-// Requires auth. Runs anti-cheat, then deterministic validator, then AI fallback.
-router.post('/verify', auth, async (req, res) => {
+router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   const { id, code, topic, instruction, task, language, test_cases, start_time } = req.body;
 
   if (!code || typeof code !== 'string' || code.trim().length === 0) {
@@ -109,36 +107,37 @@ router.post('/verify', auth, async (req, res) => {
     });
   }
 
+  const userId = req.user!.id;
+
   // ── Anti-cheat check ─────────────────────────────────────────────────────
-  const { blocked, reason } = checkAntiCheat(req.user.id, id || language, code);
+  const { blocked, reason } = checkAntiCheat(userId, id || language, code);
 
   if (blocked) {
-    const feedbackMap = {
-      rate_limit: '### ⏳ Slow Down!\n\nYou\'re submitting too fast. Wait a moment and try again.',
-      duplicate:  '### 🔄 Duplicate Submission Detected\n\nYour code is identical to your last attempt. Make a change and try again. Copying the same solution repeatedly won\'t earn you XP.'
+    const feedbackMap: Record<string, string> = {
+      rate_limit: "### ⏳ Slow Down!\n\nYou're submitting too fast. Wait a moment and try again.",
+      duplicate:  "### 🔄 Duplicate Submission Detected\n\nYour code is identical to your last attempt. Make a change and try again. Copying the same solution repeatedly won't earn you XP."
     };
     return res.status(429).json({
       isCorrect: false,
-      feedback:  feedbackMap[reason] || '### ⚠️ Submission Blocked'
+      feedback:  feedbackMap[reason!] || '### ⚠️ Submission Blocked'
     });
   }
 
-  // Record this submission BEFORE validation (prevents spamming on fast responses)
-  recordSubmission(req.user.id, id || language, code);
+  recordSubmission(userId, id || language, code);
 
   // ── Step 1: Deterministic Manual Validation ───────────────────────────────
   if (id || language) {
     const manualResult = validateExercise(id, code, language);
 
     if (manualResult && !manualResult.isCorrect) {
-      return res.json(manualResult); // Fast-fail — wrong
+      return res.json(manualResult);
     }
     if (manualResult && manualResult.isCorrect) {
-      return res.json(manualResult); // Fast-accept — correct
+      return res.json(manualResult);
     }
   }
 
-  // ── Step 2: Run code through Piston to get actual output ──────────────────
+  // ── Step 2: Run code through Piston ──────────────────────────────────────
   let actualOutput = '';
   const lang = getPistonLang(language);
 
@@ -154,43 +153,42 @@ router.post('/verify', auth, async (req, res) => {
       actualOutput    = runRes.data.run.stdout || '';
       const stderr    = runRes.data.run.stderr || '';
 
-      // If code crashed with no output, report the runtime error immediately
       if (stderr && !actualOutput) {
         return res.json({
           isCorrect: false,
           feedback:  `### ❌ Runtime Error\n\nYour code crashed:\n\`\`\`\n${stderr.slice(0, 500)}\n\`\`\``
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         return res.json({
           isCorrect: false,
           feedback:  '### ⏱️ Execution Timeout\n\nYour code took too long to run. Check for infinite loops.'
         });
       }
-      // Piston down — continue to AI for static analysis
+      // Piston down — continue to static analysis
     }
   } else {
     actualOutput = code;
   }
 
-  // ── Step 3: Deterministic Fallback Verification (AI Removed) ─────────────
-  const expected = test_cases?.expected_output || '';
+  // ── Step 3: Deterministic Fallback Verification ───────────────────────────
+  const expected     = test_cases?.expected_output || '';
   const solutionText = test_cases?.solution || '';
-  
+
   let isCorrect = false;
-  
+
   if (expected) {
-    isCorrect = code.toLowerCase().includes(String(expected).toLowerCase()) || actualOutput.toLowerCase().includes(String(expected).toLowerCase());
+    isCorrect = code.toLowerCase().includes(String(expected).toLowerCase())
+             || actualOutput.toLowerCase().includes(String(expected).toLowerCase());
   } else if (solutionText) {
-    // Normalise whitespace to compare structures
     const normCode = code.replace(/\s+/g, '').toLowerCase();
-    const normSol = solutionText.replace(/\s+/g, '').toLowerCase();
+    const normSol  = solutionText.replace(/\s+/g, '').toLowerCase();
     isCorrect = normCode.includes(normSol);
   } else {
-    isCorrect = true; // Fallback to true if no tests specified
+    isCorrect = true;
   }
-  
+
   return res.json({
     isCorrect,
     feedback: isCorrect
@@ -199,4 +197,4 @@ router.post('/verify', auth, async (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

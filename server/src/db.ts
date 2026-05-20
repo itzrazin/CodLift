@@ -1,9 +1,10 @@
-const { Pool } = require('pg');
-const dotenv = require('dotenv');
-const path = require('path');
+import { Pool } from 'pg';
+import dotenv from 'dotenv';
+import path from 'path';
 
 // Load .env from parent directory (for Railway/Render deployments)
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
+// Since db.ts is now located in server/src/db.ts, we need to go up two levels to find the workspace root .env
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config(); // also try local
 
 let dbUrl = process.env.DATABASE_URL || '';
@@ -67,12 +68,11 @@ pool.query('SELECT NOW()', async (err, res) => {
         ALTER TABLE progress ADD CONSTRAINT progress_user_lesson_exercise_key UNIQUE(user_id, lesson_id, exercise_id);
       `);
       console.log('✅ Database schema verified/updated.');
-    } catch (migrateErr) {
+    } catch (migrateErr: any) {
       console.error('⚠️ Schema migration warning:', migrateErr.message);
     }
   }
 });
 
-module.exports = {
-  query: (text, params) => pool.query(text, params),
-};
+export const query = (text: string, params?: any[]) => pool.query(text, params);
+export { pool };
