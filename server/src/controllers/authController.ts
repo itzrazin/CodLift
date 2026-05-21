@@ -1,0 +1,79 @@
+import { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import * as db from '../db';
+
+export const register = async (req: Request, res: Response) => {
+  try {
+    const { name, email, password, address, profile_photo } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ error: 'Name, email, and password are required' });
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'Invalid email format' });
+    }
+
+    const existingEmail = await db.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existingEmail.rows.length > 0) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const result = await db.query(
+      'INSERT INTO users (name, email, password, address, profile_photo, created_at, last_login) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING id, name, email, address, profile_photo, role, created_at',
+      [name, email, hashedPassword, address || null, profile_photo || null]
+    );
+
+    const user = result.rows[0];
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || '', { expiresIn: '7d' });
+
+    res.json({ token, user });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ error: 'Server error during registration' });
+  }
+};
+
+export const login = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const user = result.rows[0];
+
+    if (!user.password) {
+      return res.status(401).json({ error: 'Invalid credentials (try logging in with Google)' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const updateResult = await db.query(
+      'UPDATE users SET last_login = NOW() WHERE id = $1 RETURNING id, name, email, address, profile_photo, role, created_at',
+      [user.id]
+    );
+    const updatedUser = updateResult.rows[0];
+
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || '', { expiresIn: '7d' });
+
+    res.json({ token, user: updatedUser });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Server error during login' });
+  }
+};

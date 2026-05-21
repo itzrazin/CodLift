@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
-import authMiddleware, { AuthenticatedRequest } from '../middleware/auth';
+import { authMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as db from '../db';
 
 const router = express.Router();

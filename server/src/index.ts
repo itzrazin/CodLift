@@ -4,9 +4,6 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import helmet from 'helmet';
-import session from 'express-session';
-import connectPgSimple from 'connect-pg-simple';
-
 // Load .env — from server/src/index.ts, workspace root is 3 levels up
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 dotenv.config();
@@ -15,14 +12,13 @@ import { pool } from './db';
 import passportConfig from './config/passport';
 import curriculum from './data/curriculum';
 
-// Routes
 import authRouter       from './routes/auth';
+import userRouter       from './routes/user';
 import executeRouter    from './routes/execute';
 import lessonsRouter    from './routes/lessons';
 import progressRouter   from './routes/progress';
 import leaderboardRouter from './routes/leaderboard';
 
-const PgSession = connectPgSimple(session);
 const app       = express();
 const PORT      = process.env.PORT || 5000;
 
@@ -67,26 +63,8 @@ app.use(cors({
   credentials: true
 }));
 
-// Session — PostgreSQL-backed store
-app.use(session({
-  store: new PgSession({
-    pool,
-    tableName:           'sessions',
-    createTableIfMissing: true
-  }),
-  secret:           process.env.SESSION_SECRET || 'codlift_default_secret_123',
-  resave:           false,
-  saveUninitialized: false,
-  cookie: {
-    secure:   process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge:   24 * 60 * 60 * 1000
-  }
-}));
-
-// Passport OAuth
+// Passport OAuth (Stateless JWT flow)
 app.use(passportConfig.initialize());
-app.use(passportConfig.session());
 
 app.use(express.json({ limit: '10mb' }));
 app.use(cookieParser());
@@ -137,7 +115,7 @@ app.use('/api/auth',        authRouter);
 app.use('/api/execute',     executeRouter);
 app.use('/api/lessons',     lessonsRouter);
 app.use('/api/progress',    progressRouter);
-app.use('/api/user',        progressRouter); // alias
+app.use('/api/user',        userRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 
 // ─── Global error handler ──────────────────────────────────────────────────────

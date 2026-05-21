@@ -384,7 +384,7 @@ const ProfilePage = () => {
     setSuccessMsg('');
 
     try {
-      const res = await api.put('/auth/profile', {
+      const res = await api.put('/user/profile', {
         username: editUsername,
         bio: editBio,
         github_username: editGithub,

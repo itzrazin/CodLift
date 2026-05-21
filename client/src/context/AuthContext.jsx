@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        const response = await axios.get(`${API_URL}/auth/me`, {
+        const response = await axios.get(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUser(response.data.user);
@@ -68,9 +68,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (username, email, password) => {
+  const signup = async (name, email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/signup`, { username, email, password });
+      const response = await axios.post(`${API_URL}/auth/register`, { name, email, password });
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem('codlift_token', newToken);
       setToken(newToken);

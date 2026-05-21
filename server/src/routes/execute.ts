@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
 import crypto from 'crypto';
-import authMiddleware, { AuthenticatedRequest } from '../middleware/auth';
+import { authMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import { validateExercise } from '../utils/manualValidators';
 
 const router = express.Router();

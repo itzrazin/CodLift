@@ -1,5 +1,5 @@
 import express, { Response } from 'express';
-import authMiddleware, { AuthenticatedRequest } from '../middleware/auth';
+import { authMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as db from '../db';
 import curriculum from '../data/curriculum';
 

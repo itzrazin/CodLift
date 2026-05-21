@@ -20,7 +20,7 @@ const AuthCallback = () => {
       }
 
       try {
-        const response = await axios.get(`${API_URL}/auth/me`, {
+        const response = await axios.get(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         
