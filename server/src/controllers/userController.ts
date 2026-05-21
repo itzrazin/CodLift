@@ -11,8 +11,6 @@ const USER_SELECT = `
   COALESCE(avatar, 'User:purple') AS avatar,
   COALESCE(role, 'user')         AS role,
   COALESCE(level, 'beginner')    AS level,
-  COALESCE(xp_total, 0)          AS xp_total,
-  COALESCE(streak, 0)            AS streak,
   COALESCE(bio, '')              AS bio,
   COALESCE(github_username, '')  AS github_username,
   COALESCE(linkedin_username, '') AS linkedin_username,
