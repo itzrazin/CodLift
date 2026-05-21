@@ -2,6 +2,23 @@ import { Response } from 'express';
 import * as db from '../db';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
+const USER_SELECT = `
+  id, email,
+  COALESCE(name, '')             AS name,
+  COALESCE(username, '')         AS username,
+  COALESCE(address, '')          AS address,
+  COALESCE(profile_photo, '')    AS profile_photo,
+  COALESCE(avatar, 'User:purple') AS avatar,
+  COALESCE(role, 'user')         AS role,
+  COALESCE(level, 'beginner')    AS level,
+  COALESCE(xp_total, 0)          AS xp_total,
+  COALESCE(streak, 0)            AS streak,
+  COALESCE(bio, '')              AS bio,
+  COALESCE(github_username, '')  AS github_username,
+  COALESCE(linkedin_username, '') AS linkedin_username,
+  created_at, last_login
+`;
+
 export const getMe = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const userId = req.user?.id;
@@ -10,20 +27,7 @@ export const getMe = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const result = await db.query(
-      `SELECT
-         id, email,
-         COALESCE(name, '')            AS name,
-         COALESCE(username, '')        AS username,
-         COALESCE(address, '')         AS address,
-         COALESCE(profile_photo, '')   AS profile_photo,
-         COALESCE(avatar, 'User:purple') AS avatar,
-         COALESCE(role, 'user')        AS role,
-         COALESCE(level, 'beginner')   AS level,
-         COALESCE(bio, '')             AS bio,
-         COALESCE(github_username, '') AS github_username,
-         COALESCE(linkedin_username,'') AS linkedin_username,
-         created_at, last_login
-       FROM users WHERE id = $1`,
+      `SELECT ${USER_SELECT} FROM users WHERE id = $1`,
       [userId]
     );
 
@@ -53,21 +57,7 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
            address       = COALESCE($2, address),
            profile_photo = COALESCE($3, profile_photo)
        WHERE id = $4
-       RETURNING
-         id, email,
-         COALESCE(name, '')            AS name,
-         COALESCE(username, '')        AS username,
-         COALESCE(address, '')         AS address,
-         COALESCE(profile_photo, '')   AS profile_photo,
-         COALESCE(avatar, 'User:purple') AS avatar,
-         COALESCE(role, 'user')        AS role,
-         COALESCE(level, 'beginner')   AS level,
-         COALESCE(xp_total, 0)         AS xp_total,
-         COALESCE(streak, 0)           AS streak,
-         COALESCE(bio, '')             AS bio,
-         COALESCE(github_username, '') AS github_username,
-         COALESCE(linkedin_username,'') AS linkedin_username,
-         created_at`,
+       RETURNING ${USER_SELECT}`,
       [name, address, profile_photo, userId]
     );
 
