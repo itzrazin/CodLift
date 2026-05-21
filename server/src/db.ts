@@ -33,7 +33,6 @@ pool.query('SELECT NOW()', async (err, res) => {
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login TIMESTAMPTZ`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(20) DEFAULT 'user'`,
-        `ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin BOOLEAN DEFAULT false`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(100)`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS level VARCHAR(20) DEFAULT 'beginner'`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS xp_total INTEGER DEFAULT 0`,
@@ -43,8 +42,8 @@ pool.query('SELECT NOW()', async (err, res) => {
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS github_username VARCHAR(100)`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin_username VARCHAR(100)`,
         `ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar VARCHAR(100) DEFAULT 'User:purple'`,
-        // Sync role from is_admin for any existing admin users
-        `UPDATE users SET role = 'admin' WHERE is_admin = true AND (role IS NULL OR role = 'user')`,
+        // Sync role for any users who don't have it set yet
+        `UPDATE users SET role = 'user' WHERE role IS NULL`,
       ];
 
       for (const sql of migrations) {
