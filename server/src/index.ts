@@ -18,6 +18,7 @@ import executeRouter    from './routes/execute';
 import lessonsRouter    from './routes/lessons';
 import progressRouter   from './routes/progress';
 import leaderboardRouter from './routes/leaderboard';
+import adminRouter      from './routes/admin';
 
 const app       = express();
 const PORT      = process.env.PORT || 5000;
@@ -117,6 +118,7 @@ app.use('/api/lessons',     lessonsRouter);
 app.use('/api/progress',    progressRouter);
 app.use('/api/user',        userRouter);
 app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/admin',       adminRouter);
 
 // ─── Global error handler ──────────────────────────────────────────────────────
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

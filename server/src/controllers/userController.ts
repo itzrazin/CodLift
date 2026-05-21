@@ -10,7 +10,7 @@ export const getMe = async (req: AuthenticatedRequest, res: Response) => {
     }
 
     const result = await db.query(
-      'SELECT id, name, email, profile_photo, address, role, created_at, last_login FROM users WHERE id = $1',
+      'SELECT id, name, username, email, address, profile_photo, avatar, role, level, xp_total, xp, streak, longest_streak, bio, github_username, linkedin_username, created_at, last_login FROM users WHERE id = $1',
       [userId]
     );
 
@@ -40,7 +40,7 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
            address       = COALESCE($2, address),
            profile_photo = COALESCE($3, profile_photo)
        WHERE id = $4
-       RETURNING id, name, email, address, profile_photo, role, created_at`,
+       RETURNING id, name, username, email, address, profile_photo, avatar, role, level, xp_total, xp, streak, longest_streak, bio, github_username, linkedin_username, created_at`,
       [name, address, profile_photo, userId]
     );
 

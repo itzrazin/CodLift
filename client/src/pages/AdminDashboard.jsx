@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
@@ -6,6 +6,7 @@ import {
   Settings, ShieldAlert, Activity, ArrowUpRight,
   TrendingUp, Monitor, Database, Globe
 } from 'lucide-react';
+import axios from '../api/axios';
 
 const AdminStat = ({ title, value, change, icon: Icon, color }) => (
   <GlassCard className="p-6">
@@ -25,6 +26,54 @@ const AdminStat = ({ title, value, change, icon: Icon, color }) => (
 );
 
 const AdminDashboard = () => {
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchAdminStats = async () => {
+      try {
+        setLoading(true);
+        const token = localStorage.getItem('token');
+        const response = await axios.get('/api/admin/stats', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setStats(response.data.stats);
+        setError(null);
+      } catch (err) {
+        console.error('Failed to fetch admin stats:', err);
+        setError(err.response?.data?.error || 'Failed to load admin statistics');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAdminStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-purple border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm text-gray-500 animate-pulse">Loading admin dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <GlassCard className="p-8 max-w-md text-center">
+          <ShieldAlert className="w-12 h-12 text-red-400 mx-auto mb-4" />
+          <h2 className="text-xl font-bold mb-2">Access Denied</h2>
+          <p className="text-gray-400">{error}</p>
+        </GlassCard>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Admin Sidebar */}
@@ -72,10 +121,31 @@ const AdminDashboard = () => {
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <AdminStat title="Total Learners" value="12,402" change="14%" icon={Users} color="text-purple" />
-          <AdminStat title="Active Lessons" value="482" change="5%" icon={BookOpen} color="text-yellow" />
-          <AdminStat title="Daily Ad Revenue" value="$242.50" change="22%" icon={DollarSign} color="text-green-400" />
-          <AdminStat title="Server Load" value="14%" icon={Activity} color="text-red-400" />
+          <AdminStat 
+            title="Total Learners" 
+            value={stats.totalUsers.toLocaleString()} 
+            change={stats.userGrowth > 0 ? `${stats.userGrowth}%` : null} 
+            icon={Users} 
+            color="text-purple" 
+          />
+          <AdminStat 
+            title="Active Users (7d)" 
+            value={stats.activeUsers.toLocaleString()} 
+            icon={Activity} 
+            color="text-yellow" 
+          />
+          <AdminStat 
+            title="Completed Lessons" 
+            value={stats.completedLessons.toLocaleString()} 
+            icon={BookOpen} 
+            color="text-green-400" 
+          />
+          <AdminStat 
+            title="Total XP Earned" 
+            value={stats.totalXp.toLocaleString()} 
+            icon={TrendingUp} 
+            color="text-red-400" 
+          />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -90,13 +160,31 @@ const AdminDashboard = () => {
               </select>
             </div>
             <div className="h-64 flex items-end gap-2 px-2">
-              {[40, 60, 45, 80, 55, 90, 75].map((h, i) => (
-                <div key={i} className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" style={{ height: `${h}%` }}>
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {h * 10} Users
+              {stats.dailyActiveUsers.length > 0 ? (
+                stats.dailyActiveUsers.map((day, i) => {
+                  const maxCount = Math.max(...stats.dailyActiveUsers.map(d => d.count));
+                  const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
+                  return (
+                    <div 
+                      key={i} 
+                      className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" 
+                      style={{ height: `${height}%` }}
+                    >
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                        {day.count} Users
+                      </div>
+                    </div>
+                  );
+                })
+              ) : (
+                [40, 60, 45, 80, 55, 90, 75].map((h, i) => (
+                  <div key={i} className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" style={{ height: `${h}%` }}>
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {h * 10} Users
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
             <div className="flex justify-between mt-4 px-2">
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => (

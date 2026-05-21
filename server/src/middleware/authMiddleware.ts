@@ -42,3 +42,21 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
     return res.status(401).json({ error: 'Unauthorized' });
   }
 };
+
+import * as db from '../db';
+
+export const isAdmin = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void | Response> => {
+  try {
+    if (!req.user?.id) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    const result = await db.query('SELECT role FROM users WHERE id = $1', [req.user.id]);
+    if (result.rows.length === 0 || result.rows[0].role !== 'admin') {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+    next();
+  } catch (err) {
+    console.error('Admin middleware error:', err);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};

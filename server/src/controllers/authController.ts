@@ -25,7 +25,7 @@ export const register = async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await db.query(
-      'INSERT INTO users (name, email, password, address, profile_photo, created_at, last_login) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING id, name, email, address, profile_photo, role, created_at',
+      'INSERT INTO users (name, email, password, address, profile_photo, created_at, last_login) VALUES ($1, $2, $3, $4, $5, NOW(), NOW()) RETURNING id, name, username, email, address, profile_photo, avatar, role, level, xp_total, xp, streak, longest_streak, bio, github_username, linkedin_username, created_at',
       [name, email, hashedPassword, address || null, profile_photo || null]
     );
 
@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const updateResult = await db.query(
-      'UPDATE users SET last_login = NOW() WHERE id = $1 RETURNING id, name, email, address, profile_photo, role, created_at',
+      'UPDATE users SET last_login = NOW() WHERE id = $1 RETURNING id, name, username, email, address, profile_photo, avatar, role, level, xp_total, xp, streak, longest_streak, bio, github_username, linkedin_username, created_at, last_login',
       [user.id]
     );
     const updatedUser = updateResult.rows[0];

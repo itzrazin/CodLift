@@ -54,6 +54,17 @@ const GuestRoute = ({ children }) => {
   return children;
 };
 
+// AdminRoute: only allows users with role === 'admin'
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <PageLoader />;
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role !== 'admin') {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
+};
+
 // Layout wrapper that conditionally renders footer
 const AppLayout = ({ children }) => {
   const path = window.location.pathname;
@@ -95,7 +106,7 @@ function AppRoutes() {
           <Route path="/arena" element={<ProtectedRoute><Arena /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />
