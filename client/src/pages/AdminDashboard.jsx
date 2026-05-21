@@ -34,10 +34,8 @@ const AdminDashboard = () => {
     const fetchAdminStats = async () => {
       try {
         setLoading(true);
-        const token = localStorage.getItem('token');
-        const response = await axios.get('/api/admin/stats', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        // axios interceptor in api/axios.js automatically attaches codlift_token
+        const response = await axios.get('/api/admin/stats');
         setStats(response.data.stats);
         setError(null);
       } catch (err) {
