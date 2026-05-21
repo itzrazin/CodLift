@@ -139,7 +139,7 @@ const ProfilePage = () => {
 
   // Customizer form states
   const [isEditing, setIsEditing] = useState(false);
-  const [editUsername, setEditUsername] = useState(user?.username || '');
+  const [editUsername, setEditUsername] = useState(user?.name || user?.username || '');
   const [editBio, setEditBio] = useState(user?.bio || '');
   const [editGithub, setEditGithub] = useState(user?.github_username || '');
   const [editLinkedin, setEditLinkedin] = useState(user?.linkedin_username || '');
@@ -361,7 +361,7 @@ const ProfilePage = () => {
   const skills = getSkillsProgress();
 
   const handleOpenEdit = () => {
-    setEditUsername(user?.username || '');
+    setEditUsername(user?.name || user?.username || '');
     setEditBio(user?.bio || '');
     setEditGithub(user?.github_username || '');
     setEditLinkedin(user?.linkedin_username || '');
@@ -430,7 +430,7 @@ const ProfilePage = () => {
   return (
     <div className="min-h-screen bg-background text-white pb-20">
       <SEO 
-        title={`${user?.username || 'My'} Developer Profile | CodLift`}
+        title={`${user?.name || user?.username || 'My'} Developer Profile | CodLift`}
         description="View my coding stats and public projects on CodLift."
         url="/profile"
       />
@@ -452,7 +452,7 @@ const ProfilePage = () => {
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-6">
               <div>
                 <h1 className="text-4xl font-syne font-extrabold mb-3 uppercase tracking-tight flex flex-wrap items-center justify-center md:justify-start gap-2">
-                  {user?.username} 
+                  {user?.name || user?.username} 
                   <span className="text-purple/50 text-xl font-mono font-normal">#00{user?.id ? user.id.slice(-2) : '01'}</span>
                 </h1>
                 

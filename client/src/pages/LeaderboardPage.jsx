@@ -148,7 +148,7 @@ const LeaderboardPage = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                     className={`border-t border-white/5 hover:bg-white/5 transition-all group ${
-                      user?.username === row.username ? 'bg-purple/5 border-purple/20' : ''
+                      (user?.name || user?.username) === row.username ? 'bg-purple/5 border-purple/20' : ''
                     }`}
                   >
                     <td className="px-6 py-5">
@@ -164,7 +164,7 @@ const LeaderboardPage = () => {
                         <div>
                           <p className="font-bold text-sm group-hover:text-purple transition-colors">
                             {row.username}
-                            {user?.username === row.username && <span className="ml-2 text-[9px] text-purple font-black uppercase tracking-widest">You</span>}
+                            {(user?.name || user?.username) === row.username && <span className="ml-2 text-[9px] text-purple font-black uppercase tracking-widest">You</span>}
                           </p>
                           <p className={`text-[10px] uppercase font-black tracking-wider ${levelColors[row.level] || 'text-gray-500'}`}>{row.level}</p>
                         </div>

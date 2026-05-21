@@ -196,7 +196,7 @@ const Dashboard = () => {
         <div className="mt-auto space-y-1">
           <div className="px-4 py-3 rounded-xl bg-purple/10 border border-purple/20 mb-3">
             <p className="text-xs text-gray-400">Signed in as</p>
-            <p className="font-bold text-sm truncate">{user.username}</p>
+            <p className="font-bold text-sm truncate">{user.name || user.username}</p>
           </div>
           <button
             onClick={() => { logout(); navigate('/'); }}
@@ -229,7 +229,7 @@ const Dashboard = () => {
         <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
           <div className="flex-1">
             <h1 className="text-3xl font-syne font-extrabold tracking-tight mb-2">
-              Welcome back, <span className="text-gradient-purple">{user.username}</span>!
+              Welcome back, <span className="text-gradient-purple">{user.name || user.username}</span>!
             </h1>
             
             <p className="text-gray-400 text-sm mt-1">Ready to conquer today's challenges?</p>
