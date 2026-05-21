@@ -34,8 +34,8 @@ const AdminDashboard = () => {
     const fetchAdminStats = async () => {
       try {
         setLoading(true);
-        // axios interceptor in api/axios.js automatically attaches codlift_token
-        const response = await axios.get('/api/admin/stats');
+        // axios baseURL already includes /api, so path is just /admin/stats
+        const response = await axios.get('/admin/stats');
         setStats(response.data.stats);
         setError(null);
       } catch (err) {
