@@ -67,6 +67,7 @@ pool.query('SELECT NOW()', async (err, res) => {
         ALTER TABLE progress ADD COLUMN IF NOT EXISTS code_content TEXT;
         ALTER TABLE progress ADD COLUMN IF NOT EXISTS xp_earned INTEGER DEFAULT 0;
         ALTER TABLE progress ADD COLUMN IF NOT EXISTS is_completed BOOLEAN DEFAULT false;
+        ALTER TABLE progress ADD COLUMN IF NOT EXISTS completed BOOLEAN DEFAULT false;
         ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_lesson_id_fkey;
         ALTER TABLE progress ALTER COLUMN lesson_id TYPE VARCHAR(255);
         ALTER TABLE progress ALTER COLUMN exercise_id TYPE VARCHAR(255);
@@ -75,6 +76,9 @@ pool.query('SELECT NOW()', async (err, res) => {
         ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_user_id_lesson_id_exercise_id_key;
         ALTER TABLE progress DROP CONSTRAINT IF EXISTS progress_user_id_lesson_id_key;
         ALTER TABLE progress ADD CONSTRAINT progress_user_lesson_exercise_key UNIQUE(user_id, lesson_id, exercise_id);
+        
+        -- Sync completed with is_completed
+        UPDATE progress SET completed = is_completed WHERE completed IS NULL;
       `);
 
       console.log('✅ Database schema verified/updated.');
