@@ -24,8 +24,6 @@ const LessonPage = () => {
   const [codeEdited, setCodeEdited] = useState(false); // true once user modifies code
   const [output, setOutput]       = useState('');
   const [activeTab, setActiveTab] = useState('preview');
-  const [showHint, setShowHint]   = useState(false);
-  const [hintText, setHintText]   = useState('');
   const [status, setStatus]       = useState('idle'); // idle | running | success | error
   const [message, setMessage]     = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -49,8 +47,6 @@ const LessonPage = () => {
     setOutput('');
     setStatus('idle');
     setMessage('');
-    setShowHint(false);
-    setHintText('');
     setCodeEdited(false);
     startTimeRef.current = null;
 
@@ -123,24 +119,6 @@ const LessonPage = () => {
     // Persist draft — keyed per lesson+exercise to prevent cross-lesson bleed
     localStorage.setItem(`codlift_draft_${slug}_${exerciseId}`, val || '');
   }, [codeEdited, slug, exerciseId]);
-
-  // ─── Hint ─────────────────────────────────────────────────────────────────
-  const handleGetHint = async () => {
-    if (hintText) { setShowHint(s => !s); return; }
-    setHintText('Thinking...');
-    setShowHint(true);
-    try {
-      const res  = await api.post('/ai/hint', {
-        instruction: exercise.instruction,
-        task:        exercise.task,
-        topic:       exercise.title,
-        language:    lesson.language
-      });
-      setHintText(res.data.hint);
-    } catch {
-      setHintText('💡 Try breaking the problem into smaller steps!');
-    }
-  };
 
   // ─── Run (no verification, just execute) ──────────────────────────────────
   const handleRun = async () => {
@@ -436,34 +414,6 @@ const LessonPage = () => {
               )}
             </AnimatePresence>
 
-            {/* Hint */}
-            <AnimatePresence>
-              {showHint && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{   opacity: 0, height: 0 }}
-                  className="overflow-hidden"
-                >
-                  <GlassCard className="p-4 border-yellow/30 bg-yellow/5" hover={false}>
-                    <h4 className="text-[10px] font-black text-yellow uppercase tracking-widest mb-2 flex items-center gap-1">
-                      <Lightbulb className="w-3 h-3" /> AI Hint
-                    </h4>
-                    <p className="text-sm text-gray-200 leading-relaxed">{hintText}</p>
-                  </GlassCard>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <div className="p-4 border-t border-white/5 bg-navy/50">
-            <Button variant="ghost" className="w-full flex justify-between group text-sm" onClick={handleGetHint}>
-              <span className="flex items-center gap-2">
-                <Lightbulb className="w-4 h-4 text-yellow group-hover:animate-pulse" />
-                Need a hint?
-              </span>
-              <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded text-gray-400">AI</span>
-            </Button>
           </div>
         </div>
 

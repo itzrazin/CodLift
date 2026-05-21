@@ -52,23 +52,17 @@ router.post('/:id/submit', authMiddleware, async (req: AuthenticatedRequest, res
       userCode.replace(/\s+/g, '').includes(expectedOutput.replace(/\s+/g, ''));
 
     if (isMatch) {
-      const xpToAward  = 10;
       const exerciseId = req.body.exerciseId || '1';
 
       await db.query(
-        'UPDATE users SET xp_total = xp_total + $1, xp = xp + $1 WHERE id = $2',
-        [xpToAward, req.user!.id]
-      );
-
-      await db.query(
-        `INSERT INTO progress (user_id, lesson_id, exercise_id, xp_earned, is_completed)
-         VALUES ($1, $2, $3, $4, true)
+        `INSERT INTO progress (user_id, lesson_id, exercise_id, is_completed)
+         VALUES ($1, $2, $3, true)
          ON CONFLICT (user_id, lesson_id, exercise_id)
          DO UPDATE SET is_completed = true, completed_at = NOW()`,
-        [req.user!.id, id, exerciseId, xpToAward]
+        [req.user!.id, id, exerciseId]
       );
 
-      res.json({ success: true, xp: xpToAward });
+      res.json({ success: true });
     } else {
       res.json({ success: false, hint: "Output didn't match expected." });
     }

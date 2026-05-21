@@ -32,7 +32,6 @@ const LessonPage = () => {
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem('codlift_token');
       const res = await api.post(
         `/lessons/${id}/submit`,
         { userCode: code, language: lesson.category.toLowerCase() }

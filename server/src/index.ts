@@ -17,7 +17,6 @@ import curriculum from './data/curriculum';
 
 // Routes
 import authRouter       from './routes/auth';
-import aiRouter         from './routes/ai';
 import executeRouter    from './routes/execute';
 import lessonsRouter    from './routes/lessons';
 import progressRouter   from './routes/progress';
@@ -135,7 +134,6 @@ app.get('/sitemap.xml', (_req: Request, res: Response) => {
 
 // ─── API Routes ────────────────────────────────────────────────────────────────
 app.use('/api/auth',        authRouter);
-app.use('/api/ai',          aiRouter);
 app.use('/api/execute',     executeRouter);
 app.use('/api/lessons',     lessonsRouter);
 app.use('/api/progress',    progressRouter);

@@ -39,6 +39,7 @@ pool.query('SELECT NOW()', async (err, res) => {
         ALTER TABLE users ADD COLUMN IF NOT EXISTS github_username VARCHAR(100);
         ALTER TABLE users ADD COLUMN IF NOT EXISTS linkedin_username VARCHAR(100);
         ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar VARCHAR(100) DEFAULT 'User:purple';
+        ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP;
         
         -- Create progress table if missing (with VARCHAR lesson_id)
         CREATE TABLE IF NOT EXISTS progress (

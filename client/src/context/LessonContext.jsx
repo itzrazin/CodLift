@@ -71,21 +71,8 @@ export const LessonProvider = ({ children }) => {
           return updated;
         });
 
-        // Dynamically update user stats with the new xp_total from backend in real-time!
-        if (res.data.xp_total !== undefined) {
-          setUser(prevUser => {
-            if (!prevUser) return null;
-            return {
-              ...prevUser,
-              xp_total: res.data.xp_total
-            };
-          });
-        }
-        
         return {
           success: true,
-          xpEarned: res.data.xp_earned || 0,
-          breakdown: res.data.breakdown || {},
           alreadyDone: res.data.already_done
         };
       }

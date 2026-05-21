@@ -48,7 +48,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const result = await db.query(
-      'INSERT INTO users (username, email, password, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, streak, level, xp_total, created_at, bio, github_username, linkedin_username, avatar',
+      'INSERT INTO users (username, email, password, last_login) VALUES ($1, $2, $3, NOW()) RETURNING id, email, username, level, created_at, bio, github_username, linkedin_username, avatar',
       [username, email, hashedPassword]
     );
 
@@ -98,26 +98,9 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    let streak = user.streak || 0;
-    if (user.last_login) {
-      const lastLogin = new Date(user.last_login);
-      const today     = new Date();
-      lastLogin.setHours(0, 0, 0, 0);
-      today.setHours(0, 0, 0, 0);
-      const diffDays = Math.ceil(Math.abs(today.getTime() - lastLogin.getTime()) / (1000 * 60 * 60 * 24));
-
-      if (diffDays === 1) {
-        streak++;
-      } else if (diffDays > 1) {
-        streak = 1;
-      }
-    } else {
-      streak = 1;
-    }
-
     const updateResult = await db.query(
-      'UPDATE users SET streak = $1, last_login = NOW() WHERE id = $2 RETURNING id, email, username, streak, level, xp_total, created_at, bio, github_username, linkedin_username, avatar',
-      [streak, user.id]
+      'UPDATE users SET last_login = NOW() WHERE id = $1 RETURNING id, email, username, level, created_at, bio, github_username, linkedin_username, avatar',
+      [user.id]
     );
     const updatedUser = updateResult.rows[0];
 
@@ -157,7 +140,7 @@ router.get(
 router.get('/me', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await db.query(
-      'SELECT id, email, username, streak, level, xp_total, created_at, bio, github_username, linkedin_username, avatar FROM users WHERE id = $1',
+      'SELECT id, email, username, level, created_at, bio, github_username, linkedin_username, avatar FROM users WHERE id = $1',
       [req.user!.id]
     );
     if (result.rows.length === 0) {
@@ -183,7 +166,7 @@ router.put('/level', authMiddleware, async (req: AuthenticatedRequest, res: Resp
       return res.status(400).json({ error: 'Level is required' });
     }
     const result = await db.query(
-      'UPDATE users SET level = $1 WHERE id = $2 RETURNING id, email, username, streak, level, xp_total, created_at, bio, github_username, linkedin_username, avatar',
+      'UPDATE users SET level = $1 WHERE id = $2 RETURNING id, email, username, level, created_at, bio, github_username, linkedin_username, avatar',
       [level, req.user!.id]
     );
     if (result.rows.length === 0) {
@@ -219,7 +202,7 @@ router.put('/profile', authMiddleware, async (req: AuthenticatedRequest, res: Re
            linkedin_username = COALESCE($4, linkedin_username),
            avatar            = COALESCE($5, avatar)
        WHERE id = $6
-       RETURNING id, email, username, streak, level, xp_total, created_at, bio, github_username, linkedin_username, avatar`,
+       RETURNING id, email, username, level, created_at, bio, github_username, linkedin_username, avatar`,
       [username, bio, github_username, linkedin_username, avatar, req.user!.id]
     );
 

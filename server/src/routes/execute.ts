@@ -96,7 +96,7 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-// ─── POST /execute/verify — Validate & gate XP ───────────────────────────────
+// ─── POST /execute/verify — Validate ─────────────────────────────────────────
 router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   const { id, code, topic, instruction, task, language, test_cases, start_time } = req.body;
 
