@@ -50,8 +50,16 @@ export const isAdmin = async (req: AuthenticatedRequest, res: Response, next: Ne
     if (!req.user?.id) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    const result = await db.query('SELECT role FROM users WHERE id = $1', [req.user.id]);
-    if (result.rows.length === 0 || result.rows[0].role !== 'admin') {
+    const result = await db.query(
+      'SELECT role, is_admin FROM users WHERE id = $1',
+      [req.user.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(403).json({ error: 'Forbidden: Admin access required' });
+    }
+    const { role, is_admin } = result.rows[0];
+    // Accept either role='admin' OR legacy is_admin=true
+    if (role !== 'admin' && !is_admin) {
       return res.status(403).json({ error: 'Forbidden: Admin access required' });
     }
     next();
