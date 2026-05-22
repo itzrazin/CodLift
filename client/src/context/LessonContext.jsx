@@ -18,7 +18,7 @@ export const LessonProvider = ({ children }) => {
     }
     
     try {
-      const res = await api.get('/user/progress');
+      const res = await api.get('/progress');
       
       const progressData = res.data.progress_data || [];
       const newCompleted = {};
@@ -52,7 +52,7 @@ export const LessonProvider = ({ children }) => {
     if (!token) return { success: false, error: 'No authentication token' };
     
     try {
-      const res = await api.post('/user/update-progress', {
+      const res = await api.post('/progress/update-progress', {
         lesson_id: trackId,
         exercise_id: exerciseId.toString(),
         code_submitted: codeSubmitted,

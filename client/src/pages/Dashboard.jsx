@@ -33,7 +33,7 @@ const SkillNode = ({ title, status, x, y, delay, slug, level: nodeLevel, firstUn
       initial={{ scale: 0, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ delay, type: 'spring' }}
-      style={{ left: x, top: y }}
+      style={{ left: `${x}%`, top: `${y}px` }}
       className="absolute -translate-x-1/2 -translate-y-1/2 group cursor-pointer"
       onClick={() => status !== 'locked' && slug && navigate(`/learn/${nodeLevel}/${slug}/${firstUncompletedId}`)}
     >
@@ -82,13 +82,13 @@ const Dashboard = () => {
 
   const buildSkillTree = () => {
     const positions = [
-      { x: '50%', y: '80px' },
-      { x: '30%', y: '220px' },
-      { x: '70%', y: '220px' },
-      { x: '50%', y: '360px' },
-      { x: '25%', y: '500px' },
-      { x: '75%', y: '500px' },
-      { x: '50%', y: '640px' },
+      { x: 50,  y: 80  },
+      { x: 30,  y: 220 },
+      { x: 70,  y: 220 },
+      { x: 50,  y: 360 },
+      { x: 25,  y: 500 },
+      { x: 75,  y: 500 },
+      { x: 50,  y: 640 },
     ];
     let foundCurrent = false;
     return beginnerLessons.slice(0, 7).map((lesson, i) => {
@@ -119,7 +119,7 @@ const Dashboard = () => {
         slug: lesson.id,
         level: lesson.level,
         firstUncompletedId,
-        ...(positions[i] || { x: '50%', y: `${80 + i * 150}px` }),
+        ...(positions[i] || { x: 50, y: 80 + i * 150 }),
         delay: i * 0.1
       };
     });
@@ -286,7 +286,7 @@ const Dashboard = () => {
           </div>
 
           {/* Dynamic Connector lines */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-15">
+          <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-15" viewBox="0 0 100 780" preserveAspectRatio="none">
             {[
               [0, 1],
               [0, 2],
@@ -300,15 +300,15 @@ const Dashboard = () => {
               if (startIdx < skillTree.length && endIdx < skillTree.length) {
                 const startNode = skillTree[startIdx];
                 const endNode = skillTree[endIdx];
-                const dPath = `M ${startNode.x} ${startNode.y} L ${endNode.x} ${endNode.y}`;
                 return (
                   <path
                     key={idx}
-                    d={dPath}
+                    d={`M ${startNode.x} ${startNode.y} L ${endNode.x} ${endNode.y}`}
                     stroke="white"
-                    strokeWidth="2"
-                    strokeDasharray="5,5"
+                    strokeWidth="0.5"
+                    strokeDasharray="2,2"
                     fill="none"
+                    vectorEffect="non-scaling-stroke"
                   />
                 );
               }

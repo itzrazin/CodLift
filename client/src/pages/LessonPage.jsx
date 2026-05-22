@@ -78,7 +78,7 @@ const LessonPage = () => {
 
     if (token) {
       try {
-        const res = await api.get('/user/progress');
+        const res = await api.get('/progress');
         const data = res.data;
         const saved = data.progress_data?.find(
           p => p.lesson_id === slug && p.exercise_id === exerciseId.toString()
