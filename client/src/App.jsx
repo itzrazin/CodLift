@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { LessonProvider } from './context/LessonContext';
 import { Footer } from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
+import { SideAdColumn, BottomAdBar } from './components/ui/AdBanner';
 
 // Lazy load page components
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
@@ -65,14 +66,22 @@ const AdminRoute = ({ children }) => {
   return children;
 };
 
-// Layout wrapper that conditionally renders footer
+// Layout wrapper that conditionally renders footer + ads
 const AppLayout = ({ children }) => {
   const path = window.location.pathname;
   const showFooter = !NO_FOOTER_PAGES.some(p => path.startsWith(p));
   return (
     <>
+      {/* Sticky side ad columns — only visible on xl screens */}
+      <SideAdColumn side="left" />
+      <SideAdColumn side="right" />
+
       {children}
+
       {showFooter && <Footer />}
+
+      {/* Sticky bottom banner ad */}
+      <BottomAdBar />
     </>
   );
 };
