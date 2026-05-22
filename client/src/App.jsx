@@ -5,7 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { LessonProvider } from './context/LessonContext';
 import { Footer } from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
-import { SideAdColumn, BottomAdBar } from './components/ui/AdBanner';
+import { SideAdColumns, BottomAdBar } from './components/ui/AdBanner';
 
 // Lazy load page components
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
@@ -72,9 +72,8 @@ const AppLayout = ({ children }) => {
   const showFooter = !NO_FOOTER_PAGES.some(p => path.startsWith(p));
   return (
     <>
-      {/* Sticky side ad columns — only visible on xl screens */}
-      <SideAdColumn side="left" />
-      <SideAdColumn side="right" />
+      {/* Sticky side ad columns — only on screens >= 1440px, never overlaps content */}
+      <SideAdColumns />
 
       {children}
 
