@@ -6,7 +6,7 @@ import curriculum from '../data/curriculum';
 const router = express.Router();
 
 // ─── GET /api/progress — User progress summary ────────────────────────────────
-router.get('/progress', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.get('/', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await db.query(
       'SELECT lesson_id, exercise_id, code_content, is_completed FROM progress WHERE user_id = $1',
