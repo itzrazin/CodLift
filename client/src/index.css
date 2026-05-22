@@ -22,8 +22,6 @@
   body {
     @apply bg-background text-white font-mono antialiased selection:bg-cyber-pink selection:text-black;
     overflow-x: hidden;
-    /* Space for sticky bottom ad bar */
-    padding-bottom: 68px;
   }
 
   h1,

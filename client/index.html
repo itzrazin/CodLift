@@ -87,7 +87,6 @@
     gtag('config', 'G-S98N25X672');
   </script>
 
-
 </head>
 
 <body class="bg-[#000000] text-white">
@@ -95,11 +94,105 @@
   <h1 style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;">
     CodLift - Free Coding Website for Beginners. Master coding with interactive lessons and AI-powered feedback.
   </h1>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       AD LAYOUT
+       Left column  — 160x300, fixed to left edge
+       Right column — 160x300, fixed to right edge
+       Bottom bar   — 468x60,  fixed to bottom center
+       Popunder     — no visible element, fires on click
+       All hidden on screens < 1440px via CSS
+  ════════════════════════════════════════════════════════════════ -->
+
+  <!-- Left sticky ad column -->
+  <div id="ad-left" style="
+    position: fixed;
+    left: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    width: 160px;
+    pointer-events: auto;
+    display: none;
+  ">
+    <script>
+      atOptions = {'key':'d49b256a7a2ff2c7389db3fce167efe6','format':'iframe','height':300,'width':160,'params':{}};
+    </script>
+    <script src="https://intermediatenormalconfederate.com/d49b256a7a2ff2c7389db3fce167efe6/invoke.js"></script>
+  </div>
+
+  <!-- Right sticky ad column -->
+  <div id="ad-right" style="
+    position: fixed;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+    width: 160px;
+    pointer-events: auto;
+    display: none;
+  ">
+    <script>
+      atOptions = {'key':'d49b256a7a2ff2c7389db3fce167efe6','format':'iframe','height':300,'width':160,'params':{}};
+    </script>
+    <script src="https://intermediatenormalconfederate.com/d49b256a7a2ff2c7389db3fce167efe6/invoke.js"></script>
+  </div>
+
+  <!-- Bottom sticky banner -->
+  <div id="ad-bottom" style="
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0,0,0,0.85);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 4px 0;
+    min-height: 68px;
+  ">
+    <script>
+      atOptions = {'key':'6d7779116b168574b3e5a6dae21d0222','format':'iframe','height':60,'width':468,'params':{}};
+    </script>
+    <script src="https://intermediatenormalconfederate.com/6d7779116b168574b3e5a6dae21d0222/invoke.js"></script>
+    <!-- Dismiss button -->
+    <button onclick="document.getElementById('ad-bottom').style.display='none'; document.body.style.paddingBottom='0';"
+      style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.08);border:none;color:#666;cursor:pointer;width:20px;height:20px;border-radius:50%;font-size:10px;display:flex;align-items:center;justify-content:center;">✕</button>
+  </div>
+
+  <!-- Popunder script (fires on first click anywhere on page) -->
+  <script src="https://intermediatenormalconfederate.com/5e/d7/12/5ed712a5ab4df37ccd06f8988eaf95a0.js"></script>
+
+  <!-- Show ads based on screen width -->
+  <script>
+    function showAds() {
+      var w = window.innerWidth;
+      var bottom = document.getElementById('ad-bottom');
+      var left   = document.getElementById('ad-left');
+      var right  = document.getElementById('ad-right');
+
+      // Bottom bar: show on all screens >= 500px
+      if (bottom && w >= 500) {
+        bottom.style.display = 'flex';
+        document.body.style.paddingBottom = '68px';
+      }
+
+      // Side columns: only show when there's enough space (>= 1440px)
+      if (left && right && w >= 1440) {
+        left.style.display  = 'block';
+        right.style.display = 'block';
+      }
+    }
+
+    // Run on load and on resize
+    showAds();
+    window.addEventListener('resize', showAds);
+  </script>
+
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
-  
-  <!-- Ad Network: popunder script (loads once globally) -->
-  <script src="https://intermediatenormalconfederate.com/5e/d7/12/5ed712a5ab4df37ccd06f8988eaf95a0.js"></script>
 
 </body>
 
