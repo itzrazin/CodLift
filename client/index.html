@@ -95,49 +95,6 @@
     CodLift - Free Coding Website for Beginners. Master coding with interactive lessons and AI-powered feedback.
   </h1>
 
-  <!-- ═══════════════════════════════════════════════════════════════
-       AD LAYOUT
-       Left column  — 160x300, fixed to left edge
-       Right column — 160x300, fixed to right edge
-       Bottom bar   — 468x60,  fixed to bottom center
-       Popunder     — no visible element, fires on click
-       All hidden on screens < 1440px via CSS
-  ════════════════════════════════════════════════════════════════ -->
-
-  <!-- Left sticky ad column -->
-  <div id="ad-left" style="
-    position: fixed;
-    left: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 9999;
-    width: 160px;
-    pointer-events: auto;
-    display: none;
-  ">
-    <script>
-      atOptions = {'key':'d49b256a7a2ff2c7389db3fce167efe6','format':'iframe','height':300,'width':160,'params':{}};
-    </script>
-    <script src="https://intermediatenormalconfederate.com/d49b256a7a2ff2c7389db3fce167efe6/invoke.js"></script>
-  </div>
-
-  <!-- Right sticky ad column -->
-  <div id="ad-right" style="
-    position: fixed;
-    right: 4px;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 9999;
-    width: 160px;
-    pointer-events: auto;
-    display: none;
-  ">
-    <script>
-      atOptions = {'key':'d49b256a7a2ff2c7389db3fce167efe6','format':'iframe','height':300,'width':160,'params':{}};
-    </script>
-    <script src="https://intermediatenormalconfederate.com/d49b256a7a2ff2c7389db3fce167efe6/invoke.js"></script>
-  </div>
-
   <!-- Bottom sticky banner -->
   <div id="ad-bottom" style="
     position: fixed;
@@ -191,8 +148,16 @@
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 
-  <!-- Social Bar — must be last, right above </body> as Adsterra requires -->
-  <script src="https://intermediatenormalconfederate.com/5e/d7/12/5ed712a5ab4df37ccd06f8988eaf95a0.js"></script>
+  <!-- Social Bar — async, after page load, right above </body> -->
+  <script>
+    window.addEventListener('load', function() {
+      var s = document.createElement('script');
+      s.src = 'https://intermediatenormalconfederate.com/5e/d7/12/5ed712a5ab4df37ccd06f8988eaf95a0.js';
+      s.async = true;
+      s.setAttribute('data-cfasync', 'false');
+      document.body.appendChild(s);
+    });
+  </script>
 
 </body>
 
