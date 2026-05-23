@@ -57,76 +57,85 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
     window.addEventListener('keyup', handleKeyUp);
 
     const gameLoop = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Move player
-      if (gameData.current.keys['ArrowLeft'] || gameData.current.keys['a']) {
-        gameData.current.player.x = Math.max(0, gameData.current.player.x - 7);
-      }
-      if (gameData.current.keys['ArrowRight'] || gameData.current.keys['d']) {
-        gameData.current.player.x = Math.min(canvas.width - PLAYER_SIZE, gameData.current.player.x + 7);
+      // Guard clause for null canvas/context
+      if (!gameData.current?.frameId || !canvas || !ctx) {
+        return; // Safe exit if unmounted
       }
 
-      // Draw player (Emoji box)
-      ctx.fillStyle = '#a855f7'; // purple
-      ctx.shadowBlur = 15;
-      ctx.shadowColor = '#a855f7';
-      ctx.beginPath();
-      ctx.roundRect(gameData.current.player.x, gameData.current.player.y, PLAYER_SIZE, PLAYER_SIZE, 8);
-      ctx.fill();
-      ctx.shadowBlur = 0;
+      try {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Spawn obstacles
-      if (Math.random() < SPAWN_RATE + (score / 5000)) {
-        gameData.current.obstacles.push({
-          x: Math.random() * (canvas.width - OBSTACLE_SIZE),
-          y: -OBSTACLE_SIZE,
-          speed: OBSTACLE_SPEED + (score / 1000)
-        });
-      }
+        // Move player
+        if (gameData.current.keys['ArrowLeft'] || gameData.current.keys['a']) {
+          gameData.current.player.x = Math.max(0, gameData.current.player.x - 7);
+        }
+        if (gameData.current.keys['ArrowRight'] || gameData.current.keys['d']) {
+          gameData.current.player.x = Math.min(canvas.width - PLAYER_SIZE, gameData.current.player.x + 7);
+        }
 
-      // Update and draw obstacles
-      ctx.fillStyle = '#FF2E63'; // Red
-      gameData.current.obstacles = gameData.current.obstacles.filter(obs => {
-        obs.y += obs.speed;
-        
-        // Draw obstacle
+        // Draw player (Emoji box)
+        ctx.fillStyle = '#a855f7'; // purple
+        ctx.shadowBlur = 15;
+        ctx.shadowColor = '#a855f7';
         ctx.beginPath();
-        ctx.roundRect(obs.x, obs.y, OBSTACLE_SIZE, OBSTACLE_SIZE, 4);
+        ctx.roundRect(gameData.current.player.x, gameData.current.player.y, PLAYER_SIZE, PLAYER_SIZE, 8);
         ctx.fill();
+        ctx.shadowBlur = 0;
 
-        // Collision check
-        const player = gameData.current.player;
-        if (
-          obs.x < player.x + PLAYER_SIZE &&
-          obs.x + OBSTACLE_SIZE > player.x &&
-          obs.y < player.y + PLAYER_SIZE &&
-          obs.y + OBSTACLE_SIZE > player.y
-        ) {
-          setLives(l => {
-            if (l <= 1) setGameState('gameover');
-            return l - 1;
+        // Spawn obstacles
+        if (Math.random() < SPAWN_RATE + (score / 5000)) {
+          gameData.current.obstacles.push({
+            x: Math.random() * (canvas.width - OBSTACLE_SIZE),
+            y: -OBSTACLE_SIZE,
+            speed: OBSTACLE_SPEED + (score / 1000)
           });
-          return false;
         }
 
-        // Score update
-        if (obs.y > canvas.height) {
-          setScore(s => {
-            const newScore = s + 10;
-            if (newScore > highScore) {
-              setHighScore(newScore);
-              localStorage.setItem('code_rush_highscore', newScore);
-            }
-            return newScore;
-          });
-          return false;
-        }
+        // Update and draw obstacles
+        ctx.fillStyle = '#FF2E63'; // Red
+        gameData.current.obstacles = gameData.current.obstacles.filter(obs => {
+          obs.y += obs.speed;
+          
+          // Draw obstacle
+          ctx.beginPath();
+          ctx.roundRect(obs.x, obs.y, OBSTACLE_SIZE, OBSTACLE_SIZE, 4);
+          ctx.fill();
 
-        return true;
-      });
+          // Collision check
+          const player = gameData.current.player;
+          if (
+            obs.x < player.x + PLAYER_SIZE &&
+            obs.x + OBSTACLE_SIZE > player.x &&
+            obs.y < player.y + PLAYER_SIZE &&
+            obs.y + OBSTACLE_SIZE > player.y
+          ) {
+            setLives(l => {
+              if (l <= 1) setGameState('gameover');
+              return l - 1;
+            });
+            return false;
+          }
 
-      gameData.current.frameId = requestAnimationFrame(gameLoop);
+          // Score update
+          if (obs.y > canvas.height) {
+            setScore(s => {
+              const newScore = s + 10;
+              if (newScore > highScore) {
+                setHighScore(newScore);
+                localStorage.setItem('code_rush_highscore', newScore);
+              }
+              return newScore;
+            });
+            return false;
+          }
+
+          return true;
+        });
+
+        gameData.current.frameId = requestAnimationFrame(gameLoop);
+      } catch (error) {
+        console.error('Game loop error:', error);
+      }
     };
 
     gameLoop();

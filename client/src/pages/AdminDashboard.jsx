@@ -29,25 +29,31 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const fetchAdminStats = async () => {
+    try {
+      setLoading(true);
+      // axios baseURL already includes /api, so path is just /admin/stats
+      const response = await axios.get('/admin/stats');
+      setStats(response.data.stats);
+      setError(null);
+    } catch (err) {
+      console.error('Failed to fetch admin stats:', err);
+      setError(err.response?.data?.error || 'Failed to load admin statistics');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAdminStats = async () => {
-      try {
-        setLoading(true);
-        // axios baseURL already includes /api, so path is just /admin/stats
-        const response = await axios.get('/admin/stats');
-        setStats(response.data.stats);
-        setError(null);
-      } catch (err) {
-        console.error('Failed to fetch admin stats:', err);
-        setError(err.response?.data?.error || 'Failed to load admin statistics');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchAdminStats();
   }, []);
+
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    fetchAdminStats();
+  };
 
   if (loading) {
     return (
@@ -65,8 +71,24 @@ const AdminDashboard = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <GlassCard className="p-8 max-w-md text-center">
           <ShieldAlert className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold mb-2">Access Denied</h2>
-          <p className="text-gray-400">{error}</p>
+          <h2 className="text-xl font-bold mb-2">Dashboard Unavailable</h2>
+          <p className="text-gray-400 mb-6">{error}</p>
+          <div className="flex flex-col gap-3">
+            <Button 
+              onClick={handleRetry} 
+              disabled={loading}
+              className="w-full bg-purple text-navy hover:bg-purple/90"
+            >
+              {loading ? 'Retrying...' : `Retry ${retryCount > 0 ? `(${retryCount})` : ''}`}
+            </Button>
+            <Button 
+              variant="ghost" 
+              onClick={() => window.location.href = '/dashboard'}
+              className="w-full"
+            >
+              Back to Dashboard
+            </Button>
+          </div>
         </GlassCard>
       </div>
     );
@@ -158,30 +180,28 @@ const AdminDashboard = () => {
               </select>
             </div>
             <div className="h-64 flex items-end gap-2 px-2">
-              {stats.dailyActiveUsers.length > 0 ? (
-                stats.dailyActiveUsers.map((day, i) => {
+              {stats.dailyActiveUsers && stats.dailyActiveUsers.length > 0 ? (
+                (() => {
                   const maxCount = Math.max(...stats.dailyActiveUsers.map(d => d.count));
-                  const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
-                  return (
-                    <div 
-                      key={i} 
-                      className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" 
-                      style={{ height: `${height}%` }}
-                    >
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                        {day.count} Users
+                  return stats.dailyActiveUsers.map((day, i) => {
+                    const height = maxCount > 0 ? (day.count / maxCount) * 100 : 0;
+                    return (
+                      <div 
+                        key={`day-${i}`} 
+                        className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" 
+                        style={{ height: `${Math.max(height, 5)}%` }}
+                      >
+                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                          {day.count} Users
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
+                    );
+                  });
+                })()
               ) : (
-                [40, 60, 45, 80, 55, 90, 75].map((h, i) => (
-                  <div key={i} className="flex-1 bg-purple/20 rounded-t-lg relative group transition-all hover:bg-purple/40" style={{ height: `${h}%` }}>
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-navy border border-white/10 px-2 py-1 rounded text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {h * 10} Users
-                    </div>
-                  </div>
-                ))
+                <div className="w-full flex items-center justify-center text-gray-500 h-full">
+                  <p className="text-sm">No activity data available for this period</p>
+                </div>
               )}
             </div>
             <div className="flex justify-between mt-4 px-2">

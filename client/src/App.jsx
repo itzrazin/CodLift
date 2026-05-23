@@ -1,5 +1,6 @@
-import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, lazy, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useToast, ToastContainer } from './components/ui/Toast';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LessonProvider } from './context/LessonContext';
@@ -58,11 +59,31 @@ const GuestRoute = ({ children }) => {
 // AdminRoute: only allows users with role === 'admin'
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
+  const navigate = useNavigate();
+  const { toasts, showToast } = useToast();
+
+  useEffect(() => {
+    if (!loading && user && user.role !== 'admin') {
+      // Toast notification before redirect
+      showToast({
+        message: 'Admin access required. You have been redirected.',
+        type: 'warning',
+        duration: 3000
+      });
+      
+      // Small delay for notification to display
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true });
+      }, 500);
+    }
+  }, [user?.role, loading, navigate]);
+
   if (loading) return <PageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== 'admin') {
-    return <Navigate to="/dashboard" replace />;
+    return <ToastContainer toasts={toasts} />;
   }
+  
   return children;
 };
 
@@ -114,7 +135,7 @@ function AppRoutes() {
           <Route path="/arena" element={<ProtectedRoute><Arena /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
           <Route path="/leaderboard" element={<ProtectedRoute><LeaderboardPage /></ProtectedRoute>} />
-          <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+          <Route path="/admin" element={<ErrorBoundary><AdminRoute><AdminDashboard /></AdminRoute></ErrorBoundary>} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/" replace />} />

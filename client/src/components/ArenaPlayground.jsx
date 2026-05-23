@@ -51,14 +51,16 @@ export default function ArenaPlayground({ challengeId, code }) {
   const executeUserCode = (funcName, args) => {
     try {
       // Create a function constructor scope from the user editor code
-      const fn = new Function(...args.names, `
+      // Shadowing globals to provide a basic sandbox
+      const fn = new Function(...args.names, 'window', 'document', 'localStorage', 'fetch', 'XMLHttpRequest', `
+        "use strict";
         ${code}
         if (typeof ${funcName} === 'function') {
           return ${funcName}(${args.names.join(', ')});
         }
         throw new Error("Function ${funcName} is not defined.");
       `);
-      return { success: true, value: fn(...args.values) };
+      return { success: true, value: fn(...args.values, undefined, undefined, undefined, undefined, undefined) };
     } catch (err) {
       console.warn("User execution failed:", err);
       return { success: false, error: err.message };

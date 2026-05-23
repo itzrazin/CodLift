@@ -10,13 +10,17 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Migrate legacy token key if it exists
+    // Idempotent migration - only if destination empty
     const legacyToken = localStorage.getItem('codelift_token');
-    if (legacyToken) {
+    const newToken = localStorage.getItem('codlift_token');
+    
+    if (legacyToken && !newToken) {
       localStorage.setItem('codlift_token', legacyToken);
       localStorage.removeItem('codelift_token');
     }
+  }, []);
 
+  useEffect(() => {
     const verifyToken = async () => {
       if (!token) {
         setLoading(false);
@@ -27,9 +31,12 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.get(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setUser(response.data.user);
+        
+        if (response.status === 200) {
+          setUser(response.data.user);
+        }
       } catch (error) {
-        console.error('Session expired or invalid token:', error);
+        console.error('Token verification failed:', error);
         localStorage.removeItem('codlift_token');
         setToken(null);
         setUser(null);

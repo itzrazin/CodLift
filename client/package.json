@@ -13,6 +13,7 @@
     "@monaco-editor/react": "^4.7.0",
     "axios": "^1.16.0",
     "clsx": "^2.1.1",
+    "dompurify": "^3.4.5",
     "framer-motion": "^12.38.0",
     "lucide-react": "^0.475.0",
     "react": "^19.2.5",

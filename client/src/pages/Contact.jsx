@@ -32,14 +32,52 @@ const ContactInfo = ({ icon: Icon, title, detail, subdetail }) => (
 
 const Contact = () => {
   const [formStatus, setFormStatus] = useState('idle'); // idle | loading | success
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    subject: 'General Inquiry',
+    message: ''
+  });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // ✅ REQUIRED: Validate form
+    if (!formData.name || !formData.email || !formData.message) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
     setFormStatus('loading');
-    // Simulate API call
-    setTimeout(() => {
-      setFormStatus('success');
-    }, 1500);
+    
+    try {
+      // ✅ REQUIRED: Send to backend
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
+        setTimeout(() => setFormStatus('idle'), 3000);
+      } else {
+        alert('Failed to send message. Please try again.');
+        setFormStatus('idle');
+      }
+    } catch (error) {
+      console.error('Contact form error:', error);
+      alert('Error sending message. Please check your connection.');
+      setFormStatus('idle');
+    }
   };
 
   return (
@@ -138,6 +176,9 @@ const Contact = () => {
                         <input 
                           required
                           type="text" 
+                          name="name"
+                          value={formData.name}
+                          onChange={handleChange}
                           placeholder="John Doe"
                           className="w-full bg-navy/50 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple/50 transition-colors"
                         />
@@ -147,6 +188,9 @@ const Contact = () => {
                         <input 
                           required
                           type="email" 
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
                           placeholder="john@example.com"
                           className="w-full bg-navy/50 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple/50 transition-colors"
                         />
@@ -155,11 +199,16 @@ const Contact = () => {
 
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-gray-500 ml-1">Subject</label>
-                      <select className="w-full bg-navy/50 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple/50 transition-colors appearance-none">
-                        <option>General Inquiry</option>
-                        <option>Technical Support</option>
-                        <option>Curriculum Feedback</option>
-                        <option>Partnership Proposal</option>
+                      <select 
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
+                        className="w-full bg-navy/50 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple/50 transition-colors appearance-none"
+                      >
+                        <option value="General Inquiry">General Inquiry</option>
+                        <option value="Technical Support">Technical Support</option>
+                        <option value="Curriculum Feedback">Curriculum Feedback</option>
+                        <option value="Partnership Proposal">Partnership Proposal</option>
                       </select>
                     </div>
 
@@ -168,6 +217,9 @@ const Contact = () => {
                       <textarea 
                         required
                         rows={5}
+                        name="message"
+                        value={formData.message}
+                        onChange={handleChange}
                         placeholder="Tell us about your request..."
                         className="w-full bg-navy/50 border border-white/5 rounded-2xl px-5 py-4 focus:outline-none focus:border-purple/50 transition-colors resize-none"
                       />

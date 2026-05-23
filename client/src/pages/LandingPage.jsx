@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Hero } from '../components/Hero';
 import { Features, Marquee } from '../components/Features';
 import { LevelProgression } from '../components/Levels';

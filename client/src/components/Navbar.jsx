@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Button } from './ui/Core';
 import { useNavigate, Link } from 'react-router-dom';
 import { Logo } from './ui/Logo';

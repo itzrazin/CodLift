@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { GlassCard } from './ui/Core';
 import { Terminal, Trophy, Rocket, Gamepad2 } from 'lucide-react';
 

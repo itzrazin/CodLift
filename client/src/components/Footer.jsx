@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link, useLocation } from 'react-router-dom';
 import { Logo } from './ui/Logo';
 
@@ -27,9 +27,9 @@ export const Footer = () => {
             </p>
             <div className="flex gap-4">
               {/* Social icons */}
-              <SocialIcon href="#" icon="twitter" />
-              <SocialIcon href="#" icon="github" />
-              <SocialIcon href="#" icon="linkedin" />
+              {['twitter', 'github', 'linkedin'].map(icon => (
+                <SocialIcon key={icon} href="#" icon={icon} />
+              ))}
             </div>
           </div>
 

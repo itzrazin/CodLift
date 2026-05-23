@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { useParams, Link, Navigate } from 'react-router-dom';
 import { SEO } from '../utils/SEO';
 import { Navbar } from '../components/Navbar';
@@ -7,6 +7,7 @@ import { blogPosts } from '../content/blogData';
 import { motion } from 'framer-motion';
 import { GlassCard } from '../components/ui/Core';
 import { Calendar, User, ArrowLeft, Share2, Bookmark } from 'lucide-react';
+import DOMPurify from 'dompurify';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -72,7 +73,7 @@ const BlogPost = () => {
 
           {/* Content */}
           <div className="prose prose-invert prose-purple max-w-none prose-h2:font-syne prose-h2:font-extrabold prose-h2:text-3xl prose-p:text-gray-300 prose-p:leading-relaxed prose-p:text-lg prose-strong:text-white prose-li:text-gray-300">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }} />
           </div>
 
           {/* Footer of article */}

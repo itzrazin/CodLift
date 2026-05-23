@@ -19,4 +19,16 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+// Add response interceptor to handle token expiration
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('codlift_token');
+      window.location.href = '/login?session=expired';
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

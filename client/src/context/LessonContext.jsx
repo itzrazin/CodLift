@@ -49,7 +49,9 @@ export const LessonProvider = ({ children }) => {
 
   // Centralized updateUserProgress function
   const submitProgress = async (trackId, exerciseId, codeSubmitted, solveTimeMs) => {
-    if (!token) return { success: false, error: 'No authentication token' };
+    if (!token) {
+      return { success: false, error: 'No authentication token' };
+    }
     
     try {
       const res = await api.post('/progress/update-progress', {
@@ -60,26 +62,43 @@ export const LessonProvider = ({ children }) => {
       });
 
       if (res.data.success) {
-        // Strict state update to ensure "Session Gatekeeping" works immediately
         setCompletedLessons(prev => {
           const updated = { ...prev };
-          if (!updated[trackId]) updated[trackId] = {};
+          if (!updated[trackId]) {
+            updated[trackId] = {};
+          }
           updated[trackId][exerciseId] = {
             completed: true,
-            code: codeSubmitted
+            code: codeSubmitted,
+            completedAt: new Date().toISOString()
           };
           return updated;
         });
 
         return {
           success: true,
-          alreadyDone: res.data.already_done
+          alreadyDone: res.data.already_done,
+          xpEarned: res.data.xp_earned || 0
         };
       }
-      return { success: false, error: res.data.error || 'Unknown server error' };
+      
+      return { 
+        success: false, 
+        error: res.data.error || 'Server rejected submission' 
+      };
     } catch (err) {
       console.error('Failed to update progress', err);
-      return { success: false, error: err.message };
+      
+      let errorMsg = err.message;
+      if (err.response?.status === 401) {
+        errorMsg = 'Session expired. Please log in again.';
+      } else if (err.response?.status === 403) {
+        errorMsg = 'You do not have permission to submit this exercise.';
+      } else if (err.response?.data?.error) {
+        errorMsg = err.response.data.error;
+      }
+      
+      return { success: false, error: errorMsg };
     }
   };
 

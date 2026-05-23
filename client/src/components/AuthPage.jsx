@@ -70,6 +70,22 @@ const AuthPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    // Front-end Form Validation
+    if (!isLogin && formData.username.trim().length < 3) {
+      setError('Operative name must be at least 3 characters.');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email.trim())) {
+      setError('Invalid email format.');
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
     setLoading(true);
 
     try {

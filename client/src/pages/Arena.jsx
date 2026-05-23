@@ -100,9 +100,17 @@ const Arena = () => {
         </header>
 
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredChallenges.map((c, i) => {
-            const isCompleted = c.exercises.every((ex, idx) => completedLessons[c.id]?.[idx + 1]);
-            return <ChallengeCard key={i} {...c} isCompleted={isCompleted} />;
+          {filteredChallenges.map((c) => {
+            const isCompleted = c.exercises.every((exercise) => 
+              !!completedLessons[c.id]?.[exercise.id]?.completed || false
+            );
+            return (
+              <ChallengeCard 
+                key={c.id} 
+                {...c} 
+                isCompleted={isCompleted} 
+              />
+            );
           })}
           
           {/* Locked Challenges */}
