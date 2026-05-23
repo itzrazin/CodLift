@@ -72,6 +72,19 @@ pool.query('SELECT NOW()', async (err, res) => {
         )
       `);
 
+      // ── inquiries table ─────────────────────────────────────────────────────
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS inquiries (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          email VARCHAR(255) NOT NULL,
+          subject VARCHAR(255) DEFAULT 'General Inquiry',
+          message TEXT NOT NULL,
+          status VARCHAR(50) DEFAULT 'Pending',
+          created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+
       const progressMigrations = [
         `ALTER TABLE progress ADD COLUMN IF NOT EXISTS code_content TEXT`,
         `ALTER TABLE progress ADD COLUMN IF NOT EXISTS xp_earned INTEGER DEFAULT 0`,

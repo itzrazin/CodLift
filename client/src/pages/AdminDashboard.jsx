@@ -4,7 +4,8 @@ import {
   Users, BookOpen, DollarSign, 
   Settings, ShieldAlert, Activity, ArrowUpRight,
   TrendingUp, Database, Search, ShieldCheck, HelpCircle,
-  Eye, RefreshCw, Layers, Terminal, LayoutDashboard, Sliders, ToggleLeft, ToggleRight
+  Eye, RefreshCw, Layers, Terminal, LayoutDashboard, Sliders, ToggleLeft, ToggleRight,
+  MessageSquare, Trash2, Mail, CheckCircle2, ChevronRight
 } from 'lucide-react';
 import axios from '../api/axios';
 
@@ -41,6 +42,16 @@ const AdminDashboard = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [updatingUserId, setUpdatingUserId] = useState(null);
 
+  // Inquiries State
+  const [inquiries, setInquiries] = useState([]);
+  const [inquiriesLoading, setInquiriesLoading] = useState(false);
+  const [inquiriesError, setInquiriesError] = useState(null);
+  const [inquiryPage, setInquiryPage] = useState(1);
+  const [inquiryTotalPages, setInquiryTotalPages] = useState(1);
+  const [selectedInquiry, setSelectedInquiry] = useState(null);
+  const [inquiryStatusFilter, setInquiryStatusFilter] = useState('');
+  const [updatingInquiryId, setUpdatingInquiryId] = useState(null);
+
   // Settings State (Mock overrides)
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [adStickyBanner, setAdStickyBanner] = useState(true);
@@ -76,6 +87,25 @@ const AdminDashboard = () => {
     }
   };
 
+  const fetchInquiries = async (p = 1, status = '') => {
+    try {
+      setInquiriesLoading(true);
+      let url = `/admin/inquiries?page=${p}&limit=10`;
+      if (status) {
+        url += `&status=${encodeURIComponent(status)}`;
+      }
+      const response = await axios.get(url);
+      setInquiries(response.data.inquiries);
+      setInquiryTotalPages(response.data.pagination.totalPages);
+      setInquiriesError(null);
+    } catch (err) {
+      console.error('Failed to fetch inquiries:', err);
+      setInquiriesError(err.response?.data?.error || 'Failed to load inquiries');
+    } finally {
+      setInquiriesLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchAdminStats();
   }, []);
@@ -83,13 +113,16 @@ const AdminDashboard = () => {
   useEffect(() => {
     if (activeTab === 'users') {
       fetchUsers(page);
+    } else if (activeTab === 'inquiries') {
+      fetchInquiries(inquiryPage, inquiryStatusFilter);
     }
-  }, [activeTab, page]);
+  }, [activeTab, page, inquiryPage, inquiryStatusFilter]);
 
   const handleRetry = () => {
     setRetryCount(prev => prev + 1);
     fetchAdminStats();
     if (activeTab === 'users') fetchUsers(page);
+    if (activeTab === 'inquiries') fetchInquiries(inquiryPage, inquiryStatusFilter);
   };
 
   const handleToggleRole = async (user) => {
@@ -103,6 +136,44 @@ const AdminDashboard = () => {
       alert(err.response?.data?.error || 'Failed to update user role');
     } finally {
       setUpdatingUserId(null);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('⚠️ WARNING: Are you absolutely sure you want to PERMANENTLY REMOVE this user record from all databases? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      setUpdatingUserId(userId);
+      await axios.delete(`/admin/users/${userId}`);
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      if (stats) {
+        setStats(prev => ({
+          ...prev,
+          totalUsers: Math.max(0, prev.totalUsers - 1)
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to delete user:', err);
+      alert(err.response?.data?.error || 'Failed to remove user account.');
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
+
+  const handleUpdateInquiryStatus = async (inquiryId, newStatus) => {
+    try {
+      setUpdatingInquiryId(inquiryId);
+      await axios.put(`/admin/inquiries/${inquiryId}/status`, { status: newStatus });
+      setInquiries(prev => prev.map(inq => inq.id === inquiryId ? { ...inq, status: newStatus } : inq));
+      if (selectedInquiry && selectedInquiry.id === inquiryId) {
+        setSelectedInquiry(prev => ({ ...prev, status: newStatus }));
+      }
+    } catch (err) {
+      console.error('Failed to update inquiry status:', err);
+      alert(err.response?.data?.error || 'Failed to update status');
+    } finally {
+      setUpdatingInquiryId(null);
     }
   };
 
@@ -187,6 +258,17 @@ const AdminDashboard = () => {
             }`}
           >
             <Users className="w-4 h-4" /> User Base CRUD
+          </button>
+
+          <button 
+            onClick={() => setActiveTab('inquiries')}
+            className={`w-full flex items-center gap-4 px-4 py-3.5 rounded-xl transition-all duration-300 font-bold uppercase tracking-wider text-xs border ${
+              activeTab === 'inquiries' 
+                ? 'bg-cyber-pink text-black border-white shadow-neo' 
+                : 'text-gray-500 border-transparent hover:text-white hover:bg-white/5'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4" /> Support Tickets
           </button>
 
           <button 
@@ -444,17 +526,28 @@ const AdminDashboard = () => {
                           )}
                         </td>
                         <td className="p-4 text-right">
-                          <button
-                            onClick={() => handleToggleRole(user)}
-                            disabled={updatingUserId === user.id}
-                            className={`px-3 py-1.5 rounded font-syne font-black text-[9px] uppercase tracking-wider transition-all border ${
-                              user.role === 'admin'
-                                ? 'bg-cyber-cyan text-black hover:bg-white border-white'
-                                : 'bg-cyber-pink text-black hover:bg-white border-white'
-                            } disabled:opacity-40`}
-                          >
-                            {updatingUserId === user.id ? 'Reconfiguring...' : `Set as ${user.role === 'admin' ? 'User' : 'Admin'}`}
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => handleToggleRole(user)}
+                              disabled={updatingUserId === user.id}
+                              className={`px-3 py-1.5 rounded font-syne font-black text-[9px] uppercase tracking-wider transition-all border ${
+                                user.role === 'admin'
+                                  ? 'bg-cyber-cyan text-black hover:bg-white border-white'
+                                  : 'bg-cyber-pink text-black hover:bg-white border-white'
+                              } disabled:opacity-40`}
+                            >
+                              {updatingUserId === user.id ? 'Reconfiguring...' : `Set as ${user.role === 'admin' ? 'User' : 'Admin'}`}
+                            </button>
+                            
+                            <button
+                              onClick={() => handleDeleteUser(user.id)}
+                              disabled={updatingUserId === user.id}
+                              className="p-1.5 rounded bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white transition-all disabled:opacity-40"
+                              title="Delete User"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -495,7 +588,184 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* TAB 3: LESSON CURRICULUM */}
+        {/* TAB 3: SUPPORT TICKETS */}
+        {activeTab === 'inquiries' && (
+          <div>
+            <header className="mb-12 flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl font-syne font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-300 to-gray-500">Support <span className="text-cyber-pink font-black">Tickets</span></h1>
+                <p className="text-gray-400 text-xs mt-1 uppercase tracking-widest">Display active user enquiries and reconfigure service statuses.</p>
+              </div>
+              <div className="flex gap-3">
+                <select
+                  value={inquiryStatusFilter}
+                  onChange={(e) => {
+                    setInquiryStatusFilter(e.target.value);
+                    setInquiryPage(1);
+                  }}
+                  className="bg-black border-2 border-white/10 text-xs rounded-xl px-4 py-2 outline-none tracking-wider text-gray-300"
+                >
+                  <option value="">ALL STATUSES</option>
+                  <option value="Pending">PENDING</option>
+                  <option value="In Progress">IN PROGRESS</option>
+                  <option value="Resolved">RESOLVED</option>
+                </select>
+                <Button variant="ghost" size="sm" onClick={() => fetchInquiries(inquiryPage, inquiryStatusFilter)}>
+                  <RefreshCw className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            </header>
+
+            {inquiriesError && (
+              <div className="p-4 bg-red-500/10 border border-red-500/30 text-red-400 text-xs rounded-xl mb-6 flex items-center gap-3">
+                <ShieldAlert className="w-5 h-5 flex-shrink-0" />
+                <span>Error querying inquiries database: {inquiriesError}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              
+              {/* Inquiries List */}
+              <div className="lg:col-span-2 space-y-4">
+                {inquiriesLoading ? (
+                  <div className="p-20 text-center bg-cyber-dark border-2 border-white rounded-2xl flex flex-col items-center gap-4 justify-center shadow-neo">
+                    <div className="w-8 h-8 border-2 border-cyber-pink border-t-transparent rounded-full animate-spin" />
+                    <span className="text-xs text-gray-500 animate-pulse uppercase tracking-widest">Querying inquiries database...</span>
+                  </div>
+                ) : inquiries.length > 0 ? (
+                  <div className="space-y-4">
+                    {inquiries.map((inq) => (
+                      <GlassCard 
+                        key={inq.id}
+                        hover={false}
+                        className={`p-5 border-2 transition-all cursor-pointer ${
+                          selectedInquiry && selectedInquiry.id === inq.id
+                            ? 'border-cyber-pink shadow-[4px_4px_0px_0px_rgba(255,0,255,0.4)]'
+                            : 'border-white/5 hover:border-white/20'
+                        }`}
+                        onClick={() => setSelectedInquiry(inq)}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <div>
+                            <span className="text-[10px] text-gray-500 uppercase tracking-widest font-black block mb-0.5">Subject: {inq.subject}</span>
+                            <h4 className="text-base font-bold text-white tracking-tight">{inq.name}</h4>
+                            <span className="text-[10px] text-gray-400 lowercase">{inq.email}</span>
+                          </div>
+                          
+                          <span className={`px-2.5 py-0.5 text-[8px] font-black uppercase tracking-wider rounded border ${
+                            inq.status === 'Resolved'
+                              ? 'bg-cyber-green/15 text-cyber-green border-cyber-green/30'
+                              : inq.status === 'In Progress'
+                              ? 'bg-yellow/15 text-yellow border-yellow/30'
+                              : 'bg-red-500/15 text-red-400 border-red-500/30'
+                          }`}>
+                            {inq.status}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{inq.message}</p>
+                        <div className="flex justify-between items-center mt-4 border-t border-white/5 pt-3">
+                          <span className="text-[9px] text-gray-600">
+                            {new Date(inq.created_at).toLocaleString()}
+                          </span>
+                          <span className="text-[9px] text-cyber-pink font-extrabold tracking-widest flex items-center gap-1">
+                            VIEW SECURE LOG <ChevronRight className="w-3 h-3" />
+                          </span>
+                        </div>
+                      </GlassCard>
+                    ))}
+                    
+                    {/* Inquiry Pagination */}
+                    <div className="flex items-center justify-between mt-6">
+                      <span className="text-[10px] font-bold text-gray-600 uppercase">Page {inquiryPage} of {inquiryTotalPages}</span>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          disabled={inquiryPage <= 1 || inquiriesLoading}
+                          onClick={() => setInquiryPage(prev => Math.max(prev - 1, 1))}
+                          className="py-2 px-3.5 text-[10px] disabled:opacity-40"
+                        >
+                          Prev Sector
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          disabled={inquiryPage >= inquiryTotalPages || inquiriesLoading}
+                          onClick={() => setInquiryPage(prev => Math.min(prev + 1, inquiryTotalPages))}
+                          className="py-2 px-3.5 text-[10px] disabled:opacity-40"
+                        >
+                          Next Sector
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="p-20 text-center bg-cyber-dark border-2 border-white/10 rounded-2xl">
+                    <Mail className="w-10 h-10 mx-auto opacity-30 mb-3" />
+                    <p className="text-xs uppercase font-bold tracking-wider text-gray-500">No support tickets match the selected status.</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Inquiry Detail View Panel */}
+              <div className="lg:col-span-1">
+                {selectedInquiry ? (
+                  <GlassCard 
+                    hover={false}
+                    className="p-6 border-2 border-white shadow-[4px_4px_0px_0px_rgba(0,255,255,0.4)] bg-[#08080a]"
+                  >
+                    <div className="border-b border-white/10 pb-4 mb-6">
+                      <span className="text-[9px] text-cyber-cyan uppercase font-black tracking-widest block mb-1">INQUIRY DETAIL SECURE LOG</span>
+                      <h3 className="text-lg font-bold text-white tracking-tight mb-2">{selectedInquiry.subject}</h3>
+                      
+                      <div className="flex flex-col gap-1 text-[10px]">
+                        <span className="text-gray-300 font-bold">NAME: <span className="text-white">{selectedInquiry.name}</span></span>
+                        <span className="text-gray-300 font-bold">EMAIL: <span className="text-white lowercase">{selectedInquiry.email}</span></span>
+                        <span className="text-gray-300 font-bold">DATE: <span className="text-white">{new Date(selectedInquiry.created_at).toLocaleString()}</span></span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 mb-8">
+                      <span className="text-[9px] text-gray-500 uppercase font-black block">Message Content</span>
+                      <div className="p-4 bg-black/60 rounded-xl border border-white/5 text-xs text-gray-300 select-text leading-relaxed min-h-[120px] whitespace-pre-wrap">
+                        {selectedInquiry.message}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <span className="text-[9px] text-gray-500 uppercase font-black block">Status Operations</span>
+                      
+                      <div className="flex gap-2">
+                        {['Pending', 'In Progress', 'Resolved'].map((st) => (
+                          <button
+                            key={st}
+                            disabled={updatingInquiryId === selectedInquiry.id}
+                            onClick={() => handleUpdateInquiryStatus(selectedInquiry.id, st)}
+                            className={`flex-1 py-2 text-[8px] font-black uppercase tracking-wider rounded border transition-all ${
+                              selectedInquiry.status === st
+                                ? 'bg-cyber-pink text-black border-white shadow-neo'
+                                : 'bg-transparent border-white/10 text-gray-400 hover:text-white hover:border-white/35'
+                            }`}
+                          >
+                            {st}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </GlassCard>
+                ) : (
+                  <div className="p-10 text-center bg-[#08080a]/40 border-2 border-dashed border-white/5 rounded-2xl text-gray-500">
+                    <Eye className="w-8 h-8 mx-auto opacity-20 mb-3" />
+                    <p className="text-[10px] uppercase font-bold tracking-wider leading-relaxed">Select any active support ticket from the list to display full logs & edit operational statuses.</p>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: LESSON CURRICULUM */}
         {activeTab === 'lessons' && (
           <div>
             <header className="mb-12">
@@ -541,7 +811,7 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* TAB 4: AD MONETIZATION */}
+        {/* TAB 5: AD MONETIZATION */}
         {activeTab === 'revenue' && (
           <div>
             <header className="mb-12">
@@ -605,7 +875,7 @@ const AdminDashboard = () => {
           </div>
         )}
 
-        {/* TAB 5: SECURITY CONFIG */}
+        {/* TAB 6: SECURITY CONFIG */}
         {activeTab === 'config' && (
           <div>
             <header className="mb-12">
@@ -648,6 +918,6 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+export default AdminDashboard;board;
 
 

@@ -120,6 +120,24 @@ app.use('/api/user',        userRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/admin',       adminRouter);
 
+// Public Contact Form inquiry Submission
+app.post('/api/contact', async (req: Request, res: Response) => {
+  try {
+    const { name, email, subject, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, email, and message are required.' });
+    }
+    await pool.query(
+      'INSERT INTO inquiries (name, email, subject, message) VALUES ($1, $2, $3, $4)',
+      [name, email, subject || 'General Inquiry', message]
+    );
+    res.json({ success: true, message: 'Message sent successfully.' });
+  } catch (err) {
+    console.error('Failed to submit contact inquiry:', err);
+    res.status(500).json({ error: 'Failed to process inquiry submission.' });
+  }
+});
+
 // ─── Global error handler ──────────────────────────────────────────────────────
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   console.error('Unhandled error:', err);

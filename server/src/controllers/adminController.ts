@@ -155,3 +155,120 @@ export const updateUserRole = async (req: AuthenticatedRequest, res: Response) =
     res.status(500).json({ error: 'Failed to update user role' });
   }
 };
+
+/**
+ * GET /api/admin/inquiries
+ * Returns a paginated list of support inquiries
+ */
+export const getAllInquiries = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const offset = (page - 1) * limit;
+    const statusFilter = req.query.status as string; // Optional: Pending, In Progress, Resolved
+
+    let queryText = 'SELECT id, name, email, subject, message, status, created_at FROM inquiries';
+    let params: any[] = [];
+
+    if (statusFilter) {
+      queryText += ' WHERE status = $1';
+      params.push(statusFilter);
+    }
+
+    queryText += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    params.push(limit, offset);
+
+    const inquiriesResult = await db.query(queryText, params);
+
+    // Get count for pagination
+    let countQuery = 'SELECT COUNT(*) as count FROM inquiries';
+    let countParams: any[] = [];
+    if (statusFilter) {
+      countQuery += ' WHERE status = $1';
+      countParams.push(statusFilter);
+    }
+    const countResult = await db.query(countQuery, countParams);
+    const totalInquiries = parseInt(countResult.rows[0].count, 10);
+    const totalPages = Math.ceil(totalInquiries / limit);
+
+    res.json({
+      success: true,
+      inquiries: inquiriesResult.rows,
+      pagination: {
+        page,
+        limit,
+        totalInquiries,
+        totalPages
+      }
+    });
+  } catch (error) {
+    console.error('Get all inquiries error:', error);
+    res.status(500).json({ error: 'Failed to fetch inquiries' });
+  }
+};
+
+/**
+ * PUT /api/admin/inquiries/:inquiryId/status
+ * Update an inquiry's status
+ */
+export const updateInquiryStatus = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { inquiryId } = req.params;
+    const { status } = req.body;
+
+    if (!['Pending', 'In Progress', 'Resolved'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status. Must be "Pending", "In Progress", or "Resolved"' });
+    }
+
+    const result = await db.query(
+      'UPDATE inquiries SET status = $1 WHERE id = $2 RETURNING id, name, email, status',
+      [status, inquiryId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Inquiry not found' });
+    }
+
+    res.json({
+      success: true,
+      message: `Inquiry status updated to ${status}`,
+      inquiry: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Update inquiry status error:', error);
+    res.status(500).json({ error: 'Failed to update inquiry status' });
+  }
+};
+
+/**
+ * DELETE /api/admin/users/:userId
+ * Safely removes a user record from the database
+ */
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    // Prevent deleting your own admin account
+    if (req.user?.id === userId) {
+      return res.status(400).json({ error: 'Security Fault: You cannot delete your own admin account.' });
+    }
+
+    const result = await db.query(
+      'DELETE FROM users WHERE id = $1 RETURNING id, name, email',
+      [userId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found.' });
+    }
+
+    res.json({
+      success: true,
+      message: 'User successfully removed from system databases.',
+      user: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ error: 'Failed to remove user account.' });
+  }
+};
