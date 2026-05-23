@@ -20,7 +20,7 @@
   }
 
   body {
-    @apply bg-background text-white font-mono antialiased selection:bg-cyber-pink selection:text-black;
+    @apply bg-[var(--bg-deep)] text-white font-mono antialiased selection:bg-[var(--purple)] selection:text-black;
     overflow-x: hidden;
   }
 
@@ -57,11 +57,11 @@
   }
 
   .text-gradient-purple {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyber-cyan to-cyber-pink;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--cyan)] to-[var(--purple)];
   }
 
   .text-gradient-yellow {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyber-green to-orange-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[var(--green)] to-orange-500;
   }
 
   /* Neo-brutalist Slanted Container */

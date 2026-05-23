@@ -10,7 +10,8 @@ import { SideAdColumns, BottomAdBar } from './components/ui/AdBanner';
 
 // Lazy load page components
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
-const AuthPage       = lazy(() => import('./components/AuthPage'));
+const LoginPage      = lazy(() => import('./pages/LoginPage'));
+const SignupPage     = lazy(() => import('./pages/SignupPage'));
 const AuthCallback   = lazy(() => import('./pages/AuthCallback'));
 const Dashboard      = lazy(() => import('./pages/Dashboard'));
 const LessonPage     = lazy(() => import('./pages/LessonPage'));
@@ -90,7 +91,7 @@ const AdminRoute = ({ children }) => {
 // Layout wrapper that conditionally renders footer + ads
 const AppLayout = ({ children }) => {
   const path = window.location.pathname;
-  const showFooter = !NO_FOOTER_PAGES.some(p => path.startsWith(p));
+  const showFooter = !NO_FOOTER_PAGES.some(p => path === p || path.startsWith(`${p}/`));
   return (
     <>
       {/* Sticky side ad columns — only on screens >= 1440px, never overlaps content */}
@@ -122,8 +123,8 @@ function AppRoutes() {
           <Route path="/contact" element={<Contact />} />
 
           {/* Auth pages (redirect if already logged in) */}
-          <Route path="/login" element={<GuestRoute><AuthPage /></GuestRoute>} />
-          <Route path="/signup" element={<GuestRoute><AuthPage /></GuestRoute>} />
+          <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+          <Route path="/signup" element={<GuestRoute><SignupPage /></GuestRoute>} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Onboarding (requires auth) */}

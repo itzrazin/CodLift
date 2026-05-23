@@ -53,7 +53,8 @@ export default function ArenaPlayground({ challengeId, code }) {
     try {
       // Create a function constructor scope from the user editor code
       // Shadowing globals to provide a basic sandbox
-      const fn = new Function(...args.names, 'window', 'document', 'localStorage', 'fetch', 'XMLHttpRequest', `
+      const blockedGlobals = ['window', 'document', 'localStorage', 'fetch', 'XMLHttpRequest'];
+      const fn = new Function(...blockedGlobals, ...args.names, `
         "use strict";
         ${code}
         if (typeof ${funcName} === 'function') {
@@ -61,7 +62,7 @@ export default function ArenaPlayground({ challengeId, code }) {
         }
         throw new Error("Function ${funcName} is not defined.");
       `);
-      return { success: true, value: fn(...args.values, undefined, undefined, undefined, undefined, undefined) };
+      return { success: true, value: fn(undefined, undefined, undefined, undefined, undefined, ...args.values) };
     } catch (err) {
       console.warn("User execution failed:", err);
       return { success: false, error: err.message };
@@ -72,6 +73,7 @@ export default function ArenaPlayground({ challengeId, code }) {
   // GAME 1: Fix the Counter
   // ──────────────────────────────────────────────────────────────────────────
   const handleCounterIncrement = () => {
+    if (!gameState) return;
     if (challengeId !== 'fix-the-counter') return;
 
     let currentVal = gameState.count;
@@ -114,6 +116,7 @@ export default function ArenaPlayground({ challengeId, code }) {
   // GAME 2: Array Compressor
   // ──────────────────────────────────────────────────────────────────────────
   const runArrayCompressor = () => {
+    if (!gameState) return;
     if (challengeId !== 'array-compressor' || gameState.animating) return;
 
     setGameState(prev => ({ ...prev, animating: true, message: 'Processing array... ⚡' }));
@@ -158,6 +161,7 @@ export default function ArenaPlayground({ challengeId, code }) {
   // GAME 3: Auth Logic 101
   // ──────────────────────────────────────────────────────────────────────────
   const runAuthScan = () => {
+    if (!gameState) return;
     if (challengeId !== 'auth-logic-101' || gameState.scanning) return;
 
     setGameState(prev => ({ ...prev, scanning: true, scanResult: null, message: 'Decrypting credentials...' }));
@@ -207,58 +211,58 @@ export default function ArenaPlayground({ challengeId, code }) {
   // GAME 4: Algorithm Duel (O(log n) Single Non-Duplicate Search)
   // ──────────────────────────────────────────────────────────────────────────
   const stepBinarySearch = () => {
+    if (!gameState) return;
     if (challengeId !== 'algorithm-duel') return;
 
-    let { left, right, array, step, history } = gameState;
-    if (left >= right) {
-      setGameState(prev => ({
+    setGameState(prev => {
+      if (!prev) return prev;
+      let { left, right, array, step, history } = prev;
+      
+      if (left >= right) {
+        return {
+          ...prev,
+          foundIndex: left,
+          autoPlaying: false,
+          message: `Binary Search complete. Element found at index ${left}: ${array[left]} 🎯`
+        };
+      }
+
+      let mid = Math.floor((left + right) / 2);
+      const startMid = mid;
+      if (mid % 2 === 1) mid--;
+
+      let nextLeft = left;
+      let nextRight = right;
+
+      if (array[mid] === array[mid + 1]) {
+        nextLeft = mid + 2;
+      } else {
+        nextRight = mid;
+      }
+
+      const newHistory = [...history, { step: step + 1, left, right, mid: startMid, nextLeft, nextRight }];
+
+      return {
         ...prev,
-        foundIndex: left,
-        message: `Binary Search complete. Element found at index ${left}: ${array[left]} 🎯`
-      }));
-      return;
-    }
-
-    let mid = Math.floor((left + right) / 2);
-    const startMid = mid;
-    if (mid % 2 === 1) mid--;
-
-    let nextLeft = left;
-    let nextRight = right;
-
-    if (array[mid] === array[mid + 1]) {
-      nextLeft = mid + 2;
-    } else {
-      nextRight = mid;
-    }
-
-    const newHistory = [...history, { step: step + 1, left, right, mid: startMid, nextLeft, nextRight }];
-
-    setGameState(prev => ({
-      ...prev,
-      left: nextLeft,
-      right: nextRight,
-      mid: startMid,
-      step: step + 1,
-      history: newHistory,
-      message: `Step ${step + 1}: Split array at index ${startMid}. New bounds [${nextLeft}, ${nextRight}].`
-    }));
+        left: nextLeft,
+        right: nextRight,
+        mid: startMid,
+        step: step + 1,
+        history: newHistory,
+        message: `Step ${step + 1}: Split array at index ${startMid}. New bounds [${nextLeft}, ${nextRight}].`
+      };
+    });
   };
 
   useEffect(() => {
     if (challengeId === 'algorithm-duel' && gameState?.autoPlaying) {
       const timer = setInterval(() => {
-        if (gameState.left >= gameState.right) {
-          setGameState(prev => ({ ...prev, autoPlaying: false, foundIndex: prev.left, message: `Completed! Element: ${prev.array[prev.left]} 🌟` }));
-          clearInterval(timer);
-        } else {
-          stepBinarySearch();
-        }
+        stepBinarySearch();
       }, 1000);
       return () => clearInterval(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState?.left, gameState?.right, gameState?.autoPlaying]);
+  }, [challengeId, gameState?.autoPlaying]);
 
 
   return (

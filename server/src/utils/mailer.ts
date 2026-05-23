@@ -54,7 +54,8 @@ export const sendWelcomeEmail = async (email: string, username: string) => {
     return info;
   } catch (error) {
     console.error(`❌ Error sending welcome email to ${email}:`, error);
-    throw error; // Rethrow so the calling function knows it failed
+    // Rethrow so the calling function knows it failed
+    throw error;
   }
 };
 
