@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
       return userData;
     } catch (error) {
       console.error('Login error:', error);
-      throw new Error(error.response?.data?.error || 'Login failed. Please try again.');
+      throw new Error(error.response?.data?.error || 'Login failed. Please try again.', { cause: error });
     }
   };
 
@@ -85,7 +85,7 @@ export const AuthProvider = ({ children }) => {
       return userData;
     } catch (error) {
       console.error('Signup error:', error);
-      throw new Error(error.response?.data?.error || 'Signup failed. Please try again.');
+      throw new Error(error.response?.data?.error || 'Signup failed. Please try again.', { cause: error });
     }
   };
 
@@ -108,4 +108,5 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

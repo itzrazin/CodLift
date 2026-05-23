@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Button, GlassCard } from '../components/ui/Core';
+import { GlassCard } from '../components/ui/Core';
 import { Trophy, Medal, Crown, User, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';

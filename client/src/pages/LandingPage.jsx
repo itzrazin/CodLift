@@ -1,4 +1,4 @@
-
+import React, { useState, useEffect } from 'react';
 import { Hero } from '../components/Hero';
 import { Features, Marquee } from '../components/Features';
 import { LevelProgression } from '../components/Levels';
@@ -48,6 +48,20 @@ const LandingPage = () => {
     }
   };
 
+  const [particles, setParticles] = useState([]);
+  
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setParticles(Array.from({ length: 20 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      width: `${Math.random() * 4 + 2}px`,
+      height: `${Math.random() * 4 + 2}px`,
+      animationDuration: `${Math.random() * 10 + 10}s`,
+      animationDelay: `${Math.random() * 5}s`
+    })));
+  }, []);
+
   return (
     <div className="min-h-screen bg-background overflow-hidden selection:bg-purple/30">
       <SEO 
@@ -68,16 +82,16 @@ const LandingPage = () => {
 
       {/* Global Background Elements */}
       <div className="particles-container">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {particles.map(p => (
           <div
-            key={i}
+            key={p.id}
             className="particle"
             style={{
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 4 + 2}px`,
-              height: `${Math.random() * 4 + 2}px`,
-              animationDuration: `${Math.random() * 10 + 10}s`,
-              animationDelay: `${Math.random() * 5}s`
+              left: p.left,
+              width: p.width,
+              height: p.height,
+              animationDuration: p.animationDuration,
+              animationDelay: p.animationDelay
             }}
           />
         ))}

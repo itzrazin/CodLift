@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import {
   Home, BookOpen, Gamepad2, User, LogOut,
-  Zap, Flame, Star, ChevronRight, CheckCircle2, Lock, Trophy, Menu, X
+  Star, ChevronRight, CheckCircle2, Lock, Trophy, Menu
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -78,7 +78,7 @@ const Dashboard = () => {
 
   // Build dynamic skill tree from curriculum
   const beginnerLessons = clientCurriculum.filter(l => l.level === 'beginner');
-  const completedLessons = new Set(Object.keys(globalCompletedLessons));
+
 
   const buildSkillTree = () => {
     const positions = [

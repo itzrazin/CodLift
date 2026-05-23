@@ -1,9 +1,8 @@
-
 import { SEO } from '../utils/SEO';
 import { motion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
-import { Rocket, Target, Sparkles, Code2, Users, Trophy, Globe, Zap } from 'lucide-react';
+import { Target, Sparkles, Code2, Users, Trophy, Globe, Zap } from 'lucide-react';
 import { GlassCard, Button } from '../components/ui/Core';
 
 const StatCard = ({ icon: Icon, label, value }) => (

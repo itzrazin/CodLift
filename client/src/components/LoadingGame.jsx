@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trophy, Shield, Heart } from 'lucide-react';
+import { Trophy, Shield, Heart } from 'lucide-react';
 
-export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend..." }) => {
+export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) => {
   const canvasRef = useRef(null);
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
@@ -25,6 +25,7 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
 
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setScore(0);
       setLives(3);
       setTimeLeft(45);
@@ -148,6 +149,7 @@ export const LoadingGame = ({ isOpen, onClose, message = "Waking up the backend.
     }, 1000);
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       cancelAnimationFrame(gameData.current.frameId);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
   Search, Filter, ChevronRight, Star,
-  Bug, Scissors, Rocket, Sword, Trophy, Gamepad2, CheckCircle2
+  Rocket, Trophy, Gamepad2, CheckCircle2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { arenaChallenges } from '../data/challenges';
@@ -52,7 +52,6 @@ const ChallengeCard = ({ id, title, type, difficulty, icon: Icon, color, isCompl
 
 const Arena = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
   const { completedLessons, loadingProgress } = useLesson();
 
   if (loadingProgress) return null;

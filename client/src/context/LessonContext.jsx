@@ -5,7 +5,7 @@ import { useAuth } from './AuthContext';
 const LessonContext = createContext(null);
 
 export const LessonProvider = ({ children }) => {
-  const { token, user, setUser } = useAuth();
+  const { token } = useAuth();
   
   // completedLessons structure: { 'html-basics': { '1': true, '2': true }, 'css-flexbox': { '1': true } }
   const [completedLessons, setCompletedLessons] = useState({});
@@ -44,6 +44,7 @@ export const LessonProvider = ({ children }) => {
   }, [token]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProgress();
   }, [fetchProgress]);
 
@@ -119,4 +120,5 @@ export const LessonProvider = ({ children }) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useLesson = () => useContext(LessonContext);

@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Mail, Lock, User as UserIcon, 
-  ArrowRight, Github, Chrome, AlertCircle,
+  ArrowRight, Chrome, AlertCircle,
   Eye, EyeOff
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -46,21 +45,13 @@ const InputField = ({ type, placeholder, icon: Icon, value, onChange, name, requ
 
 const AuthPage = () => {
   const location = useLocation();
-  const [isLogin, setIsLogin]   = useState(location.pathname !== '/signup');
+  const isLogin = location.pathname !== '/signup';
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const [error, setError]       = useState(null);
   const [loading, setLoading]   = useState(false);
 
   const { login, signup } = useAuth();
   const navigate  = useNavigate();
-
-  useEffect(() => {
-    if (location.pathname === '/signup') {
-      setIsLogin(false);
-    } else if (location.pathname === '/login') {
-      setIsLogin(true);
-    }
-  }, [location.pathname]);
 
   const handleChange = (e) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));

@@ -4,7 +4,7 @@ import { SEO } from '../utils/SEO';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { blogPosts } from '../content/blogData';
-import { motion } from 'framer-motion';
+
 import { GlassCard } from '../components/ui/Core';
 import { Calendar, User, ArrowLeft, Share2, Bookmark } from 'lucide-react';
 import DOMPurify from 'dompurify';

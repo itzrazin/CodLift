@@ -76,7 +76,7 @@ const AdminRoute = ({ children }) => {
         navigate('/dashboard', { replace: true });
       }, 500);
     }
-  }, [user?.role, loading, navigate]);
+  }, [user, loading, navigate, showToast]);
 
   if (loading) return <PageLoader />;
   if (!user) return <Navigate to="/login" replace />;

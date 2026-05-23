@@ -44,7 +44,7 @@ const OAuthCallbackPage = () => {
     };
 
     handleCallback();
-  }, []);
+  }, [searchParams, navigate, loginWithToken]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">

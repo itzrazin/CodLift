@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
-  User, Share2, 
+  User, 
   ExternalLink,
   Calendar, Award, Trophy,
   Code2, Layout, Database, Terminal, Rocket,
   CheckCircle2, Lock, ArrowRight, Sparkles,
   Github, Linkedin, Edit3, Check, X, Eye, ShieldAlert
 } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLesson } from '../context/LessonContext';
 import { arenaChallenges } from '../data/challenges';
@@ -245,7 +245,7 @@ const ProfilePage = () => {
     try {
       const date = new Date(dateStr);
       return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-    } catch (e) {
+    } catch {
       return 'May 2026';
     }
   };

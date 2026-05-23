@@ -32,7 +32,7 @@ const LoginPage = () => {
     if (!email || !password) { setError('Please fill in all fields.'); return; }
     setLoading(true);
     try {
-      const data = await login(email, password);
+      await login(email, password);
       navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed. Please try again.');

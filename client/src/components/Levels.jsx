@@ -1,6 +1,5 @@
 
-import { motion } from 'framer-motion';
-import { CheckCircle2, Lock, ChevronRight } from 'lucide-react';
+import { CheckCircle2, Lock } from 'lucide-react';
 
 export const LevelProgression = () => {
   const levels = [

@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button, GlassCard } from '../components/ui/Core';
+import { Button } from '../components/ui/Core';
 import {
-  ArrowLeft, Play, Send, Lightbulb,
+  ArrowLeft, Play, Send,
   ChevronLeft, ChevronRight, CheckCircle2, AlertCircle,
-  Terminal, Globe, Sparkles, BookOpen, Rocket
+  Terminal, Globe, BookOpen, Rocket
 } from 'lucide-react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -33,7 +33,7 @@ const LessonPage = () => {
 
   const navigate = useNavigate();
   const { level, slug, exerciseId = '1' } = useParams();
-  const { user, token } = useAuth();
+  const { token } = useAuth();
   const { submitProgress, completedLessons } = useLesson();
 
   // ─── Load exercise data ─────────────────────────────────────────────────────
@@ -105,6 +105,7 @@ const LessonPage = () => {
   }, [level, slug, exerciseId, token]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchExercise();
   }, [fetchExercise]);
 
@@ -403,6 +404,7 @@ const LessonPage = () => {
                   </div>
                   {/* Render markdown feedback safely */}
                   <div className="text-xs opacity-90 leading-relaxed whitespace-pre-line overflow-y-auto max-h-[200px] custom-scrollbar">
+                    {/* eslint-disable-next-line no-misleading-character-class */}
                     {String(message).replace(/^###\s*[✅❌⚠️]\s*/gm, '').replace(/^-\s+/gm, '> ')}
                   </div>
                   {status === 'success' && (

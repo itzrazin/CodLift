@@ -4,7 +4,7 @@ import { Footer } from '../components/Footer';
 import { SEO } from '../utils/SEO';
 import { motion } from 'framer-motion';
 import { GlassCard } from '../components/ui/Core';
-import { HelpCircle, ChevronRight, Globe, ShieldCheck, Trophy } from 'lucide-react';
+import { HelpCircle, Trophy } from 'lucide-react';
 
 const FAQItem = ({ question, answer }) => (
   <motion.div 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+
 import { Button, GlassCard } from '../components/ui/Core';
 import { 
-  BarChart3, Users, BookOpen, DollarSign, 
+  Users, BookOpen, DollarSign, 
   Settings, ShieldAlert, Activity, ArrowUpRight,
-  TrendingUp, Monitor, Database, Globe
+  TrendingUp, Database
 } from 'lucide-react';
 import axios from '../api/axios';
 
@@ -47,6 +47,7 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchAdminStats();
   }, []);
 

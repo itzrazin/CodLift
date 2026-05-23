@@ -1,20 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Play, RefreshCw, CheckCircle2, XCircle, 
-  Gamepad2, User, Key, ShieldAlert, Cpu, 
-  ArrowRight, ShieldCheck, ChevronRight, Zap
+  RefreshCw,
+  Gamepad2, Key, ShieldAlert, Cpu, 
+  ShieldCheck, ChevronRight, Zap
 } from 'lucide-react';
 
 export default function ArenaPlayground({ challengeId, code }) {
   const [gameState, setGameState] = useState(null);
 
-  // Initialize or reset game states based on the challengeId
-  useEffect(() => {
-    resetGame();
-  }, [challengeId]);
-
-  const resetGame = () => {
+  const resetGame = useCallback(() => {
     if (challengeId === 'fix-the-counter') {
       setGameState({ count: 0, lastIncrement: null, isError: false, message: 'Arcade Ready.' });
     } else if (challengeId === 'array-compressor') {
@@ -45,7 +40,13 @@ export default function ArenaPlayground({ challengeId, code }) {
         message: 'Ready to search.'
       });
     }
-  };
+  }, [challengeId]);
+
+  // Initialize or reset game states based on the challengeId
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    resetGame();
+  }, [resetGame]);
 
   // Safe executor of user code
   const executeUserCode = (funcName, args) => {
@@ -151,18 +152,7 @@ export default function ArenaPlayground({ challengeId, code }) {
     }, 1200);
   };
 
-  const handleCustomArrayChange = (e) => {
-    const val = e.target.value;
-    try {
-      const parsed = val.split(',').map(n => parseInt(n.trim(), 10)).filter(n => !isNaN(n));
-      setGameState(prev => ({
-        ...prev,
-        inputArray: parsed,
-        outputArray: null,
-        message: 'Custom array loaded.'
-      }));
-    } catch (err) {}
-  };
+
 
   // ──────────────────────────────────────────────────────────────────────────
   // GAME 3: Auth Logic 101
@@ -267,6 +257,7 @@ export default function ArenaPlayground({ challengeId, code }) {
       }, 1000);
       return () => clearInterval(timer);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState?.left, gameState?.right, gameState?.autoPlaying]);
 
 

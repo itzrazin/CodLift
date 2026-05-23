@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from './ui/Core';
-import { Play, Code, Zap, Trophy, CheckCircle2 } from 'lucide-react';
+import { Play, Code, Trophy, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const CodeMockup = () => {
-  const [code, setCode] = useState('');
-  const fullCode = `function startCoding() {
+const fullCode = `function startCoding() {
   const platform = "CodLift";
   const mission = "Ship Real Things";
   
@@ -18,6 +16,9 @@ const CodeMockup = () => {
   
   return "Ready to code!";
 }`;
+
+const CodeMockup = () => {
+  const [code, setCode] = useState('');
 
   useEffect(() => {
     let index = 0;

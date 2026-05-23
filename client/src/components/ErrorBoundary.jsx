@@ -1,13 +1,13 @@
+import React, { Component } from 'react';
 
-
-class ErrorBoundary extends React.Component {
+class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true };
+    return { hasError: true, error };
   }
 
   componentDidCatch(error, errorInfo) {
@@ -26,7 +26,7 @@ class ErrorBoundary extends React.Component {
           <div className="max-w-md w-full bg-surface border border-gray-800 rounded-xl p-6 shadow-xl">
             <h2 className="text-2xl font-bold text-red-400 mb-4">Oops! Something went wrong.</h2>
             <p className="text-gray-400 mb-4">We're sorry, but an unexpected error occurred. Please try refreshing the page or navigating back.</p>
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <div className="bg-gray-900 p-3 rounded-lg overflow-x-auto text-sm font-mono text-red-300 mb-4 whitespace-pre-wrap">
                 {this.state.error.toString()}
               </div>
