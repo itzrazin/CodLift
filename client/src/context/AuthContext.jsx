@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     // Idempotent migration - only if destination empty
     const legacyToken = localStorage.getItem('codelift_token');
     const newToken = localStorage.getItem('codlift_token');
-    
+
     if (legacyToken && !newToken) {
       localStorage.setItem('codlift_token', legacyToken);
       localStorage.removeItem('codelift_token');
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
         const response = await axios.get(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
+
         if (response.status === 200) {
           setUser(response.data.user);
         }
@@ -59,11 +59,11 @@ export const AuthProvider = ({ children }) => {
       return userData;
     }
 
-    // Otherwise, it is the regular email/password login flow
-    const email = param1;
+    // Otherwise, it is the regular username/password login flow
+    const username = param1;
     const password = param2;
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, { email, password });
+      const response = await axios.post(`${API_URL}/auth/login`, { username, password });
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem('codlift_token', newToken);
       setToken(newToken);
@@ -75,9 +75,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const signup = async (name, email, password) => {
+  const signup = async (name, email, username, password) => {
     try {
-      const response = await axios.post(`${API_URL}/auth/register`, { name, email, password });
+      const response = await axios.post(`${API_URL}/auth/register`, { name, email, username, password });
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem('codlift_token', newToken);
       setToken(newToken);

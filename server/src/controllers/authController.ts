@@ -5,10 +5,10 @@ import * as db from '../db';
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, address, profile_photo } = req.body;
+    const { name, email, username, password, address, profile_photo } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: 'Name, email, and password are required' });
+    if (!name || !email || !username || !password) {
+      return res.status(400).json({ error: 'Name, email, username, and password are required' });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -16,17 +16,24 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
+    // Check if email exists
     const existingEmail = await db.query('SELECT id FROM users WHERE email = $1', [email]);
     if (existingEmail.rows.length > 0) {
       return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    // Check if username exists
+    const existingUsername = await db.query('SELECT id FROM users WHERE username = $1', [username]);
+    if (existingUsername.rows.length > 0) {
+      return res.status(400).json({ error: 'Username already in use' });
     }
 
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     const result = await db.query(
-      `INSERT INTO users (name, email, password, address, profile_photo, created_at, last_login)
-       VALUES ($1, $2, $3, $4, $5, NOW(), NOW())
+      `INSERT INTO users (name, email, username, password, address, profile_photo, created_at, last_login)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
        RETURNING
          id, email,
          COALESCE(name, '')            AS name,
@@ -42,7 +49,7 @@ export const register = async (req: Request, res: Response) => {
          COALESCE(github_username, '') AS github_username,
          COALESCE(linkedin_username,'') AS linkedin_username,
          created_at`,
-      [name, email, hashedPassword, address || null, profile_photo || null]
+      [name, email, username, hashedPassword, address || null, profile_photo || null]
     );
 
     const user = result.rows[0];
@@ -57,13 +64,13 @@ export const register = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { username, password } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
