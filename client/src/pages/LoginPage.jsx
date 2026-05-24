@@ -102,12 +102,12 @@ const LoginPage = () => {
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
-                type="email"
-                placeholder="Email address"
+                type="text"
+                placeholder="Username"
                 value={username}
                 onChange={e => setUsername(e.target.value)}
                 className="w-full bg-navy-light border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm focus:outline-none focus:border-purple/50 transition-colors placeholder:text-gray-600"
-                autoComplete="email"
+                autoComplete="username"
               />
             </div>
 
