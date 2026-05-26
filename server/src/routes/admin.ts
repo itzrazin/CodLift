@@ -10,11 +10,14 @@ router.use(authMiddleware, isAdmin);
 // Dashboard Stats
 router.get('/stats', adminController.getAdminStats);
 router.get('/stats/growth', adminController.getGrowthStats);
+router.get('/stats/activity', adminController.getActivityStats);
 router.get('/stats/top-learners', adminController.getTopLearners);
+router.get('/stats/lesson-completion', adminController.getLessonCompletionStats);
 
 // User Management
 router.get('/users', adminController.getAllUsers);
 router.get('/users/:userId', adminController.getUserDetail);
+router.put('/users/:userId/role', adminController.updateUserRole);
 router.put('/users/:userId/ban', adminController.banUser);
 router.put('/users/:userId/unban', adminController.unbanUser);
 router.put('/users/:userId/reset-xp', adminController.resetUserXP);
@@ -31,6 +34,7 @@ router.put('/inquiries/:inquiryId/status', adminController.updateInquiryStatus);
 router.post('/broadcast/email', adminController.broadcastEmail);
 router.get('/announcements', adminController.getAnnouncements);
 router.post('/announcements', adminController.createAnnouncement);
+router.delete('/announcements/:id', adminController.deleteAnnouncement);
 
 // Audit Log
 router.get('/audit-log', adminController.getAuditLog);

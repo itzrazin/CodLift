@@ -70,6 +70,24 @@ export const getGrowthStats = async (req: AuthenticatedRequest, res: Response) =
 };
 
 /**
+ * GET /api/admin/stats/activity
+ */
+export const getActivityStats = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const result = await db.query(`
+      SELECT DATE(last_login) as date, COUNT(*) as count
+      FROM users
+      WHERE last_login >= NOW() - INTERVAL '30 days'
+      GROUP BY DATE(last_login)
+      ORDER BY date ASC
+    `);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch activity stats' });
+  }
+};
+
+/**
  * GET /api/admin/stats/top-learners
  */
 export const getTopLearners = async (req: AuthenticatedRequest, res: Response) => {
@@ -84,6 +102,27 @@ export const getTopLearners = async (req: AuthenticatedRequest, res: Response) =
     res.json({ success: true, data: result.rows });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch top learners' });
+  }
+};
+
+/**
+ * GET /api/admin/stats/lesson-completion
+ */
+export const getLessonCompletionStats = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const result = await db.query(`
+      SELECT 
+        lesson_id, 
+        COUNT(*) as total_attempts,
+        SUM(CASE WHEN is_completed = true THEN 1 ELSE 0 END) as total_completions,
+        ROUND((SUM(CASE WHEN is_completed = true THEN 1 ELSE 0 END)::numeric / COUNT(*)) * 100, 2) as completion_rate
+      FROM progress
+      GROUP BY lesson_id
+      ORDER BY completion_rate ASC
+    `);
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch lesson completion stats' });
   }
 };
 
@@ -169,6 +208,29 @@ export const getUserDetail = async (req: AuthenticatedRequest, res: Response) =>
     });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch user detail' });
+  }
+};
+
+/**
+ * PUT /api/admin/users/:userId/role
+ */
+export const updateUserRole = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!['admin', 'user'].includes(role)) {
+      return res.status(400).json({ error: 'Invalid role' });
+    }
+
+    await db.query('UPDATE users SET role = $1 WHERE id = $2', [role, userId]);
+    
+    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    await logAdminAction({ id: req.user!.id, email: adminEmail }, 'UPDATE_USER_ROLE', 'user', userId, { role });
+
+    res.json({ success: true, message: 'Role updated' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update role' });
   }
 };
 
@@ -304,6 +366,48 @@ export const replyToInquiry = async (req: AuthenticatedRequest, res: Response) =
 };
 
 /**
+ * PUT /api/admin/inquiries/:inquiryId/status
+ */
+export const updateInquiryStatus = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { inquiryId } = req.params;
+    const { status } = req.body;
+
+    if (!['Pending', 'In Progress', 'Resolved'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+
+    await db.query('UPDATE inquiries SET status = $1 WHERE id = $2', [status, inquiryId]);
+    
+    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    await logAdminAction({ id: req.user!.id, email: adminEmail }, 'UPDATE_INQUIRY_STATUS', 'inquiry', inquiryId, { status });
+
+    res.json({ success: true, message: 'Status updated' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update status' });
+  }
+};
+
+/**
+ * DELETE /api/admin/users/:userId
+ */
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { userId } = req.params;
+    if (req.user?.id === userId) return res.status(400).json({ error: 'Cannot delete self' });
+
+    await db.query('DELETE FROM users WHERE id = $1', [userId]);
+    
+    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    await logAdminAction({ id: req.user!.id, email: adminEmail }, 'DELETE_USER', 'user', userId);
+
+    res.json({ success: true, message: 'User deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete user' });
+  }
+};
+
+/**
  * GET /api/admin/audit-log
  */
 export const getAuditLog = async (req: AuthenticatedRequest, res: Response) => {
@@ -421,5 +525,22 @@ export const getAnnouncements = async (req: AuthenticatedRequest, res: Response)
     res.json({ success: true, announcements: result.rows });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch announcements' });
+  }
+};
+
+/**
+ * DELETE /api/admin/announcements/:id
+ */
+export const deleteAnnouncement = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    await db.query('DELETE FROM announcements WHERE id = $1', [id]);
+    
+    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    await logAdminAction({ id: req.user!.id, email: adminEmail }, 'DELETE_ANNOUNCEMENT', 'announcement', id);
+
+    res.json({ success: true, message: 'Announcement deleted' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete announcement' });
   }
 };
