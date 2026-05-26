@@ -23,7 +23,8 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   response => response,
   error => {
-    if (error.response?.status === 401) {
+    const isAuthPath = window.location.pathname === '/login' || window.location.pathname === '/signup';
+    if (error.response?.status === 401 && !isAuthPath) {
       localStorage.removeItem('codlift_token');
       window.location.href = '/login?session=expired';
     }

@@ -100,7 +100,7 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Username */}
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
               <input
                 type="text"
                 placeholder="Username"
