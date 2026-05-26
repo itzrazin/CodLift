@@ -11,14 +11,14 @@ class ErrorBoundary extends Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    // Highly visible logging for production debugging
+    // Enhanced logging to capture component stack trace
     console.error("CRITICAL ERROR DETECTED:");
-    console.error(error);
-    console.error("Error Info:", errorInfo);
-    
+    console.error("Error Object:", error);
+    console.error("Component Stack:", errorInfo.componentStack);
+    console.error("Full Error Info:", JSON.stringify(errorInfo));
+
     this.setState({ error, errorInfo });
   }
-
   render() {
     if (this.state.hasError) {
       return (

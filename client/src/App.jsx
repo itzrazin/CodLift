@@ -60,25 +60,7 @@ const GuestRoute = ({ children }) => {
 // AdminRoute: only allows users with role === 'admin'
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
-  const navigate = useNavigate();
-  const { toasts, showToast } = useToast();
-
-  useEffect(() => {
-    if (!loading && user && user.role !== 'admin') {
-      // Toast notification before redirect
-      showToast({
-        message: 'Admin access required. You have been redirected.',
-        type: 'warning',
-        duration: 3000
-      });
-      
-      // Small delay for notification to display
-      setTimeout(() => {
-        navigate('/dashboard', { replace: true });
-      }, 500);
-    }
-  }, [user, loading, navigate, showToast]);
-
+  
   if (loading) return <PageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== 'admin') {
