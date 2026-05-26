@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { API_URL } from '../utils/config';
 
@@ -20,49 +20,47 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const verifyToken = useCallback(async (tokenToVerify) => {
+    if (!tokenToVerify) {
+      setLoading(false);
+      setUser(null);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await axios.get(`${API_URL}/user/me`, {
+        headers: { Authorization: `Bearer ${tokenToVerify}` }
+      });
+
+      if (response.status === 200) {
+        setUser(response.data.user);
+      }
+    } catch (error) {
+      console.error('Token verification failed:', error);
+      localStorage.removeItem('codlift_token');
+      setToken(null);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
-    const verifyToken = async () => {
-      // If we already have a user and the token hasn't changed, skip
-      if (user && token === localStorage.getItem('codlift_token')) {
-        setLoading(false);
-        return;
-      }
+    // Only run verifyToken if we don't have a user yet
+    if (!user) {
+      verifyToken(token);
+    } else {
+      setLoading(false);
+    }
+  }, [token, user, verifyToken]);
 
-      if (!token) {
-        setLoading(false);
-        setUser(null);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const response = await axios.get(`${API_URL}/user/me`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        if (response.status === 200) {
-          setUser(response.data.user);
-        }
-      } catch (error) {
-        console.error('Token verification failed:', error);
-        localStorage.removeItem('codlift_token');
-        setToken(null);
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    verifyToken();
-  }, [token]);
-
-  const login = async (param1, param2) => {
+  const login = useCallback(async (param1, param2) => {
     // If param2 is an object, it is the OAuth token callback flow
     if (param2 && typeof param2 === 'object') {
       const newToken = param1;
       const userData = param2;
       localStorage.setItem('codlift_token', newToken);
-      // Set user first to avoid transient null user state when token changes
       setUser(userData);
       setToken(newToken);
       setLoading(false);
@@ -84,9 +82,9 @@ export const AuthProvider = ({ children }) => {
       console.error('Login error:', error);
       throw new Error(error.response?.data?.error || 'Login failed. Please try again.', { cause: error });
     }
-  };
+  }, []);
 
-  const signup = async (name, email, username, password) => {
+  const signup = useCallback(async (name, email, username, password) => {
     try {
       const response = await axios.post(`${API_URL}/auth/register`, { name, email, username, password });
       const { token: newToken, user: userData } = response.data;
@@ -99,9 +97,9 @@ export const AuthProvider = ({ children }) => {
       console.error('Signup error:', error);
       throw new Error(error.response?.data?.error || 'Signup failed. Please try again.', { cause: error });
     }
-  };
+  }, []);
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await axios.post(`${API_URL}/auth/logout`);
     } catch (err) {
@@ -111,7 +109,7 @@ export const AuthProvider = ({ children }) => {
       setToken(null);
       setUser(null);
     }
-  };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, setUser, token, login, signup, logout, loading }}>

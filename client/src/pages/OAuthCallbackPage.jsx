@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
@@ -12,11 +12,15 @@ const OAuthCallbackPage = () => {
   const [message, setMessage] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
+  const processedRef = useRef(false);
 
   useEffect(() => {
+    // Prevent double-processing in strict mode
+    if (processedRef.current) return;
+    
     const handleCallback = async () => {
       const token = searchParams.get('token');
-      const isNew = searchParams.get('is_new') === 'true';
+      const isNewParam = searchParams.get('is_new') === 'true';
       const error = searchParams.get('error');
 
       if (error) {
@@ -33,6 +37,8 @@ const OAuthCallbackPage = () => {
         return;
       }
 
+      processedRef.current = true;
+
       try {
         // Fetch user data using the token
         const response = await axios.get(`${API_URL}/user/me`, {
@@ -40,14 +46,17 @@ const OAuthCallbackPage = () => {
         });
         
         const userData = response.data.user;
+        
+        // Wait for login state to be set
         await login(token, userData);
         
         setStatus('success');
-        setMessage(isNew || !userData.level ? 'Welcome to CodLift! Setting up your profile...' : 'Welcome back! Redirecting...');
+        const isNewUser = isNewParam || !userData.level;
+        setMessage(isNewUser ? 'Welcome to CodLift! Setting up your profile...' : 'Welcome back! Redirecting...');
         
-        // Use a longer delay to ensure state is solid and give user feedback
+        // Use a 1.5s delay to ensure state is solid and give user feedback
         setTimeout(() => {
-          if (isNew || !userData.level) {
+          if (isNewUser) {
             navigate('/onboarding', { replace: true });
           } else {
             navigate('/dashboard', { replace: true });
@@ -56,7 +65,7 @@ const OAuthCallbackPage = () => {
       } catch (err) {
         console.error('OAuth Callback Error:', err);
         setStatus('error');
-        setMessage('Authentication failed. Please try again.');
+        setMessage('Authentication failed. The secure session could not be established.');
         setTimeout(() => navigate('/login'), 3000);
       }
     };
@@ -75,7 +84,7 @@ const OAuthCallbackPage = () => {
           <>
             <div className="w-16 h-16 border-4 border-purple border-t-transparent rounded-full animate-spin mx-auto mb-6" />
             <h2 className="text-xl font-bold mb-2">Signing you in...</h2>
-            <p className="text-gray-400 text-sm">Just a moment!</p>
+            <p className="text-gray-400 text-sm">Validating secure credentials...</p>
           </>
         )}
         {status === 'success' && (
@@ -94,9 +103,9 @@ const OAuthCallbackPage = () => {
         {status === 'error' && (
           <>
             <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-6" />
-            <h2 className="text-xl font-bold mb-2">Something went wrong</h2>
+            <h2 className="text-xl font-bold mb-2">Login Failed</h2>
             <p className="text-gray-400 text-sm">{message}</p>
-            <p className="text-gray-600 text-xs mt-4">Redirecting to login...</p>
+            <p className="text-gray-600 text-xs mt-4 italic">You will be redirected shortly...</p>
           </>
         )}
       </motion.div>
