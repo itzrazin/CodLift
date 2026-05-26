@@ -11,7 +11,7 @@ const getApiUrl = () => {
        window.location.hostname.startsWith('192.168.'))) {
     return 'http://localhost:10000/api';
   }
-  return 'https://codlift-api.onrender.com/api';
+  return 'https://codlift.onrender.com/api';
 };
 
 export const API_URL = getApiUrl();
