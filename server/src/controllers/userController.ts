@@ -2,6 +2,11 @@ import { Response } from 'express';
 import * as db from '../db';
 import { AuthenticatedRequest } from '../middleware/authMiddleware';
 
+const sanitize = (str: any): string => {
+  if (typeof str !== 'string') return '';
+  return str.replace(/<[^>]*>?/gm, '').substring(0, 500);
+};
+
 const USER_SELECT = `
   id, email,
   COALESCE(name, '')             AS name,
@@ -51,17 +56,27 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
 
     const result = await db.query(
       `UPDATE users
-       SET name              = COALESCE($1, name),
-           username          = COALESCE($2, username),
-           address           = COALESCE($3, address),
-           profile_photo     = COALESCE($4, profile_photo),
-           bio               = COALESCE($5, bio),
-           github_username   = COALESCE($6, github_username),
-           linkedin_username = COALESCE($7, linkedin_username),
-           avatar            = COALESCE($8, avatar)
+       SET name              = $1,
+           username          = $2,
+           address           = $3,
+           profile_photo     = $4,
+           bio               = $5,
+           github_username   = $6,
+           linkedin_username = $7,
+           avatar            = $8
        WHERE id = $9
        RETURNING ${USER_SELECT}`,
-      [name, username, address, profile_photo, bio, github_username, linkedin_username, avatar, userId]
+      [
+        sanitize(name), 
+        sanitize(username), 
+        sanitize(address), 
+        sanitize(profile_photo), 
+        sanitize(bio), 
+        sanitize(github_username), 
+        sanitize(linkedin_username), 
+        sanitize(avatar),
+        userId
+      ]
     );
 
     if (result.rows.length === 0) {

@@ -115,10 +115,10 @@ export const sendCustomEmail = async (to: string, subject: string, message: stri
  */
 export const sendBulkEmail = async (recipients: string[], subject: string, message: string) => {
   const BATCH_SIZE = 50;
-  const DELAY_MS = 2000; // 2 seconds between batches
+  const DELAY_MS = 2000;
+  let lastProcessedIndex = 0;
 
-  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
-    const batch = recipients.slice(i, i + BATCH_SIZE);
+  const sendBatch = async (batch: string[], startIndex: number) => {
     const mailOptions = {
       bcc: batch,
       subject,
@@ -131,16 +131,33 @@ export const sendBulkEmail = async (recipients: string[], subject: string, messa
         </div>
       `,
     };
+    await transporter.sendMail(mailOptions);
+  };
 
-    try {
-      await transporter.sendMail(mailOptions);
-      if (i + BATCH_SIZE < recipients.length) {
-        await new Promise(resolve => setTimeout(resolve, DELAY_MS));
-      }
-    } catch (error) {
-      console.error(`❌ Error sending bulk email batch:`, error);
-    }
+  const batches = [];
+  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+    batches.push({
+      recipients: recipients.slice(i, i + BATCH_SIZE),
+      startIndex: i
+    });
   }
+
+  const results = await Promise.allSettled(
+    batches.map(async (batch, idx) => {
+      if (idx > 0) await new Promise(resolve => setTimeout(resolve, idx * DELAY_MS));
+      await sendBatch(batch.recipients, batch.startIndex);
+      lastProcessedIndex = batch.startIndex + batch.recipients.length;
+      return batch.startIndex;
+    })
+  );
+
+  results.forEach((res, idx) => {
+    if (res.status === 'rejected') {
+      console.error(`❌ Batch starting at index ${batches[idx].startIndex} failed:`, res.reason);
+    }
+  });
+
+  return { lastProcessedIndex };
 };
 
 export default transporter;
