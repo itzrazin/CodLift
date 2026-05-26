@@ -44,7 +44,6 @@ export const LessonProvider = ({ children }) => {
   }, [token]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProgress();
   }, [fetchProgress]);
 
@@ -68,7 +67,7 @@ export const LessonProvider = ({ children }) => {
           if (!updated[trackId]) {
             updated[trackId] = {};
           }
-          updated[trackId][exerciseId] = {
+          updated[trackId][exerciseId.toString()] = {
             completed: true,
             code: codeSubmitted,
             completedAt: new Date().toISOString()

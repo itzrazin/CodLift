@@ -1,9 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import * as db from '../db';
 
 export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
+    role?: string;
   };
 }
 
@@ -17,7 +19,7 @@ export interface AuthenticatedRequest extends Request {
  * When the user sends the token back, we verify the signature. If someone tampered with the payload, the signature won't match and we reject it
  * This means we don't need to query the database on every request — we trust the token
  */
-export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void | Response => {
+export const authMiddleware = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void | Response> => {
   const authHeader = req.header('Authorization');
 
   if (!authHeader) {
@@ -33,8 +35,23 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
     // Verify the signature. If it fails (expired, tampered, missing), catch the error
     const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { id: string };
     
-    // If it passes, decode the payload to get userId, attach it to req.user
-    req.user = { id: decoded.id };
+    // Check if user exists and is not banned
+    const userResult = await db.query('SELECT id, role, is_banned FROM users WHERE id = $1', [decoded.id]);
+    const user = userResult.rows[0];
+
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    if (user.is_banned) {
+      return res.status(403).json({ error: 'Account suspended.' });
+    }
+
+    // If it passes, attach user data to req.user
+    req.user = { 
+      id: user.id,
+      role: user.role
+    };
     
     // Call next() to pass control to the actual route handler
     next();
@@ -43,13 +60,16 @@ export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: N
   }
 };
 
-import * as db from '../db';
-
 export const isAdmin = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void | Response> => {
   try {
     if (!req.user?.id) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
+    
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
     const result = await db.query(
       'SELECT role FROM users WHERE id = $1',
       [req.user.id]

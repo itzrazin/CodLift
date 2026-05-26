@@ -2,9 +2,11 @@
 import { Button } from './ui/Core';
 import { useNavigate, Link } from 'react-router-dom';
 import { Logo } from './ui/Logo';
+import { useAuth } from '../context/AuthContext';
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-cyber-dark/90 backdrop-blur-md border-b-2 border-cyber-pink shadow-[0_0_15px_rgba(255,0,255,0.2)]">
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
@@ -23,7 +25,7 @@ export const Navbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {!localStorage.getItem('codlift_token') ? (
+          {!user ? (
             <>
               <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="hidden sm:flex">LOG IN</Button>
               <Button size="sm" onClick={() => navigate('/signup')}>START QUEST</Button>

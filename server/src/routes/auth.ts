@@ -6,17 +6,23 @@ import { register, login } from '../controllers/authController';
 
 const router = express.Router();
 
-// Rate limiter: Max 10 attempts per 15 minutes per IP
+// Rate limiters
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 10,
   message: { error: 'Too many login attempts, please try again after 15 minutes' }
 });
 
+const registerLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many accounts created from this IP, please try again after an hour' }
+});
+
 // ─── POST /api/auth/register ───────────────────────────────────────────────────
-router.post('/register', register);
+router.post('/register', registerLimiter, register);
 // Keeping /signup as an alias for backward compatibility with frontend
-router.post('/signup', register);
+router.post('/signup', registerLimiter, register);
 
 // ─── POST /api/auth/login ──────────────────────────────────────────────────────
 router.post('/login', loginLimiter, login);

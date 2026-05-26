@@ -82,7 +82,7 @@ const AdminRoute = ({ children }) => {
   if (loading) return <PageLoader />;
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== 'admin') {
-    return <ToastContainer toasts={toasts} />;
+    return <Navigate to="/dashboard" replace />;
   }
   
   return children;

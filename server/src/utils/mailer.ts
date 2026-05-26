@@ -54,7 +54,6 @@ export const sendWelcomeEmail = async (email: string, username: string) => {
     return info;
   } catch (error) {
     console.error(`❌ Error sending welcome email to ${email}:`, error);
-    // Rethrow so the calling function knows it failed
     throw error;
   }
 };
@@ -64,7 +63,7 @@ export const sendWelcomeEmail = async (email: string, username: string) => {
  */
 export const sendLoginAlert = async (email: string, username: string) => {
   const mailOptions = {
-    from: '"CodLift Security" <security@codlift.site>', // Overriding default 'from'
+    from: '"CodLift Security" <security@codlift.site>',
     to: email,
     subject: 'New Login to CodLift 🛡️',
     html: `
@@ -82,3 +81,66 @@ export const sendLoginAlert = async (email: string, username: string) => {
     console.error('❌ Error sending login alert:', error);
   }
 };
+
+/**
+ * Generic email sender for admin custom emails
+ */
+export const sendCustomEmail = async (to: string, subject: string, message: string) => {
+  const mailOptions = {
+    to,
+    subject,
+    html: `
+      <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #080b10; color: #ffffff; border-radius: 20px;">
+        <h2 style="color: #a855f7;">Message from CodLift Support</h2>
+        <div style="font-size: 16px; line-height: 1.6; color: #cbd5e1; white-space: pre-wrap;">
+          ${message}
+        </div>
+        <p style="color: #64748b; font-size: 12px; margin-top: 40px; border-top: 1px solid #1a1e26; padding-top: 20px;">
+          This is an official communication from CodLift.
+        </p>
+      </div>
+    `,
+  };
+
+  try {
+    return await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error(`❌ Error sending custom email to ${to}:`, error);
+    throw error;
+  }
+};
+
+/**
+ * Bulk email sender with BCC batching
+ */
+export const sendBulkEmail = async (recipients: string[], subject: string, message: string) => {
+  const BATCH_SIZE = 50;
+  const DELAY_MS = 2000; // 2 seconds between batches
+
+  for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
+    const batch = recipients.slice(i, i + BATCH_SIZE);
+    const mailOptions = {
+      bcc: batch,
+      subject,
+      html: `
+        <div style="font-family: sans-serif; padding: 30px; background-color: #080b10; color: #ffffff;">
+          <h1 style="color: #00f5d4;">CodLift Platform Announcement</h1>
+          <div style="font-size: 16px; line-height: 1.6; white-space: pre-wrap;">
+            ${message}
+          </div>
+        </div>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      if (i + BATCH_SIZE < recipients.length) {
+        await new Promise(resolve => setTimeout(resolve, DELAY_MS));
+      }
+    } catch (error) {
+      console.error(`❌ Error sending bulk email batch:`, error);
+    }
+  }
+};
+
+export default transporter;

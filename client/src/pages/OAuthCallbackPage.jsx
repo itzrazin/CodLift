@@ -8,7 +8,7 @@ const OAuthCallbackPage = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState('loading'); // loading | success | error
   const [message, setMessage] = useState('');
-  const { loginWithToken } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,7 +32,14 @@ const OAuthCallbackPage = () => {
       }
 
       try {
-        await loginWithToken(token);
+        // Fetch user data using the token
+        const response = await axios.get(`${API_URL}/user/me`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const userData = response.data.user;
+        await login(token, userData);
+        
         setStatus('success');
         setMessage(isNew ? 'Welcome to CodLift! Setting up your profile...' : 'Welcome back! Redirecting...');
         setTimeout(() => navigate('/dashboard'), 1500);

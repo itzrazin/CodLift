@@ -1,98 +1,148 @@
 import express, { Response } from 'express';
 import { authMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import * as db from '../db';
-import curriculum from '../data/curriculum';
+import { curriculum } from '../data/curriculum';
+import levelsData from '../data/levels.json';
 
 const router = express.Router();
 
-// ─── GET /api/progress — User progress summary ────────────────────────────────
+/**
+ * XP CALCULATION ENGINE
+ */
+function calculateXP(solveTimeMs: number | null, difficulty: string): number {
+  const baseXP = levelsData.base_xp.default;
+  const multiplier = (levelsData.difficulty_multipliers as any)[difficulty] || 1.0;
+  
+  let xp = baseXP * multiplier;
+
+  // Apply speed bonus
+  if (solveTimeMs) {
+    if (solveTimeMs < 30000) {
+      xp += levelsData.speed_bonus.under_30s;
+    } else if (solveTimeMs < 60000) {
+      xp += levelsData.speed_bonus.under_60s;
+    } else if (solveTimeMs < 120000) {
+      xp += levelsData.speed_bonus.under_120s;
+    }
+  }
+
+  return Math.round(xp);
+}
+
+// GET /api/progress - Fetch all progress for the current user
 router.get('/', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await db.query(
-      'SELECT lesson_id, exercise_id, code_content, is_completed FROM progress WHERE user_id = $1',
+      'SELECT * FROM progress WHERE user_id = $1 ORDER BY completed_at DESC',
       [req.user!.id]
     );
-
-    const completedExercises  = result.rows;
-    const completedLessonIds  = [...new Set<string>(completedExercises.map((ex: any) => ex.lesson_id))];
-
-    res.json({
-      completed_lessons: completedLessonIds,
-      progress_data:     completedExercises
-    });
+    res.json({ progress_data: result.rows });
   } catch (error) {
-    console.error('Error fetching user progress:', error);
+    console.error('Error fetching progress:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// ─── POST /api/progress/update-progress — Record completed exercise ──────────
+// POST /api/progress/update-progress - Record lesson completion and award XP
 router.post('/update-progress', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { lesson_id, exercise_id, code_submitted } = req.body;
+    const { lesson_id, exercise_id, code_submitted, solve_time_ms } = req.body;
+    const userId = req.user!.id;
 
     if (!lesson_id || !exercise_id) {
       return res.status(400).json({ error: 'Missing lesson_id or exercise_id' });
     }
 
+    // 1. Check if already completed
     const existing = await db.query(
       'SELECT id FROM progress WHERE user_id = $1 AND lesson_id = $2 AND exercise_id = $3 AND is_completed = true',
-      [req.user!.id, lesson_id, exercise_id]
+      [userId, lesson_id, exercise_id]
     );
+
     const alreadyCompleted = existing.rows.length > 0;
+    let xpEarned = 0;
 
+    // 2. Calculate XP only for new completions
+    if (!alreadyCompleted) {
+      const lesson = curriculum.find(l => l.id === lesson_id);
+      const difficulty = lesson?.level || 'beginner';
+      xpEarned = calculateXP(solve_time_ms, difficulty);
+    }
+
+    // 3. Insert or update progress
     await db.query(
-      `INSERT INTO progress (user_id, lesson_id, exercise_id, code_content, is_completed)
-       VALUES ($1, $2, $3, $4, true)
+      `INSERT INTO progress (user_id, lesson_id, exercise_id, is_completed, code_content, xp_earned)
+       VALUES ($1, $2, $3, true, $4, $5)
        ON CONFLICT (user_id, lesson_id, exercise_id)
-       DO UPDATE SET is_completed = true, code_content = $4, completed_at = NOW()`,
-      [req.user!.id, lesson_id, exercise_id, code_submitted]
+       DO UPDATE SET 
+         is_completed = true, 
+         code_content = $4,
+         xp_earned = CASE WHEN progress.is_completed = false THEN $5 ELSE progress.xp_earned END,
+         completed_at = CURRENT_TIMESTAMP`,
+      [userId, lesson_id, exercise_id, code_submitted, xpEarned]
     );
 
-    res.json({
-      success:      true,
-      already_done: alreadyCompleted
+    // 4. Update user total XP
+    if (xpEarned > 0) {
+      await db.query(
+        'UPDATE users SET xp = COALESCE(xp, 0) + $1, xp_total = COALESCE(xp_total, 0) + $1 WHERE id = $2',
+        [xpEarned, userId]
+      );
+    }
+
+    res.json({ 
+      success: true, 
+      already_done: alreadyCompleted,
+      xp_earned: xpEarned
     });
   } catch (error) {
-    console.error('Error updating user progress:', error);
+    console.error('Error updating progress:', error);
     res.status(500).json({ error: 'Server error' });
   }
 });
 
-// ─── GET /api/progress/resume — Smart Resume ─────────────────────────────────
+// GET /api/progress/resume - Get the last uncompleted exercise for the user
 router.get('/resume', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const result = await db.query(
-      'SELECT lesson_id, exercise_id FROM progress WHERE user_id = $1 AND is_completed = true',
+      'SELECT lesson_id, exercise_id FROM progress WHERE user_id = $1 AND is_completed = true ORDER BY completed_at DESC LIMIT 1',
       [req.user!.id]
     );
 
-    const completedSet = new Set<string>(result.rows.map((r: any) => `${r.lesson_id}:${r.exercise_id}`));
-
-    let nextLesson: any = null;
-    let nextExerciseId  = 1;
-
-    for (const lesson of curriculum) {
-      for (let i = 0; i < lesson.exercises.length; i++) {
-        const exNum = i + 1;
-        if (!completedSet.has(`${lesson.id}:${exNum}`)) {
-          nextLesson     = lesson;
-          nextExerciseId = exNum;
-          break;
+    if (result.rows.length === 0) {
+      // No progress yet, start with first lesson
+      const firstLesson = curriculum[0];
+      return res.json({
+        resume: {
+          level:      firstLesson.level,
+          slug:       firstLesson.id,
+          exerciseId: 1
         }
-      }
-      if (nextLesson) break;
+      });
     }
 
-    if (!nextLesson) {
-      const last     = curriculum[curriculum.length - 1];
-      nextLesson     = last;
-      nextExerciseId = last.exercises.length;
+    const last = result.rows[0];
+    const lastLesson = curriculum.find(l => l.id === last.lesson_id);
+    if (!lastLesson) return res.status(404).json({ error: 'Last lesson not found' });
+
+    const lastExId = parseInt(last.exercise_id);
+    let nextExerciseId = lastExId + 1;
+    let nextLesson = lastLesson;
+
+    if (nextExerciseId > lastLesson.exercises.length) {
+      const currentIdx = curriculum.findIndex(l => l.id === last.lesson_id);
+      if (currentIdx < curriculum.length - 1) {
+        nextLesson = curriculum[currentIdx + 1];
+        nextExerciseId = 1;
+      } else {
+        // All lessons completed!
+        return res.json({ resume: null });
+      }
     }
 
     res.json({
-      nextLesson: {
-        level:      nextLesson.level?.toLowerCase() || 'beginner',
+      resume: {
+        level:      nextLesson.level,
         slug:       nextLesson.id,
         exerciseId: nextExerciseId
       }

@@ -2,6 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, Shield, Heart } from 'lucide-react';
 
+const PLAYER_SIZE = 30;
+const OBSTACLE_SIZE = 20;
+const OBSTACLE_SPEED = 4;
+const SPAWN_RATE = 0.02;
+
+// Internal Button component helper
+const Button = ({ children, onClick, size = "md" }) => (
+  <button 
+    onClick={onClick}
+    className={`bg-purple text-black font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(168,85,247,0.3)]
+      ${size === 'sm' ? 'px-6 py-2 text-xs' : 'px-8 py-3 text-sm'}`}
+  >
+    {children}
+  </button>
+);
+
 export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) => {
   const canvasRef = useRef(null);
   const [score, setScore] = useState(0);
@@ -9,12 +25,6 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
   const [timeLeft, setTimeLeft] = useState(45);
   const [gameState, setGameState] = useState('playing'); // playing, gameover
   const [highScore, setHighScore] = useState(0);
-
-  // Game constants
-  const PLAYER_SIZE = 30;
-  const OBSTACLE_SIZE = 20;
-  const OBSTACLE_SPEED = 4;
-  const SPAWN_RATE = 0.02;
 
   const gameData = useRef({
     player: { x: 0, y: 0 },
@@ -25,7 +35,6 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
 
   useEffect(() => {
     if (isOpen) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setScore(0);
       setLives(3);
       setTimeLeft(45);
@@ -44,6 +53,7 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
     
     // Set canvas size
     const resize = () => {
+      if (!canvas.parentElement) return;
       canvas.width = canvas.parentElement.clientWidth;
       canvas.height = 400;
       gameData.current.player.x = canvas.width / 2 - PLAYER_SIZE / 2;
@@ -58,10 +68,7 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
     window.addEventListener('keyup', handleKeyUp);
 
     const gameLoop = () => {
-      // Guard clause for null canvas/context
-      if (!gameData.current?.frameId || !canvas || !ctx) {
-        return; // Safe exit if unmounted
-      }
+      if (!canvas || !ctx) return;
 
       try {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -139,7 +146,7 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
       }
     };
 
-    gameLoop();
+    gameData.current.frameId = requestAnimationFrame(gameLoop);
 
     const timer = setInterval(() => {
       setTimeLeft(t => {
@@ -149,7 +156,6 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
     }, 1000);
 
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       cancelAnimationFrame(gameData.current.frameId);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
@@ -248,14 +254,3 @@ export const LoadingGame = ({ isOpen, message = "Waking up the backend..." }) =>
     </AnimatePresence>
   );
 };
-
-// Internal Button component helper
-const Button = ({ children, onClick, size = "md" }) => (
-  <button 
-    onClick={onClick}
-    className={`bg-purple text-black font-bold rounded-xl transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(168,85,247,0.3)]
-      ${size === 'sm' ? 'px-6 py-2 text-xs' : 'px-8 py-3 text-sm'}`}
-  >
-    {children}
-  </button>
-);

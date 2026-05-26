@@ -105,7 +105,6 @@ const LessonPage = () => {
   }, [level, slug, exerciseId, token]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchExercise();
   }, [fetchExercise]);
 
@@ -404,8 +403,7 @@ const LessonPage = () => {
                   </div>
                   {/* Render markdown feedback safely */}
                   <div className="text-xs opacity-90 leading-relaxed whitespace-pre-line overflow-y-auto max-h-[200px] custom-scrollbar">
-                    {/* eslint-disable-next-line no-misleading-character-class */}
-                    {String(message).replace(/^###\s*[✅❌⚠️]\s*/gm, '').replace(/^-\s+/gm, '> ')}
+                    {String(message).replace(/^###\s*(✅|❌|⚠️)\s*/gm, '').replace(/^-\s+/gm, '> ')}
                   </div>
                   {status === 'success' && (
                     <Button variant="secondary" size="sm" className="mt-2 w-full border-black text-black" onClick={() => setShowModal(true)}>

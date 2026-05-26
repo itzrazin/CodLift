@@ -83,7 +83,7 @@ const AuthPage = () => {
       if (isLogin) {
         await login(formData.email, formData.password);
       } else {
-        await signup(formData.username.trim(), formData.email.trim().toLowerCase(), formData.password);
+        await signup(formData.username.trim(), formData.email.trim().toLowerCase(), formData.username.trim(), formData.password);
       }
       navigate('/dashboard');
     } catch (err) {

@@ -1,46 +1,41 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser';
-import path from 'path';
 import helmet from 'helmet';
-// Load .env — from server/src/index.ts, workspace root is 3 levels up
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+import dotenv from 'dotenv';
+import path from 'path';
+import rateLimit from 'express-rate-limit';
+
+// Route Imports
+import authRouter from './routes/auth';
+import executeRouter from './routes/execute';
+import lessonsRouter from './routes/lessons';
+import progressRouter from './routes/progress';
+import userRouter from './routes/user';
+import leaderboardRouter from './routes/leaderboard';
+import adminRouter from './routes/admin';
+
+// Data / DB
+import * as db from './db';
+import { pool } from './db';
+import { curriculum } from './data/curriculum';
+
 dotenv.config();
 
-import { pool } from './db';
-import passportConfig from './config/passport';
-import curriculum from './data/curriculum';
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-import authRouter       from './routes/auth';
-import userRouter       from './routes/user';
-import executeRouter    from './routes/execute';
-import lessonsRouter    from './routes/lessons';
-import progressRouter   from './routes/progress';
-import leaderboardRouter from './routes/leaderboard';
-import adminRouter      from './routes/admin';
+// ─── Middleware ────────────────────────────────────────────────────────────────
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const app       = express();
-const PORT      = process.env.PORT || 5000;
-
-// Trust proxy for secure cookies and OAuth redirects on Render/Vercel
-app.set('trust proxy', 1);
-
-// Security HTTP headers
-app.use(helmet({
-  contentSecurityPolicy:    false,
-  crossOriginEmbedderPolicy: false
-}));
-
-// CORS configuration
+// Dynamic CORS configuration
 const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'https://codlift.onrender.com',
-  'https://codlift.site',
   'http://localhost:5173',
-  'http://127.0.0.1:5173',
-  'http://localhost:3000'
-].filter(Boolean).map((url) => (url as string).replace(/\/$/, ''));
+  'http://localhost:3000',
+  'https://codlift.site',
+  'https://www.codlift.site',
+  'https://codlift.vercel.app'
+];
 
 app.use(cors({
   origin: (origin, callback) => {
@@ -48,29 +43,28 @@ app.use(cors({
     const cleanOrigin    = origin.replace(/\/$/, '');
     const isWhitelisted  = allowedOrigins.includes(cleanOrigin);
     const isVercelPreview = cleanOrigin.endsWith('.vercel.app') && cleanOrigin.includes('codlift-');
-
+    
     if (isWhitelisted || isVercelPreview) {
-      return callback(null, true);
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
     }
-
-    if (process.env.NODE_ENV === 'production') {
-      console.warn(`[CORS] Blocked unknown origin: ${origin}`);
-      return callback(Object.assign(new Error('CORS: origin not allowed'), { status: 403 }));
-    }
-
-    console.warn(`[CORS] Unknown origin allowed in dev: ${origin}`);
-    return callback(null, true);
   },
   credentials: true
 }));
 
-// Passport OAuth (Stateless JWT flow)
-app.use(passportConfig.initialize());
+app.use(helmet({
+  contentSecurityPolicy: false, // Handled by frontend index.html for now
+}));
 
-app.use(express.json({ limit: '10mb' }));
-app.use(cookieParser());
+// ─── Rate Limiters ────────────────────────────────────────────────────────────
+const contactLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 3,
+  message: { error: 'Too many messages sent, please try again after an hour' }
+});
 
-// ─── Health check ──────────────────────────────────────────────────────────────
+// ─── System Routes ─────────────────────────────────────────────────────────────
 app.get('/', (_req: Request, res: Response) => {
   res.json({ status: 'CodLift API is running', timestamp: new Date().toISOString() });
 });
@@ -121,7 +115,7 @@ app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/admin',       adminRouter);
 
 // Public Contact Form inquiry Submission
-app.post('/api/contact', async (req: Request, res: Response) => {
+app.post('/api/contact', contactLimiter, async (req: Request, res: Response) => {
   try {
     const { name, email, subject, message } = req.body;
     if (!name || !email || !message) {

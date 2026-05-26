@@ -7,9 +7,11 @@ import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { SEO } from '../utils/SEO';
 import { Navbar } from '../components/Navbar';
+import { useAuth } from '../context/AuthContext';
 
 const CTA = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="absolute inset-0 scanlines opacity-50 pointer-events-none"></div>
@@ -25,8 +27,8 @@ const CTA = () => {
             &gt; SYSTEM READY. NO CREDIT CARD REQUIRED. 
             <br />&gt; PURE GAMIFIED LEARNING ENGINE ONLINE.
           </p>
-          <Button size="lg" className="mx-auto" onClick={() => navigate(localStorage.getItem('codlift_token') ? '/dashboard' : '/signup')}>
-            {localStorage.getItem('codlift_token') ? 'RESUME QUEST' : 'START QUEST'} <ArrowRight className="w-6 h-6" />
+          <Button size="lg" className="mx-auto" onClick={() => navigate(user ? '/dashboard' : '/signup')}>
+            {user ? 'RESUME QUEST' : 'START QUEST'} <ArrowRight className="w-6 h-6" />
           </Button>
         </div>
       </div>
@@ -51,7 +53,6 @@ const LandingPage = () => {
   const [particles, setParticles] = useState([]);
   
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setParticles(Array.from({ length: 20 }).map((_, i) => ({
       id: i,
       left: `${Math.random() * 100}%`,

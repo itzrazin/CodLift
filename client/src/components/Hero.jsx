@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/Core';
 import { Play, Code, Trophy, CheckCircle2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const fullCode = `function startCoding() {
   const platform = "CodLift";
@@ -81,6 +82,7 @@ const CodeMockup = () => {
 
 export const Hero = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
       <div className="container mx-auto px-6">
@@ -100,7 +102,7 @@ export const Hero = () => {
                 Experience the most interactive and practice-driven way to master full-stack development.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                {localStorage.getItem('codlift_token') ? (
+                {user ? (
                   <Button size="lg" className="w-full sm:w-auto" onClick={() => navigate('/dashboard')}>
                     Resume <Play className="w-5 h-5" />
                   </Button>

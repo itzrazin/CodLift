@@ -23,7 +23,7 @@ const OnboardingPage = () => {
     if (!selected) return;
     setLoading(true);
     try {
-      const res = await api.put('/auth/level', { level: selected });
+      const res = await api.put('/user/level', { level: selected });
       
       if (res.status === 200 || res.status === 204 || res.data?.success) {
         setUser({ ...user, level: selected });

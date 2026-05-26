@@ -93,7 +93,7 @@ const Dashboard = () => {
     let foundCurrent = false;
     return beginnerLessons.slice(0, 7).map((lesson, i) => {
       const completedExercises = globalCompletedLessons[lesson.id] || {};
-      const isCompleted = lesson.exercises.every((ex, idx) => completedExercises[idx + 1]);
+      const isCompleted = lesson.exercises.every((ex, idx) => completedExercises[String(idx + 1)]);
       
       let status = 'locked';
       if (isCompleted) {
@@ -107,7 +107,7 @@ const Dashboard = () => {
       let firstUncompletedId = 1;
       const exercisesCount = lesson.exercises.length;
       for (let exerciseNum = 1; exerciseNum <= exercisesCount; exerciseNum++) {
-        if (!completedExercises[exerciseNum]) {
+        if (!completedExercises[String(exerciseNum)]) {
           firstUncompletedId = exerciseNum;
           break;
         }

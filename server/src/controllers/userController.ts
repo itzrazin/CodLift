@@ -47,16 +47,21 @@ export const updateProfile = async (req: AuthenticatedRequest, res: Response) =>
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    const { name, address, profile_photo } = req.body;
+    const { name, username, address, profile_photo, bio, github_username, linkedin_username, avatar } = req.body;
 
     const result = await db.query(
       `UPDATE users
-       SET name          = COALESCE($1, name),
-           address       = COALESCE($2, address),
-           profile_photo = COALESCE($3, profile_photo)
-       WHERE id = $4
+       SET name              = COALESCE($1, name),
+           username          = COALESCE($2, username),
+           address           = COALESCE($3, address),
+           profile_photo     = COALESCE($4, profile_photo),
+           bio               = COALESCE($5, bio),
+           github_username   = COALESCE($6, github_username),
+           linkedin_username = COALESCE($7, linkedin_username),
+           avatar            = COALESCE($8, avatar)
+       WHERE id = $9
        RETURNING ${USER_SELECT}`,
-      [name, address, profile_photo, userId]
+      [name, username, address, profile_photo, bio, github_username, linkedin_username, avatar, userId]
     );
 
     if (result.rows.length === 0) {

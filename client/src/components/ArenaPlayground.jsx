@@ -44,7 +44,6 @@ export default function ArenaPlayground({ challengeId, code }) {
 
   // Initialize or reset game states based on the challengeId
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     resetGame();
   }, [resetGame]);
 
@@ -53,7 +52,7 @@ export default function ArenaPlayground({ challengeId, code }) {
     try {
       // Create a function constructor scope from the user editor code
       // Shadowing globals to provide a basic sandbox
-      const blockedGlobals = ['window', 'document', 'localStorage', 'fetch', 'XMLHttpRequest'];
+      const blockedGlobals = ['window', 'document', 'localStorage', 'fetch', 'XMLHttpRequest', 'globalThis', 'self'];
       const fn = new Function(...blockedGlobals, ...args.names, `
         "use strict";
         ${code}
@@ -62,7 +61,7 @@ export default function ArenaPlayground({ challengeId, code }) {
         }
         throw new Error("Function ${funcName} is not defined.");
       `);
-      return { success: true, value: fn(undefined, undefined, undefined, undefined, undefined, ...args.values) };
+      return { success: true, value: fn(...blockedGlobals.map(() => undefined), ...args.values) };
     } catch (err) {
       console.warn("User execution failed:", err);
       return { success: false, error: err.message };

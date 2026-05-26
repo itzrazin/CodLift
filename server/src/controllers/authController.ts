@@ -70,7 +70,10 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Username and password are required' });
     }
 
-    const result = await db.query('SELECT * FROM users WHERE username = $1', [username]);
+    const result = await db.query(
+      'SELECT * FROM users WHERE username = $1 OR email = $1',
+      [username]
+    );
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
