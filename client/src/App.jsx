@@ -12,7 +12,7 @@ import { SideAdColumns, BottomAdBar } from './components/ui/AdBanner';
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
 const LoginPage      = lazy(() => import('./pages/LoginPage'));
 const SignupPage     = lazy(() => import('./pages/SignupPage'));
-const AuthCallback   = lazy(() => import('./pages/AuthCallback'));
+const AuthCallback   = lazy(() => import('./pages/OAuthCallbackPage'));
 const Dashboard      = lazy(() => import('./pages/Dashboard'));
 const LessonPage     = lazy(() => import('./pages/LessonPage'));
 const Arena          = lazy(() => import('./pages/Arena'));

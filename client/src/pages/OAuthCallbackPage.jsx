@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
+import axios from 'axios';
+import { API_URL } from '../utils/config';
 
 const OAuthCallbackPage = () => {
   const [searchParams] = useSearchParams();
@@ -41,9 +43,18 @@ const OAuthCallbackPage = () => {
         await login(token, userData);
         
         setStatus('success');
-        setMessage(isNew ? 'Welcome to CodLift! Setting up your profile...' : 'Welcome back! Redirecting...');
-        setTimeout(() => navigate('/dashboard'), 1500);
-      } catch {
+        setMessage(isNew || !userData.level ? 'Welcome to CodLift! Setting up your profile...' : 'Welcome back! Redirecting...');
+        
+        // Use a longer delay to ensure state is solid and give user feedback
+        setTimeout(() => {
+          if (isNew || !userData.level) {
+            navigate('/onboarding', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
+        }, 1500);
+      } catch (err) {
+        console.error('OAuth Callback Error:', err);
         setStatus('error');
         setMessage('Authentication failed. Please try again.');
         setTimeout(() => navigate('/login'), 3000);
@@ -51,7 +62,7 @@ const OAuthCallbackPage = () => {
     };
 
     handleCallback();
-  }, [searchParams, navigate, loginWithToken]);
+  }, [searchParams, navigate, login]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">
@@ -94,4 +105,3 @@ const OAuthCallbackPage = () => {
 };
 
 export default OAuthCallbackPage;
-

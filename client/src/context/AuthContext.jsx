@@ -6,15 +6,15 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('codlift_token') || localStorage.getItem('codelift_token') || null);
+  const [token, setToken] = useState(localStorage.getItem('codlift_token') || null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Idempotent migration - only if destination empty
+    // Idempotent migration - migrate legacy 'codelift_token' to 'codlift_token'
     const legacyToken = localStorage.getItem('codelift_token');
-    const newToken = localStorage.getItem('codlift_token');
+    const currentToken = localStorage.getItem('codlift_token');
 
-    if (legacyToken && !newToken) {
+    if (legacyToken && !currentToken) {
       localStorage.setItem('codlift_token', legacyToken);
       localStorage.removeItem('codelift_token');
     }
@@ -22,11 +22,19 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      if (!token) {
+      // If we already have a user and the token hasn't changed, skip
+      if (user && token === localStorage.getItem('codlift_token')) {
         setLoading(false);
         return;
       }
 
+      if (!token) {
+        setLoading(false);
+        setUser(null);
+        return;
+      }
+
+      setLoading(true);
       try {
         const response = await axios.get(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
@@ -54,8 +62,10 @@ export const AuthProvider = ({ children }) => {
       const newToken = param1;
       const userData = param2;
       localStorage.setItem('codlift_token', newToken);
-      setToken(newToken);
+      // Set user first to avoid transient null user state when token changes
       setUser(userData);
+      setToken(newToken);
+      setLoading(false);
       return userData;
     }
 
@@ -66,8 +76,9 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${API_URL}/auth/login`, { username, password });
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem('codlift_token', newToken);
-      setToken(newToken);
       setUser(userData);
+      setToken(newToken);
+      setLoading(false);
       return userData;
     } catch (error) {
       console.error('Login error:', error);
@@ -80,8 +91,9 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${API_URL}/auth/register`, { name, email, username, password });
       const { token: newToken, user: userData } = response.data;
       localStorage.setItem('codlift_token', newToken);
-      setToken(newToken);
       setUser(userData);
+      setToken(newToken);
+      setLoading(false);
       return userData;
     } catch (error) {
       console.error('Signup error:', error);
