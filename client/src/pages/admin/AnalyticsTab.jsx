@@ -10,14 +10,18 @@ const AnalyticsTab = () => {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await api.get('/admin/stats'); // We'll assume stats includes completion data now
-        // For demonstration, let's mock some structured data if not present
-        setStats([
-          { id: 'html-basics', title: 'HTML Basics', lang: 'HTML', attempts: 1240, completions: 890, rate: 71 },
-          { id: 'css-flexbox', title: 'CSS Flexbox', lang: 'CSS', attempts: 980, completions: 450, rate: 45 },
-          { id: 'js-loops', title: 'JS Loops', lang: 'JS', attempts: 750, completions: 210, rate: 28 },
-          { id: 'python-intro', title: 'Python Intro', lang: 'PY', attempts: 540, completions: 410, rate: 76 },
-        ]);
+        const res = await api.get('/admin/stats/lesson-completion');
+        if (res.data.success) {
+          const mappedStats = res.data.data.map(item => ({
+            id: item.lesson_id,
+            title: item.lesson_id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+            lang: item.lesson_id.includes('html') ? 'HTML' : item.lesson_id.includes('css') ? 'CSS' : item.lesson_id.includes('js') ? 'JS' : 'PY',
+            attempts: parseInt(item.total_attempts),
+            completions: parseInt(item.total_completions),
+            rate: parseFloat(item.completion_rate)
+          }));
+          setStats(mappedStats);
+        }
       } catch (err) {
         console.error(err);
       } finally {

@@ -12,38 +12,64 @@ async function runMigrations() {
   try {
     console.log('🔄 Starting database migrations...');
     
-    // Read migration file
-    const migrationPath = path.resolve(__dirname, '../../migrations/001_add_role_and_profile_columns.sql');
-    const migrationSQL = fs.readFileSync(migrationPath, 'utf-8');
+    // 1. Create migrations tracking table if it doesn't exist
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS migrations (
+        id SERIAL PRIMARY KEY,
+        filename VARCHAR(255) UNIQUE NOT NULL,
+        applied_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+      );
+    `);
+
+    // 2. Get all migration files
+    const migrationsDir = path.resolve(__dirname, '../../migrations');
+    const files = fs.readdirSync(migrationsDir)
+      .filter(f => f.endsWith('.sql'))
+      .sort();
+
+    // 3. Get already applied migrations
+    const { rows: appliedMigrations } = await client.query('SELECT filename FROM migrations');
+    const appliedFiles = new Set(appliedMigrations.map(m => m.filename));
+
+    // 4. Run pending migrations
+    for (const file of files) {
+      if (appliedFiles.has(file)) {
+        console.log(`⏩ Skipping ${file} (already applied)`);
+        continue;
+      }
+
+      console.log(`🚀 Applying ${file}...`);
+      const migrationSQL = fs.readFileSync(path.join(migrationsDir, file), 'utf-8');
+      
+      await client.query('BEGIN');
+      try {
+        await client.query(migrationSQL);
+        await client.query('INSERT INTO migrations (filename) VALUES ($1)', [file]);
+        await client.query('COMMIT');
+        console.log(`✅ ${file} applied successfully!`);
+      } catch (err) {
+        await client.query('ROLLBACK');
+        console.error(`❌ Error applying ${file}:`, err);
+        throw err;
+      }
+    }
     
-    // Execute migration
-    await client.query(migrationSQL);
-    
-    console.log('✅ Migration completed successfully!');
-    console.log('');
-    console.log('📋 Summary:');
-    console.log('   - Added role column to users table');
-    console.log('   - Added profile columns (name, address, profile_photo, bio, etc.)');
-    console.log('   - Made password and username nullable for OAuth users');
-    console.log('   - Synced is_admin with role column');
-    console.log('   - Added completed column to progress table');
-    console.log('   - Created performance indexes');
-    console.log('');
-    console.log('🔐 To make a user an admin, run:');
-    console.log('   UPDATE users SET role = \'admin\' WHERE email = \'your-email@example.com\';');
+    console.log('🎉 All migrations completed successfully!');
     
   } catch (error) {
-    console.error('❌ Migration failed:', error);
+    console.error('❌ Migration process failed:', error);
     throw error;
   } finally {
     client.release();
-    await pool.end();
   }
 }
 
 runMigrations()
-  .then(() => process.exit(0))
+  .then(() => {
+    pool.end();
+    process.exit(0);
+  })
   .catch((error) => {
     console.error(error);
-    process.exit(1);
+    pool.end().finally(() => process.exit(1));
   });

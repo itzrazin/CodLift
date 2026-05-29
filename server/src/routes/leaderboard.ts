@@ -15,23 +15,23 @@ router.get('/', async (req: Request, res: Response) => {
       // Weekly: XP earned in last 7 days via progress completions
       query = `
         SELECT 
-          u.id, u.name as username, u.profile_photo as avatar, u.level,
+          u.id, COALESCE(u.username, u.name, 'Anonymous') as username, u.profile_photo as avatar, u.level,
           COALESCE(COUNT(DISTINCT p.lesson_id || '-' || p.exercise_id) FILTER (WHERE p.is_completed = true), 0) as lessons_completed
         FROM users u
         LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true AND p.completed_at >= NOW() - INTERVAL '7 days'
-        GROUP BY u.id, u.name, u.profile_photo, u.level
-        ORDER BY lessons_completed DESC, u.name ASC
+        GROUP BY u.id, u.name, u.username, u.profile_photo, u.level
+        ORDER BY lessons_completed DESC, username ASC
         LIMIT $1
       `;
     } else {
       query = `
         SELECT 
-          u.id, u.name as username, u.profile_photo as avatar, u.level,
+          u.id, COALESCE(u.username, u.name, 'Anonymous') as username, u.profile_photo as avatar, u.level,
           COALESCE(COUNT(DISTINCT p.lesson_id || '-' || p.exercise_id), 0) as lessons_completed
         FROM users u
         LEFT JOIN progress p ON p.user_id = u.id AND p.is_completed = true
-        GROUP BY u.id, u.name, u.profile_photo, u.level
-        ORDER BY lessons_completed DESC, u.name ASC
+        GROUP BY u.id, u.name, u.username, u.profile_photo, u.level
+        ORDER BY lessons_completed DESC, username ASC
         LIMIT $1
       `;
     }

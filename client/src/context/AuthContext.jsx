@@ -6,30 +6,36 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setTokenState] = useState(() => localStorage.getItem('codlift_token'));
   const [loading, setLoading] = useState(true);
 
-  // Helper to sync with storage
-  const setToken = (token) => {
-    if (token) localStorage.setItem('codlift_token', token);
-    else localStorage.removeItem('codlift_token');
-  };
+  // Helper to sync with storage and state
+  const setToken = useCallback((newToken) => {
+    if (newToken) {
+      localStorage.setItem('codlift_token', newToken);
+    } else {
+      localStorage.removeItem('codlift_token');
+    }
+    setTokenState(newToken);
+  }, []);
 
-  const getToken = () => localStorage.getItem('codlift_token');
+  const getToken = () => token;
 
   // Verify token on mount
   useEffect(() => {
     const initAuth = async () => {
-      const token = getToken();
-      if (!token) {
+      const currentToken = localStorage.getItem('codlift_token');
+      if (!currentToken) {
         setLoading(false);
         return;
       }
 
       try {
         const res = await axios.get(`${API_URL}/user/me`, {
-          headers: { Authorization: `Bearer ${token}` }
+          headers: { Authorization: `Bearer ${currentToken}` }
         });
         setUser(res.data.user);
+        setTokenState(currentToken);
       } catch (err) {
         setToken(null);
         setUser(null);
@@ -38,18 +44,18 @@ export const AuthProvider = ({ children }) => {
       }
     };
     initAuth();
-  }, []);
+  }, [setToken]);
 
-  const login = useCallback(async (username, password) => {
+  const login = useCallback(async (usernameOrEmail, password) => {
     try {
-      const res = await axios.post(`${API_URL}/auth/login`, { username, password });
+      const res = await axios.post(`${API_URL}/auth/login`, { username: usernameOrEmail, password });
       setToken(res.data.token);
       setUser(res.data.user);
       return res.data.user;
     } catch (err) {
       throw new Error(err.response?.data?.error || 'Login failed');
     }
-  }, []);
+  }, [setToken]);
 
   const signup = useCallback(async (username, email, password) => {
     try {
@@ -65,16 +71,16 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       throw new Error(err.response?.data?.error || 'Signup failed');
     }
-  }, []);
+  }, [setToken]);
 
   const logout = useCallback(() => {
     setToken(null);
     setUser(null);
     window.location.href = '/login';
-  }, []);
+  }, [setToken]);
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, token, setToken, login, signup, logout, loading }}>
       {!loading && children}
     </AuthContext.Provider>
   );

@@ -10,7 +10,7 @@ const OAuthCallbackPage = () => {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState('loading'); // loading | success | error
   const [message, setMessage] = useState('');
-  const { login } = useAuth();
+  const { setToken, setUser } = useAuth();
   const navigate = useNavigate();
   const processedRef = useRef(false);
 
@@ -47,8 +47,9 @@ const OAuthCallbackPage = () => {
         
         const userData = response.data.user;
         
-        // Wait for login state to be set
-        await login(token, userData);
+        // Manually update auth state
+        setToken(token);
+        setUser(userData);
         
         setStatus('success');
         const isNewUser = isNewParam || !userData.level;
@@ -71,7 +72,7 @@ const OAuthCallbackPage = () => {
     };
 
     handleCallback();
-  }, [searchParams, navigate, login]);
+  }, [searchParams, navigate, setToken, setUser]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">

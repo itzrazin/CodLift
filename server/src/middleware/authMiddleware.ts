@@ -33,7 +33,7 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
 
   try {
     // Verify the signature. If it fails (expired, tampered, missing), catch the error
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || '') as { id: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
     
     // Check if user exists and is not banned
     const userResult = await db.query('SELECT id, role, is_banned FROM users WHERE id = $1', [decoded.id]);

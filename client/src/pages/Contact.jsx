@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 import { GlassCard, Button } from '../components/ui/Core';
+import api from '../api/axios';
 import { 
   Mail as MailIcon, 
   MessageSquare as MessageIcon, 
@@ -59,13 +60,9 @@ const Contact = () => {
     
     try {
       // ✅ REQUIRED: Send to backend
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
+      const response = await api.post('/contact', formData);
 
-      if (response.ok) {
+      if (response.data.success) {
         setFormStatus('success');
         setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
         setTimeout(() => setFormStatus('idle'), 3000);

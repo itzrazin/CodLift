@@ -19,7 +19,7 @@ const UsersTab = () => {
   const [sortOrder, setSortOrder] = useState('DESC');
   
   const [selectedUser, setSelectedUser] = useState(null);
-  const [showBanModal, setShowModal] = useState(false);
+  const [showBanModal, setShowBanModal] = useState(false);
   const [banReason, setBanReason] = useState('');
 
   const fetchUsers = useCallback(async () => {
@@ -53,7 +53,7 @@ const UsersTab = () => {
     if (!banReason) return alert('Reason required');
     try {
       await api.put(`/admin/users/${selectedUser.id}/ban`, { reason: banReason });
-      setShowModal(false);
+      setShowBanModal(false);
       setBanReason('');
       fetchUsers();
     } catch (err) {
@@ -171,7 +171,7 @@ const UsersTab = () => {
                   <td className="py-4 px-4 text-right">
                     <div className="flex justify-end gap-2">
                       <button 
-                        onClick={() => { setSelectedUser(user); setShowModal(true); }}
+                        onClick={() => { setSelectedUser(user); setShowBanModal(true); }}
                         className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-red-500 transition-all"
                         title="Ban User"
                       >
@@ -236,7 +236,7 @@ const UsersTab = () => {
 
             <div className="flex gap-4">
               <button 
-                onClick={() => setShowModal(false)}
+                onClick={() => setShowBanModal(false)}
                 className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-mono text-xs font-bold transition-all"
               >
                 CANCEL

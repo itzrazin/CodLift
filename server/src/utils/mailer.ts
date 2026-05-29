@@ -134,7 +134,7 @@ export const sendBulkEmail = async (recipients: string[], subject: string, messa
     await transporter.sendMail(mailOptions);
   };
 
-  const batches = [];
+  const batches: { recipients: string[], startIndex: number }[] = [];
   for (let i = 0; i < recipients.length; i += BATCH_SIZE) {
     batches.push({
       recipients: recipients.slice(i, i + BATCH_SIZE),

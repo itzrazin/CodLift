@@ -1,6 +1,5 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { useToast, ToastContainer } from './components/ui/Toast';
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LessonProvider } from './context/LessonContext';
@@ -10,8 +9,7 @@ import { SideAdColumns, BottomAdBar } from './components/ui/AdBanner';
 
 // Lazy load page components
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
-const LoginPage      = lazy(() => import('./pages/LoginPage'));
-const SignupPage     = lazy(() => import('./pages/SignupPage'));
+const AuthPage       = lazy(() => import('./components/AuthPage'));
 const AuthCallback   = lazy(() => import('./pages/OAuthCallbackPage'));
 const Dashboard      = lazy(() => import('./pages/Dashboard'));
 const LessonPage     = lazy(() => import('./pages/LessonPage'));
@@ -105,8 +103,8 @@ function AppRoutes() {
           <Route path="/contact" element={<Contact />} />
 
           {/* Auth pages (redirect if already logged in) */}
-          <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
-          <Route path="/signup" element={<GuestRoute><SignupPage /></GuestRoute>} />
+          <Route path="/login" element={<GuestRoute><AuthPage /></GuestRoute>} />
+          <Route path="/signup" element={<GuestRoute><AuthPage /></GuestRoute>} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Onboarding (requires auth) */}

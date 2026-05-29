@@ -64,12 +64,15 @@ const Dashboard = () => {
     try {
       const res = await api.get('/progress/resume');
       const data = res.data;
-      if (data.nextLesson) {
-        navigate(`/learn/${data.nextLesson.level}/${data.nextLesson.slug}/${data.nextLesson.exerciseId}`);
+      if (data.resume) {
+        navigate(`/learn/${data.resume.level}/${data.resume.slug}/${data.resume.exerciseId}`);
       } else {
+        // All completed or no progress, start at beginning
         navigate('/learn/beginner/html-basics/1');
       }
-    } catch {
+    } catch (err) {
+      console.error('Resume error:', err);
+      // Fallback to first lesson on any error (e.g. 404 from server)
       navigate('/learn/beginner/html-basics/1');
     }
   };

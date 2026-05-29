@@ -9,9 +9,9 @@ if (!isset($_GET['code']) || !isset($_GET['state']) || $_GET['state'] !== $_SESS
 
 $postFields = [
     'code' => $_GET['code'],
-    'client_id' => 'YOUR_CLIENT_ID',
-    'client_secret' => 'YOUR_CLIENT_SECRET',
-    'redirect_uri' => 'YOUR_REDIRECT_URI',
+    'client_id' => getenv('GOOGLE_CLIENT_ID'),
+    'client_secret' => getenv('GOOGLE_CLIENT_SECRET'),
+    'redirect_uri' => getenv('GOOGLE_REDIRECT_URI'),
     'grant_type' => 'authorization_code'
 ];
 
@@ -36,6 +36,10 @@ $_SESSION['user_id'] = $google_id;
 $_SESSION['email'] = $user['email'];
 $_SESSION['role'] = 'user'; 
 
-header('Location: admin.php');
+if ($_SESSION['role'] === 'admin') {
+    header('Location: admin.php');
+} else {
+    header('Location: dashboard.php');
+}
 exit;
 ?>

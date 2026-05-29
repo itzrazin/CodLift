@@ -55,3 +55,14 @@ CREATE TABLE IF NOT EXISTS progress (
   UNIQUE(user_id, lesson_id, exercise_id)
 );
 
+-- Inquiries Table
+CREATE TABLE IF NOT EXISTS inquiries (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  subject VARCHAR(255),
+  message TEXT NOT NULL,
+  status VARCHAR(50) DEFAULT 'Pending',
+  created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+);
+

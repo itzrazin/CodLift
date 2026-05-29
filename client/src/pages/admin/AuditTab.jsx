@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GlassCard } from '../../components/ui/Core';
 import { ShieldCheck, Download, Filter, Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import api from '../../api/axios';
@@ -9,7 +9,7 @@ const AuditTab = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const fetchLogs = async () => {
+  const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
       const res = await api.get('/admin/audit-log', { params: { page } });
@@ -20,11 +20,11 @@ const AuditTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
 
   useEffect(() => {
     fetchLogs();
-  }, [page]);
+  }, [fetchLogs]);
 
   const downloadCSV = () => {
     const headers = ['Timestamp', 'Admin', 'Action', 'Target Type', 'Target ID', 'Details'];

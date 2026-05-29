@@ -120,11 +120,11 @@ const AdminDashboard = () => {
         <div className="p-4 border-t border-white/5 bg-black/20">
           <div className={`flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 ${!isSidebarOpen && 'justify-center'}`}>
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-cyber-cyan to-blue-600 flex items-center justify-center text-xs font-black text-black">
-              {user?.username?.substring(0, 2).toUpperCase()}
+              {(user?.username || user?.name || '??').substring(0, 2).toUpperCase()}
             </div>
             {isSidebarOpen && (
               <div className="flex-1 overflow-hidden">
-                <p className="text-[10px] font-black uppercase tracking-widest truncate">{user?.username}</p>
+                <p className="text-[10px] font-black uppercase tracking-widest truncate">{user?.username || user?.name}</p>
                 <p className="text-[8px] text-gray-500 font-mono truncate uppercase">System Administrator</p>
               </div>
             )}

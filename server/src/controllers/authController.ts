@@ -53,7 +53,7 @@ export const register = async (req: Request, res: Response) => {
     );
 
     const user = result.rows[0];
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || '', { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
 
     res.json({ token, user });
   } catch (error) {
@@ -110,7 +110,7 @@ export const login = async (req: Request, res: Response) => {
     );
     const updatedUser = updateResult.rows[0];
 
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || '', { expiresIn: '7d' });
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
 
     res.json({ token, user: updatedUser });
   } catch (error) {

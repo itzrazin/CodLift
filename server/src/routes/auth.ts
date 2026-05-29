@@ -40,8 +40,9 @@ router.get(
   passport.authenticate('google', { session: false, failureRedirect: '/login' }),
   (req: any, res: Response) => {
     // Note: This relies on passport.ts returning a user with id
-    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET || '', { expiresIn: '7d' });
-    res.redirect(`${process.env.CLIENT_URL || 'https://codlift.site'}/auth/callback?token=${token}`);
+    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
+    const isNew = req.user.isNew ? '&is_new=true' : '';
+    res.redirect(`${process.env.CLIENT_URL || 'https://codlift.site'}/auth/callback?token=${token}${isNew}`);
   }
 );
 

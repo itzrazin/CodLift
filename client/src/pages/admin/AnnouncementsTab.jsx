@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GlassCard } from '../../components/ui/Core';
 import { Plus, Bell, Trash2, Calendar, Eye, EyeOff } from 'lucide-react';
 import api from '../../api/axios';
@@ -12,7 +12,7 @@ const AnnouncementsTab = () => {
   const [newMessage, setNewMessage] = useState('');
   const [newType, setNewType] = useState('info');
 
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
     try {
       const res = await api.get('/admin/announcements');
       setAnnouncements(res.data.announcements);
@@ -21,11 +21,11 @@ const AnnouncementsTab = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchAnnouncements();
-  }, []);
+  }, [fetchAnnouncements]);
 
   const handleCreate = async (e) => {
     e.preventDefault();

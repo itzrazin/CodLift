@@ -21,7 +21,7 @@ $_SESSION['state'] = bin2hex(random_bytes(16));
             <input type="password" id="password" name="password" required>
             <button type="submit">Sign In</button>
         </form>
-        <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=YOUR_CLIENT_ID&redirect_uri=YOUR_REDIRECT_URI&response_type=code&scope=email%20profile&state=<?php echo $_SESSION['state']; ?>" class="google-btn">Sign in with Google</a>
+        <a href="https://accounts.google.com/o/oauth2/v2/auth?client_id=<?php echo getenv('GOOGLE_CLIENT_ID'); ?>&redirect_uri=<?php echo getenv('GOOGLE_REDIRECT_URI'); ?>&response_type=code&scope=email%20profile&state=<?php echo $_SESSION['state']; ?>" class="google-btn">Sign in with Google</a>
     </div>
 </body>
 </html>

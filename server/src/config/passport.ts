@@ -44,7 +44,9 @@ passport.use(new GoogleStrategy({
         [email, displayName, googleId, profilePhoto]
       );
       
-      return done(null, newUserResult.rows[0]);
+      const newUser = newUserResult.rows[0];
+      (newUser as any).isNew = true;
+      return done(null, newUser);
     } catch (error: any) {
       console.error('Google OAuth Error:', error);
       return done(error, undefined);

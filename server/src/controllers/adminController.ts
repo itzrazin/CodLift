@@ -138,7 +138,14 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
     const role = req.query.role as string || 'all';
     const status = req.query.status as string || 'all';
     const sortBy = req.query.sortBy as string || 'created_at';
-    const sortOrder = req.query.sortOrder as string || 'DESC';
+    const sortOrder = (req.query.sortOrder as string || 'DESC').toUpperCase();
+
+    // BUG 6 FIX: Allowlist sort parameters to prevent SQL injection
+    const ALLOWED_SORT_COLS = ['created_at', 'last_login', 'username', 'email', 'xp_total', 'level', 'role'];
+    const ALLOWED_SORT_DIR = ['ASC', 'DESC'];
+    
+    const safeSortBy = ALLOWED_SORT_COLS.includes(sortBy) ? sortBy : 'created_at';
+    const safeSortOrder = ALLOWED_SORT_DIR.includes(sortOrder) ? sortOrder : 'DESC';
 
     let query = `SELECT id, avatar, username, email, role, level, xp_total, is_banned, last_login, created_at FROM users WHERE 1=1`;
     const params: any[] = [];
@@ -163,7 +170,7 @@ export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
     const totalResult = await db.query(countQuery, params);
     const totalUsers = parseInt(totalResult.rows[0].count);
 
-    query += ` ORDER BY ${sortBy} ${sortOrder} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    query += ` ORDER BY ${safeSortBy} ${safeSortOrder} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
 
     const result = await db.query(query, params);
