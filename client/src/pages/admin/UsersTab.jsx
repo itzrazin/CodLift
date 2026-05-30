@@ -21,6 +21,16 @@ const UsersTab = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [showBanModal, setShowBanModal] = useState(false);
   const [banReason, setBanReason] = useState('');
+  
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState('');
+  
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const showError = (msg) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(''), 5000);
+  };
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
@@ -50,35 +60,35 @@ const UsersTab = () => {
   }, [fetchUsers]);
 
   const handleBan = async () => {
-    if (!banReason) return alert('Reason required');
+    if (!banReason) return showError('Reason required');
     try {
       await api.put(`/admin/users/${selectedUser.id}/ban`, { reason: banReason });
       setShowBanModal(false);
       setBanReason('');
       fetchUsers();
     } catch (err) {
-      alert('Ban failed');
+      showError('Ban failed');
     }
   };
 
   const handleUnban = async (userId) => {
-    if (!confirm('Unban this user?')) return;
     try {
       await api.put(`/admin/users/${userId}/unban`);
       fetchUsers();
     } catch (err) {
-      alert('Unban failed');
+      showError('Unban failed');
     }
   };
 
-  const handleDelete = async (userId) => {
-    const confirmation = prompt('Type DELETE to confirm permanent deletion:');
-    if (confirmation !== 'DELETE') return;
+  const handleDelete = async () => {
+    if (deleteConfirmation !== 'DELETE') return;
     try {
-      await api.delete(`/admin/users/${userId}`);
+      await api.delete(`/admin/users/${selectedUser.id}`);
+      setShowDeleteModal(false);
+      setDeleteConfirmation('');
       fetchUsers();
     } catch (err) {
-      alert('Delete failed');
+      showError('Delete failed');
     }
   };
 
@@ -120,6 +130,12 @@ const UsersTab = () => {
           </select>
         </div>
       </div>
+      
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] animate-pulse">
+          {errorMsg}
+        </div>
+      )}
 
       <GlassCard className="border-white/5 overflow-hidden">
         <div className="overflow-x-auto">
@@ -154,8 +170,8 @@ const UsersTab = () => {
                       {user.role}
                     </span>
                   </td>
-                  <td className="py-4 px-4 font-bold text-gray-400 uppercase tracking-tighter">{user.level}</td>
-                  <td className="py-4 px-4 font-bold text-yellow">{user.xp_total.toLocaleString()}</td>
+                  <td className="py-4 px-4 font-bold text-gray-400 uppercase tracking-tighter">{user.level || 'beginner'}</td>
+                  <td className="py-4 px-4 font-bold text-yellow">{(user.xp_total ?? 0).toLocaleString()}</td>
                   <td className="py-4 px-4">
                     {user.is_banned ? (
                       <span className="flex items-center gap-1.5 text-red-500 font-black text-[9px] uppercase tracking-widest animate-pulse">
@@ -178,7 +194,7 @@ const UsersTab = () => {
                         <ShieldAlert className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => { setSelectedUser(user); setShowDeleteModal(true); }}
                         className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-red-600 transition-all"
                         title="Delete User"
                       >
@@ -246,6 +262,41 @@ const UsersTab = () => {
                 className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-mono text-xs font-bold shadow-[0_0_20px_rgba(220,38,38,0.3)] transition-all"
               >
                 CONFIRM BAN
+              </button>
+            </div>
+          </GlassCard>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
+          <GlassCard className="max-w-md w-full p-8 border-red-500/30">
+            <h3 className="text-xl font-syne font-black uppercase tracking-tight text-red-500 mb-2">Delete User Account</h3>
+            <p className="text-sm text-gray-400 mb-6 font-mono">You are about to permanently delete <span className="text-white font-bold">{selectedUser?.username}</span>. This action cannot be undone.</p>
+            
+            <label className="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Type DELETE to confirm</label>
+            <input 
+              type="text"
+              value={deleteConfirmation}
+              onChange={(e) => setDeleteConfirmation(e.target.value)}
+              placeholder="DELETE"
+              className="w-full bg-white/5 border border-white/10 rounded-xl p-4 font-mono text-xs focus:border-red-500/50 outline-none mb-6 text-center tracking-widest"
+            />
+
+            <div className="flex gap-4">
+              <button 
+                onClick={() => { setShowDeleteModal(false); setDeleteConfirmation(''); }}
+                className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-mono text-xs font-bold transition-all"
+              >
+                CANCEL
+              </button>
+              <button 
+                onClick={handleDelete}
+                disabled={deleteConfirmation !== 'DELETE'}
+                className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-mono text-xs font-bold shadow-[0_0_20px_rgba(220,38,38,0.3)] disabled:opacity-50 transition-all"
+              >
+                CONFIRM DELETE
               </button>
             </div>
           </GlassCard>

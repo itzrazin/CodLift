@@ -47,7 +47,9 @@ const LoginPage = () => {
             <User className="absolute left-3 top-3 text-gray-500" size={18} />
             <input 
               type="text" 
-              placeholder="Username" 
+              placeholder="Username or Email"
+              required
+              autoComplete="username"
               className="w-full bg-navy-light pl-10 p-2.5 rounded-lg border border-white/10 outline-none focus:border-purple"
               value={username} 
               onChange={e => setUsername(e.target.value)} 
@@ -58,10 +60,17 @@ const LoginPage = () => {
             <input 
               type="password" 
               placeholder="Password" 
+              required
+              autoComplete="current-password"
               className="w-full bg-navy-light pl-10 p-2.5 rounded-lg border border-white/10 outline-none focus:border-purple"
               value={password} 
               onChange={e => setPassword(e.target.value)} 
             />
+          </div>
+          <div className="flex justify-end">
+            <Link to="/forgot-password" className="text-xs text-gray-400 hover:text-purple transition-colors">
+              Forgot password?
+            </Link>
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? '...' : 'LOG IN'}

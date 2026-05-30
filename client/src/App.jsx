@@ -11,6 +11,8 @@ import { SideAdColumns, BottomAdBar } from './components/ui/AdBanner';
 const LandingPage    = lazy(() => import('./pages/LandingPage'));
 const AuthPage       = lazy(() => import('./components/AuthPage'));
 const AuthCallback   = lazy(() => import('./pages/OAuthCallbackPage'));
+const ForgotPasswordPage = lazy(() => import('./pages/ForgotPasswordPage'));
+const ResetPasswordPage  = lazy(() => import('./pages/ResetPasswordPage'));
 const Dashboard      = lazy(() => import('./pages/Dashboard'));
 const LessonPage     = lazy(() => import('./pages/LessonPage'));
 const Arena          = lazy(() => import('./pages/Arena'));
@@ -105,6 +107,8 @@ function AppRoutes() {
           {/* Auth pages (redirect if already logged in) */}
           <Route path="/login" element={<GuestRoute><AuthPage /></GuestRoute>} />
           <Route path="/signup" element={<GuestRoute><AuthPage /></GuestRoute>} />
+          <Route path="/forgot-password" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
+          <Route path="/reset-password" element={<GuestRoute><ResetPasswordPage /></GuestRoute>} />
           <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Onboarding (requires auth) */}

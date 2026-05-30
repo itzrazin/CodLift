@@ -7,15 +7,15 @@ import { useAuth } from '../context/AuthContext';
 
 const fullCode = `function startCoding() {
   const platform = "CodLift";
-  const mission = "Ship Real Things";
-  
-  while(isLearning) {
+  let isLearning = true;
+
+  while (isLearning) {
     buildProject();
-    runValidator();
-    buildSkills();
+    gainXP();
+    if (skillsMaxed()) isLearning = false;
   }
-  
-  return "Ready to code!";
+
+  return "Ready to ship!";
 }`;
 
 const CodeMockup = () => {

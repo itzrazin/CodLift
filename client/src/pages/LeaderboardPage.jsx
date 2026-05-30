@@ -7,17 +7,6 @@ import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 import { SEO } from '../utils/SEO';
 
-const PLACEHOLDER = [
-  { rank: 1, username: 'ByteBandit',   level: 'master',       lessons_completed: 87 },
-  { rank: 2, username: 'ReactRacer',   level: 'pro',          lessons_completed: 71 },
-  { rank: 3, username: 'NodeNinja',    level: 'pro',          lessons_completed: 63 },
-  { rank: 4, username: 'CodeKing',     level: 'pro',          lessons_completed: 55 },
-  { rank: 5, username: 'AlgoAlice',    level: 'intermediate', lessons_completed: 44 },
-  { rank: 6, username: 'PythonPete',   level: 'intermediate', lessons_completed: 38 },
-  { rank: 7, username: 'CSSChampion', level: 'beginner',     lessons_completed: 29 },
-  { rank: 8, username: 'GitGud',       level: 'beginner',     lessons_completed: 22 },
-];
-
 const levelColors = {
   master: 'text-purple-400', pro: 'text-blue-400',
   intermediate: 'text-yellow', beginner: 'text-green-400',
@@ -32,19 +21,21 @@ const RankBadge = ({ rank }) => {
 
 const LeaderboardPage = () => {
   const [filter, setFilter] = useState('all-time');
-  const [data, setData] = useState(PLACEHOLDER);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState(null);
   const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       setLoading(true);
+      setErrorMsg(null);
       try {
         const res = await api.get(`/leaderboard?period=${filter}`);
-        if (res.data.leaderboard?.length > 0) setData(res.data.leaderboard);
-      } catch {
-        // Use placeholder on error
+        if (res.data.leaderboard) setData(res.data.leaderboard);
+      } catch (err) {
+        setErrorMsg('Leaderboard temporarily unavailable. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -131,7 +122,13 @@ const LeaderboardPage = () => {
               <div className="w-8 h-8 border-2 border-purple border-t-transparent rounded-full animate-spin mx-auto mb-3" />
               <p className="text-gray-500 text-sm">Loading rankings...</p>
             </div>
-          ) : (
+          ) : errorMsg ? (
+          <div className="p-8 text-center border-t border-white/5 bg-red-500/5">
+            <p className="text-red-400 font-mono text-sm tracking-widest uppercase mb-2">System Error</p>
+            <p className="text-gray-400 font-mono text-xs">{errorMsg}</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-white/5 text-[10px] uppercase tracking-widest text-gray-500 font-bold">
@@ -179,8 +176,9 @@ const LeaderboardPage = () => {
                 ))}
               </tbody>
             </table>
-          )}
-        </GlassCard>
+          </div>
+        )}
+      </GlassCard>
       </div>
     </div>
   );

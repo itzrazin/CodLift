@@ -13,6 +13,7 @@ import { clientCurriculum } from '../data/curriculum';
 import { arenaChallenges } from '../data/challenges';
 import { Logo } from '../components/ui/Logo';
 import api from '../api/axios';
+import { AnnouncementBanner } from '../components/AnnouncementBanner';
 
 const SidebarItem = ({ icon: Icon, label, active, onClick }) => (
   <button 
@@ -214,6 +215,7 @@ const Dashboard = () => {
       {/* ── Main Content ────────────────────────────────────────────────── */}
       {/* md:ml-64 offsets the fixed sidebar on desktop; no offset on mobile */}
       <main className="flex-1 md:ml-64 p-4 sm:p-8 lg:p-10 overflow-y-auto w-full">
+        <AnnouncementBanner />
 
         {/* Mobile header bar with hamburger */}
         <div className="flex items-center justify-between mb-6 md:hidden">

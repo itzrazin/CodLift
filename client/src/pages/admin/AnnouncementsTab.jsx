@@ -11,6 +11,12 @@ const AnnouncementsTab = () => {
   const [newTitle, setNewTitle] = useState('');
   const [newMessage, setNewMessage] = useState('');
   const [newType, setNewType] = useState('info');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const showError = (msg) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(''), 5000);
+  };
 
   const fetchAnnouncements = useCallback(async () => {
     try {
@@ -36,7 +42,17 @@ const AnnouncementsTab = () => {
       setShowAddForm(false);
       fetchAnnouncements();
     } catch (err) {
-      alert('Failed to create announcement');
+      showError('Failed to create announcement');
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!confirm('Delete this announcement?')) return;
+    try {
+      await api.delete(`/admin/announcements/${id}`);
+      fetchAnnouncements();
+    } catch (err) {
+      showError('Failed to delete announcement');
     }
   };
 
@@ -53,6 +69,12 @@ const AnnouncementsTab = () => {
           {showAddForm ? 'CANCEL' : <><Plus className="w-3.5 h-3.5" /> NEW ANNOUNCEMENT</>}
         </button>
       </div>
+
+      {errorMsg && (
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] animate-pulse">
+          {errorMsg}
+        </div>
+      )}
 
       {showAddForm && (
         <GlassCard className="p-6 border-purple/30 bg-purple/5 animate-in slide-in-from-top-4 duration-300">
@@ -124,10 +146,11 @@ const AnnouncementsTab = () => {
               </div>
 
               <div className="flex gap-2">
-                <button className="p-2 hover:bg-white/5 rounded-lg text-gray-500 hover:text-white transition-all">
-                  {ann.is_active ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-                <button className="p-2 hover:bg-white/5 rounded-lg text-gray-500 hover:text-red-500 transition-all">
+                <button 
+                  onClick={() => handleDelete(ann.id)}
+                  className="p-2 hover:bg-white/5 rounded-lg text-gray-500 hover:text-red-500 transition-all"
+                  title="Delete Announcement"
+                >
                   <Trash2 className="w-4 h-4" />
                 </button>
               </div>

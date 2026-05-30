@@ -1,8 +1,18 @@
 import express from 'express';
 import { authMiddleware, isAdmin } from '../middleware/authMiddleware';
 import * as adminController from '../controllers/adminController';
+import rateLimit from 'express-rate-limit';
 
 const router = express.Router();
+
+const broadcastLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 1,
+  message: { error: 'Rate limit exceeded. Try again in 10 minutes.' }
+});
+
+// Public announcements route (must be before auth middleware)
+router.get('/announcements', adminController.getAnnouncements);
 
 // All routes here require admin access
 router.use(authMiddleware, isAdmin);
@@ -31,8 +41,7 @@ router.post('/inquiries/:inquiryId/reply', adminController.replyToInquiry);
 router.put('/inquiries/:inquiryId/status', adminController.updateInquiryStatus);
 
 // Broadcast & Announcements
-router.post('/broadcast/email', adminController.broadcastEmail);
-router.get('/announcements', adminController.getAnnouncements);
+router.post('/broadcast/email', broadcastLimiter, adminController.broadcastEmail);
 router.post('/announcements', adminController.createAnnouncement);
 router.delete('/announcements/:id', adminController.deleteAnnouncement);
 

@@ -60,24 +60,18 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
   }
 };
 
-export const isAdmin = async (req: AuthenticatedRequest, res: Response, next: NextFunction): Promise<void | Response> => {
-  try {
-    if (!req.user?.id) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-
-    const result = await db.query(
-      'SELECT role FROM users WHERE id = $1 AND role = $2',
-      [req.user.id, 'admin']
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(403).json({ error: 'Forbidden: Admin access required' });
-    }
-
-    next();
-  } catch (err) {
-    console.error('Admin middleware error:', err);
-    return res.status(500).json({ error: 'Server error' });
+/**
+ * isAdmin — checks role from req.user (already populated by authMiddleware).
+ * No additional DB query is needed — authMiddleware already fetches role
+ * and attaches it to req.user. This eliminates the previous double-query
+ * pattern that hit the DB twice on every single admin request.
+ */
+export const isAdmin = (req: AuthenticatedRequest, res: Response, next: NextFunction): void | Response => {
+  if (!req.user?.id) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Forbidden: Admin access required' });
+  }
+  next();
 };

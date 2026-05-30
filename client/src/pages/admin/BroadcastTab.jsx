@@ -9,12 +9,22 @@ const BroadcastTab = () => {
   const [message, setMessage] = useState('');
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [stats, setStats] = useState(null);
 
-  const handleBroadcast = async (e) => {
+  React.useEffect(() => {
+    api.get('/admin/stats').then(res => setStats(res.data.stats)).catch(() => {});
+  }, []);
+
+  const handlePreSubmit = (e) => {
     e.preventDefault();
-    if (!confirm(`Are you sure you want to send this email to all ${audience} users?`)) return;
-    
+    setShowConfirm(true);
+  };
+
+  const handleBroadcast = async () => {
     setSending(true);
+    setShowConfirm(false);
     try {
       await api.post('/admin/broadcast/email', { audience, subject, message });
       setSuccess(true);
@@ -22,10 +32,22 @@ const BroadcastTab = () => {
       setMessage('');
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
-      alert('Broadcast failed');
+      if (err.response?.status === 429) {
+        setErrorMsg('Rate limit exceeded. Try again in 10 minutes.');
+      } else {
+        setErrorMsg('Broadcast failed');
+      }
+      setTimeout(() => setErrorMsg(''), 5000);
     } finally {
       setSending(false);
     }
+  };
+
+  const getRecipientEstimate = () => {
+    if (!stats) return 'Estimating...';
+    if (audience === 'admins') return stats.totalAdmins;
+    if (audience === 'all') return stats.totalUsers;
+    return 'Users in ' + audience + ' track';
   };
 
   return (
@@ -45,7 +67,13 @@ const BroadcastTab = () => {
           <Mail className="w-32 h-32" />
         </div>
 
-        <form onSubmit={handleBroadcast} className="relative z-10 space-y-6">
+        {errorMsg && (
+          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] animate-pulse">
+            {errorMsg}
+          </div>
+        )}
+
+        <form onSubmit={handlePreSubmit} className="relative z-10 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Target Audience</label>
@@ -120,6 +148,38 @@ const BroadcastTab = () => {
           </button>
         </form>
       </GlassCard>
+
+      {/* Confirmation Modal */}
+      {showConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
+          <GlassCard className="max-w-md w-full p-8 border-cyber-pink/30">
+            <h3 className="text-xl font-syne font-black uppercase tracking-tight text-cyber-pink mb-2">Confirm Mass Broadcast</h3>
+            <p className="text-sm text-gray-400 mb-6 font-mono">
+              You are about to send an email to <span className="text-white font-bold">{getRecipientEstimate()}</span> users. This action cannot be undone.
+            </p>
+            
+            <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+              <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Subject Preview</p>
+              <p className="text-sm text-white font-bold">{subject}</p>
+            </div>
+
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-xl font-mono text-xs font-bold transition-all"
+              >
+                CANCEL
+              </button>
+              <button 
+                onClick={handleBroadcast}
+                className="flex-1 px-4 py-3 bg-cyber-pink hover:bg-cyber-pink/90 text-black rounded-xl font-mono text-xs font-bold shadow-[0_0_20px_rgba(255,0,255,0.3)] transition-all"
+              >
+                CONFIRM TRANSMIT
+              </button>
+            </div>
+          </GlassCard>
+        </div>
+      )}
     </div>
   );
 };

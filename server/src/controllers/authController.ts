@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 import * as db from '../db';
+import * as mailer from '../utils/mailer';
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -116,5 +118,68 @@ export const login = async (req: Request, res: Response) => {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Server error during login' });
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ error: 'Email required' });
+
+    const userRes = await db.query('SELECT id, username FROM users WHERE email = $1', [email]);
+    if (userRes.rows.length === 0) {
+      // Return success anyway to prevent email enumeration
+      return res.json({ success: true, message: 'If an account exists, a reset link has been sent.' });
+    }
+
+    const user = userRes.rows[0];
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 3600000); // 1 hour
+
+    await db.query(
+      'INSERT INTO password_reset_tokens (user_id, token, expires_at) VALUES ($1, $2, $3)',
+      [user.id, token, expiresAt]
+    );
+
+    const resetLink = `${process.env.CLIENT_URL || 'https://codlift.site'}/reset-password?token=${token}`;
+    await mailer.sendCustomEmail(
+      email,
+      'Password Reset Request',
+      `Hello ${user.username},\n\nWe received a request to reset your password. Click the link below to reset it:\n${resetLink}\n\nThis link expires in 1 hour.\nIf you did not request this, please ignore this email.`
+    );
+
+    res.json({ success: true, message: 'If an account exists, a reset link has been sent.' });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ error: 'Failed to process request' });
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token, newPassword } = req.body;
+    if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password required' });
+    if (newPassword.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+
+    const tokenRes = await db.query(
+      'SELECT user_id FROM password_reset_tokens WHERE token = $1 AND expires_at > NOW()',
+      [token]
+    );
+
+    if (tokenRes.rows.length === 0) {
+      return res.status(400).json({ error: 'Invalid or expired token' });
+    }
+
+    const userId = tokenRes.rows[0].user_id;
+    const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || '10', 10);
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    await db.query('UPDATE users SET password = $1 WHERE id = $2', [hashedPassword, userId]);
+    await db.query('DELETE FROM password_reset_tokens WHERE user_id = $1', [userId]);
+
+    res.json({ success: true, message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ error: 'Failed to reset password' });
   }
 };

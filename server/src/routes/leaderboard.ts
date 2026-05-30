@@ -50,20 +50,7 @@ router.get('/', async (req: Request, res: Response) => {
     res.json({ leaderboard: ranked, period, total: ranked.length });
   } catch (err) {
     console.error('Leaderboard error:', err);
-    const period = typeof req.query.period === 'string' ? req.query.period : 'all-time';
-    // Return fallback placeholder data instead of error
-    res.json({ 
-      leaderboard: [
-        { rank: 1, username: 'ByteBandit', level: 'master', lessons_completed: 87 },
-        { rank: 2, username: 'ReactRacer', level: 'pro', lessons_completed: 71 },
-        { rank: 3, username: 'NodeNinja', level: 'pro', lessons_completed: 63 },
-        { rank: 4, username: 'CodeKing', level: 'pro', lessons_completed: 55 },
-        { rank: 5, username: 'AlgoAlice', level: 'intermediate', lessons_completed: 44 },
-      ],
-      period,
-      total: 5,
-      fallback: true
-    });
+    res.status(503).json({ error: 'Leaderboard temporarily unavailable. Please try again later.' });
   }
 });
 

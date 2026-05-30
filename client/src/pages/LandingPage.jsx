@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { SEO } from '../utils/SEO';
 import { Navbar } from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
+import { AnnouncementBanner } from '../components/AnnouncementBanner';
 
 const CTA = () => {
   const navigate = useNavigate();
@@ -72,6 +73,7 @@ const LandingPage = () => {
         url="/"
         schema={websiteSchema}
       />
+      <AnnouncementBanner />
       <Navbar />
       <Hero />
       <Marquee />

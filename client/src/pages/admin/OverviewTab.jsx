@@ -155,10 +155,10 @@ const OverviewTab = () => {
                     <td className="py-3 px-2 font-bold text-white group-hover:text-cyber-cyan transition-colors">{user.username}</td>
                     <td className="py-3 px-2">
                       <span className="px-2 py-0.5 rounded bg-purple/10 text-purple border border-purple/20 uppercase text-[9px] font-black tracking-widest">
-                        {user.level}
+                        {user.level || 'beginner'}
                       </span>
                     </td>
-                    <td className="py-3 px-2 text-right font-bold text-yellow">{user.xp_total.toLocaleString()}</td>
+                    <td className="py-3 px-2 text-right font-bold text-yellow">{(user.xp_total ?? 0).toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>

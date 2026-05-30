@@ -19,8 +19,7 @@ const OAuthCallbackPage = () => {
     if (processedRef.current) return;
     
     const handleCallback = async () => {
-      const token = searchParams.get('token');
-      const isNewParam = searchParams.get('is_new') === 'true';
+      const code = searchParams.get('code');
       const error = searchParams.get('error');
 
       if (error) {
@@ -30,9 +29,9 @@ const OAuthCallbackPage = () => {
         return;
       }
 
-      if (!token) {
+      if (!code) {
         setStatus('error');
-        setMessage('No authentication token received.');
+        setMessage('No authentication code received.');
         setTimeout(() => navigate('/login'), 3000);
         return;
       }
@@ -40,6 +39,10 @@ const OAuthCallbackPage = () => {
       processedRef.current = true;
 
       try {
+        // Exchange code for token
+        const exchangeRes = await axios.post(`${API_URL}/auth/exchange-code`, { code });
+        const { token, isNew: isNewParam } = exchangeRes.data;
+
         // Fetch user data using the token
         const response = await axios.get(`${API_URL}/user/me`, {
           headers: { Authorization: `Bearer ${token}` }
