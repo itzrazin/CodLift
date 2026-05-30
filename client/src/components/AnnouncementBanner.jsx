@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Info, AlertTriangle, CheckCircle2, XCircle, X } from 'lucide-react';
 import axios from 'axios';
-import { API_URL } from '../../utils/config';
+import { API_URL } from '../utils/config';
 
 export const AnnouncementBanner = () => {
   const [announcements, setAnnouncements] = useState([]);
