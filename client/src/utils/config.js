@@ -14,7 +14,7 @@ const getApiUrl = () => {
   if (!import.meta.env.VITE_API_URL && import.meta.env.DEV) {
     console.warn('[CodLift] VITE_API_URL is not set. Using fallback URL.');
   }
-  return 'https://codlift-api.onrender.com/api';
+  return 'https://codlift.onrender.com/api';
 };
 
 export const API_URL = getApiUrl();
