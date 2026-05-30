@@ -454,23 +454,6 @@ const LessonPage = () => {
           </div>
 
           <div className="flex-1 overflow-hidden relative bg-[#080b10]">
-            {/* Loading Overlay for State Isolation */}
-            <AnimatePresence>
-              {(!code && !codeEdited) && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-navy/80 z-20 flex items-center justify-center backdrop-blur-md"
-                >
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-8 h-8 border-2 border-cyber-cyan border-t-transparent rounded-full animate-spin" />
-                    <span className="text-[10px] text-cyber-cyan font-mono animate-pulse uppercase tracking-widest">Inhibiting State Bleed...</span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {status === 'running' && (
               <div className="absolute inset-0 bg-black/60 z-10 flex items-center justify-center backdrop-blur-sm">
                 <div className="flex flex-col items-center gap-3">

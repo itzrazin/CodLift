@@ -11,50 +11,45 @@ export const clientCurriculum = [
         id: 'html_1_1',
         title: 'The Skeleton of the Web',
         instruction: `
-<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
-  <h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine your body without any skin, muscles, or clothes — just the bare <strong>Human Skeleton</strong>. It provides the fundamental structure that holds everything else up. Without bones, you would just be a puddle on the floor! Similarly, <strong>HTML (HyperText Markup Language)</strong> is the strict structural skeleton of every single website. It defines where the head, body, and limbs of your page go.</p>
-</div>
+      {
+        id: 'html_1_1',
+        title: 'The Skeleton of the Web',
+        instruction: `
+### What is HTML?
 
-### Step 1: What is HTML?
+HTML (HyperText Markup Language) provides the structural skeleton of every website. It tells the browser exactly how to arrange text, images, and other content on the screen. 
 
-HTML stands for HyperText Markup Language. 
-Think of it as a set of instructions that tells the browser (like Chrome or Safari) exactly how to arrange things on a screen.
-We call it a "Markup Language" because we "mark up" plain text with special symbols to give it meaning.
-Without HTML, a website would just be a giant, messy pile of words with no headers, no buttons, and no structure.
+Without HTML, a website would just be a messy pile of words with no headers, buttons, or structure.
 
-### Step 2: The Logic of Tags
+### The Logic of Tags
 
-To build this skeleton, we use things called **tags**.
-A tag is like a pair of bookends that you wrap around a piece of text.
-If you want a title to be big and bold, you don't just type the title; you wrap it in a "Heading" tag.
-This tells the computer: "Everything inside these two symbols is the most important title on the page!"
+We build this structure using **tags**. A tag is like a pair of bookends wrapped around a piece of text to give it meaning.
 
-### Step 3: The Simplest Code Example
+For example, to make a big, bold title, we wrap text in a Heading tag.
 
-Look at this tiny snippet:
+### The Code
 
 \`\`\`html
 <h1>Hello CodLift</h1>
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking It Down
 
-1. **\`<\`**: This is the "Less Than" symbol. In coding, it acts like the start of a whisper. It tells the computer, "Pay attention, a command is coming!"
-2. **\`h1\`**: This is the command itself. "h" stands for Heading, and "1" means it is the most important one.
-3. **\`>\`**: This is the "Greater Than" symbol. It closes the command, like saying "Over" on a walkie-talkie.
-4. **\`Hello CodLift\`**: This is the actual text that the human user will see on their screen.
-5. **\`</h1\`**: Notice the **\`/\`** (Forward Slash). This is the "End" signal. It tells the computer, "The heading is finished now. Stop making the text big."
+1. **\`<\`** and **\`>\`** — Angle brackets wrap the command
+2. **\`h1\`** — The tag name (Heading 1 = the most important title)
+3. **\`Hello CodLift\`** — The actual content the user sees
+4. **\`</h1\`** — The **closing tag** with a forward slash (\`/\`) to tell the browser "stop making text big here"
 
-### Wait! Don't Make This Mistake:
+### ⚠️ Common Mistake
 
-A common mistake for beginners is forgetting the **\`/\`** in the closing tag. 
-If you write \`<h1>Welcome<h1>\`, the computer will think you never finished the first heading!
-It might try to make your *entire* website look like one giant title. 
-Always remember: every "Open" command needs a "Close" command with a slash.
+Forgetting the \`/\` in the closing tag:
+\`\`\`html
+<h1>Welcome<h1>  <!-- ❌ WRONG: missing the slash -->
+<h1>Welcome</h1> <!-- ✅ CORRECT -->
+\`\`\`
 
 **Your Task:**
-Update the text inside the existing <h1> tag in the editor to exactly read: "Hello CodLift".`,
+Update the text inside the existing \`<h1>\` tag in the editor to exactly read: "Hello CodLift".`,
         task: 'Update the h1 tag text to exactly: Hello CodLift',
         initial_code: '<html>\n  <body>\n    <h1>Welcome</h1>\n  </body>\n</html>',
         test_cases: { 
@@ -67,47 +62,40 @@ Update the text inside the existing <h1> tag in the editor to exactly read: "Hel
         id: 'html_1_2',
         title: 'Paragraphs & Text Blocks',
         instruction: `
-<div class="p-4 bg-blue/10 border border-blue/20 rounded-xl my-4">
-  <h4 class="text-blue font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you are writing a letter on a fresh sheet of paper. When you finish one thought and want to start another, you skip a line. This gives your writing "room to breathe" so the reader doesn't get overwhelmed. The <strong>&lt;p&gt; (Paragraph) tag</strong> does exactly this for your website.</p>
-</div>
+      {
+        id: 'html_1_2',
+        title: 'Paragraphs & Text Blocks',
+        instruction: `
+### The Paragraph Tag
 
-### Step 1: The Logic of Blocks
+Websites consist mostly of text, but reading one giant "wall of text" is overwhelming. The **Paragraph tag (\`<p>\`)** breaks text into readable blocks.
 
-Websites are mostly made of text. 
-But if you just pile all your words into one giant block, nobody will want to read it.
-It looks like a "wall of text" which is very scary for users!
-To fix this, we use the Paragraph tag to break our thoughts into smaller, bite-sized pieces.
+When a browser sees a \`<p>\` tag, it automatically adds invisible spacing (margin) above and below the block, giving your text "room to breathe."
 
-### Step 2: Why do we need it?
-
-The computer uses the Paragraph tag to know where one block of text ends and the next begins.
-When the browser sees this tag, it automatically adds a little bit of invisible "cushion" (empty space) above and below the text.
-This empty space makes your website look professional and clean.
-Without this tag, your sentences would all squish together like one long, never-ending line.
-
-### Step 3: The Simplest Code Example
-
-Here is how you write a simple paragraph in HTML:
+### The Code
 
 \`\`\`html
 <p>Learning to code is fun!</p>
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking It Down
 
-1. **\`<\`**: The start symbol. It tells the browser, "I am about to give you a structural instruction."
-2. **\`p\`**: This stands for **Paragraph**. It is the shortest way to tell the computer to start a new block of text.
-3. **\`>\`**: The closing symbol for the start tag. It means, "The instruction is ready, now here comes the text!"
-4. **\`Learning to code is fun!\`**: This is your content. You can type anything here—sentences, stories, or jokes.
-5. **\`</p>\`**: The end tag. The **\`/\`** (slash) is the most important part here. It tells the computer, "Stop the paragraph here and add the cushion space now."
+1. **\`<p>\`** — The opening paragraph tag
+2. **\`Learning to code is fun!\`** — The content of the paragraph
+3. **\`</p>\`** — The closing paragraph tag (note the slash)
 
-### Wait! Don't Make This Mistake:
+### ⚠️ Common Mistake
 
-A common mistake is putting a Heading tag (\`<h1>\`) *inside* a Paragraph tag (\`<p>\`). 
-This is like trying to put a giant billboard inside a small cardboard box. 
-It confuses the computer and can make your layout break!
-Always keep your paragraphs for regular text, and use headings only for titles.
+Do NOT put heading tags inside paragraph tags. A paragraph is meant for regular body text, while a heading is meant to be a title.
+
+\`\`\`html
+<!-- ❌ WRONG: Don't nest structural elements incorrectly -->
+<p><h1>My Title</h1></p>
+
+<!-- ✅ CORRECT: Keep them separate -->
+<h1>My Title</h1>
+<p>My paragraph text goes here.</p>
+\`\`\`
 
 **Your Task:**
 Below the existing heading, add a new \`<p>\` tag and set its text content to exactly: "Learning to code is fun!".`,
@@ -123,51 +111,39 @@ Below the existing heading, add a new \`<p>\` tag and set its text content to ex
         id: 'html_1_3',
         title: 'Hyperlinks & Global Connectivity',
         instruction: `
-<div class="p-4 bg-green/10 border border-green/20 rounded-xl my-4">
-  <h4 class="text-green font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine your website is a house. But what if you want to visit your neighbor's house? You need a <strong>Magic Doorway</strong>. In the world of websites, these doorways are called <strong>Hyperlinks</strong>. They allow you to hop from one website to another in a single click.</p>
-</div>
+      {
+        id: 'html_1_3',
+        title: 'Hyperlinks & Global Connectivity',
+        instruction: `
+### What is a Hyperlink?
 
-### Step 1: The Logic of the Doorway
+A hyperlink (or "link") allows users to jump from one web page to another. To create links in HTML, we use the **Anchor tag (\`<a>\`)**.
 
-A link is more than just text. It is a "portal."
-When you see a link like "Visit Google," there are two parts:
-1. The part you see: The words "Visit Google."
-2. The secret part: The actual address (URL) where the portal leads.
-To make this work, we use the **Anchor tag** (which looks like \`<a>\`).
+A link requires two pieces of information:
+1. The **text** the user will click on
+2. The **destination address** (URL) the browser will go to
 
-### Step 2: What is an Attribute?
+### Using Attributes
 
-A regular box is just a box. But a box with a "Fragile" sticker has extra information.
-In coding, we use **Attributes** to give our tags extra information.
-The Anchor tag needs a special attribute called **\`href\`** to know where to go.
-Without \`href\`, the link is like a door that leads to nowhere—it won't do anything when you click it!
+To tell the anchor tag where to go, we use an **Attribute** called \`href\` (Hypertext Reference). Attributes provide extra information to a tag.
 
-### Step 3: The Simplest Code Example
-
-Here is how you create a working link:
+### The Code
 
 \`\`\`html
 <a href="https://codlift.site">Visit CodLift</a>
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking It Down
 
-1. **\`<\`**: The start of the instruction.
-2. **\`a\`**: This stands for **Anchor**. Think of it like dropping an anchor at a specific spot on the web.
-3. **The Space**: Very important! It separates the tag name (\`a\`) from the extra information (\`href\`).
-4. **\`href\`**: This stands for **Hypertext Reference**. It is the "Address Label" for the link.
-5. **\`=\`**: The assignment symbol. It tells the computer: "The address is equal to the following text."
-6. **\`"https://codlift.site"\`**: The destination. We put it in **quotes** so the computer knows it is a specific web address.
-7. **\`>\`**: This closes the opening tag.
-8. **\`Visit CodLift\`**: These are the words the user will actually see and click on.
-9. **\`</a>\`**: The end tag. It tells the computer, "This is the end of the clickable area."
+1. **\`<a \`** — The opening anchor tag
+2. **\`href="https://codlift.site"\`** — The attribute defining the destination URL
+3. **\`>\`** — Closes the opening tag
+4. **\`Visit CodLift\`** — The clickable text displayed to the user
+5. **\`</a>\`** — The closing anchor tag
 
-### Wait! Don't Make This Mistake:
+### ⚠️ Common Mistake
 
-If you forget the \`https://\` at the start of your address, the link might break!
-The computer will look for a file on *your* own computer instead of searching the whole internet. 
-Always include the full address to make sure your magic doorway works.
+Always include \`https://\` at the beginning of your external links. If you just write \`href="www.google.com"\`, the browser will look for a file named "www.google.com" on your *own* website instead of going to the actual internet.
 
 **Your Task:**
 Create a new anchor tag that says "Visit CodLift". You must set the href attribute to point to the exact URL "https://codlift.site".`,
@@ -192,27 +168,31 @@ Create a new anchor tag that says "Visit CodLift". You must set the href attribu
         id: 'html_2_1',
         title: 'Semantic Layout',
         instruction: `
-<div class="p-4 bg-orange/10 border border-orange/20 rounded-xl my-4">
-  <h4 class="text-orange font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you are moving into a brand new house. You wouldn't just throw everything into a massive, unlabelled pile in the living room. Instead, you use specific <strong>Rooms</strong>. You have a Kitchen for cooking, a Bedroom for sleeping, and a Garage for the car. <strong>Semantic HTML</strong> is just like naming the rooms in your website so the computer knows what happens in each one.</p>
-</div>
+      {
+        id: 'html_2_1',
+        title: 'Semantic Layout',
+        instruction: `
+### Semantic HTML
 
-### Step 1: The Logic of "Meaning"
+"Semantic" means "meaningful." Early websites used generic tags (\`<div>\`) for everything, making it impossible for browsers or screen readers to know which part was the menu, the main content, or the footer. 
 
-In the early days of the internet, developers used plain "Boxes" (called \`<div>\` tags) for everything.
-The problem was that the computer couldn't tell which box was the menu, which box was the footer, and which box was the actual story.
-It was like a house where every room was just called "Room." 
-To fix this, we use **Semantic Tags**. "Semantic" is just a fancy word for "Meaningful."
+Semantic HTML solves this by providing specific tags for specific page regions.
 
-### Step 2: Why do we need it?
+### Key Semantic Tags
 
-When you use meaningful tags like \`<header>\` and \`<main>\`, you are helping two types of "visitors":
-1. **Search Engines (like Google):** Google's robots read your site to decide if it's good. If they see a \`<main>\` tag, they know: "Aha! This is the most important part of the page!"
-2. **Screen Readers:** People who cannot see use special software that reads the website out loud. If you use semantic tags, the software can tell them: "You are now entering the Header section."
+| Tag | Purpose |
+|---|---|
+| \`<header>\` | The top area, usually containing the logo or navigation menu |
+| \`<main>\` | The primary content of the page (only use ONE per page) |
+| \`<footer>\` | The bottom area, often containing copyright info or links |
+| \`<nav>\` | A block containing navigation links |
 
-### Step 3: The Simplest Code Example
+### Why Semantics Matter
 
-Here is how you wrap your content in meaningful rooms:
+1. **Accessibility**: Screen readers rely on semantic tags to announce page structure to visually impaired users.
+2. **SEO**: Search engines like Google prioritize content inside \`<main>\` over content in sidebars or footers.
+
+### The Code
 
 \`\`\`html
 <header>
@@ -223,21 +203,9 @@ Here is how you wrap your content in meaningful rooms:
 </main>
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### ⚠️ Common Mistake
 
-1. **\`<header>\`**: The start tag for the top of your page. It usually holds your logo or menu.
-2. **\`<h1>My Website</h1>\`**: The content inside the header.
-3. **\`</header>\`**: The end of the top section.
-4. **\`<main>\`**: The start tag for the primary "room" of your page. There should only ever be ONE of these per page!
-5. **\`<p>...</p>\`**: The content inside the main room.
-6. **\`</main>\`**: The end of the primary section.
-
-### Wait! Don't Make This Mistake:
-
-Don't use more than one \`<main>\` tag on a page. 
-A house usually only has one "Main Hall." 
-If you have two, the computer won't know which one is the real main section.
-Always keep it simple: one header for the top, and one main for the middle.
+Do not use more than one \`<main>\` tag on a page. A page only has one primary subject. If you have two \`<main>\` tags, it confuses accessibility tools and search engines.
 
 **Your Task:**
 Wrap the existing \`<h1>\` heading exactly inside a proper \`<header>\` element. Then, wrap the existing \`<p>\` paragraph exactly inside a \`<main>\` element.`,
@@ -261,26 +229,19 @@ Wrap the existing \`<h1>\` heading exactly inside a proper \`<header>\` element.
         id: 'css_1_1',
         title: 'Painting with CSS',
         instruction: `
-<div class="p-4 bg-pink/10 border border-pink/20 rounded-xl my-4">
-  <h4 class="text-pink font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine opening your <strong>Wardrobe/Closet</strong> in the morning. You have your physical body (that's the HTML), but now you get to choose your style. Do you want to wear a red shirt? Blue pants? A hat? <strong>CSS (Cascading Style Sheets)</strong> is exactly like dressing up your website. HTML provides the body, but CSS controls the colors and clothes.</p>
-</div>
+      {
+        id: 'css_1_1',
+        title: 'Painting with CSS',
+        instruction: `
+### What is CSS?
 
-### Step 1: The Logic of "Separation"
+While HTML provides the structure of a page, **CSS (Cascading Style Sheets)** controls its visual appearance — colors, fonts, spacing, and layout. 
 
-In coding, we like to keep things organized.
-We use HTML to build the "Bones" of the site, but we use a different language called CSS to choose the "Colors."
-This is great because if you want to change your site from Blue to Purple, you only have to change one small piece of CSS code, rather than changing every single page of your website.
+Separating content (HTML) from presentation (CSS) keeps code organized and allows you to change the look of an entire website by editing one CSS file.
 
-### Step 2: What is a Selector?
+### CSS Selectors
 
-To change the color of a title, the computer needs to know *which* title you are talking about.
-A **Selector** is like a finger pointing at an element. 
-If you write \`h1\`, you are pointing at all the big titles and saying, "Hey you! Change your color!"
-
-### Step 3: The Simplest Code Example
-
-Here is a simple CSS rule that changes the color of a heading:
+To style an HTML element, you need to "select" it first. 
 
 \`\`\`css
 h1 {
@@ -288,26 +249,28 @@ h1 {
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking It Down
 
-1. **\`h1\`**: The **Selector**. It points to the HTML tag we want to style.
-2. **\`{\`**: The **Opening Curly Brace**. It tells the computer, "The styling instructions start here."
-3. **The Space/Indent**: We usually put a few spaces before the next word to make it easier for humans to read.
-4. **\`color\`**: This is the **Property**. It tells the computer *what* we want to change (in this case, the text color).
-5. **\`:\`**: The **Colon**. It separates the property from the value. It means "set the color TO..."
-6. **\`purple\`**: This is the **Value**. It is the actual color we want to use.
-7. **\`;\`**: The **Semicolon**. It means "This instruction is finished."
-8. **\`}\`**: The **Closing Curly Brace**. It means "No more styles for this element."
+1. **\`h1\`** — The **Selector**. It targets all \`<h1>\` tags on the page.
+2. **\`{\`** and **\`}\`** — Curly braces contain the styling rules.
+3. **\`color\`** — The **Property**. It specifies *what* you want to change (text color).
+4. **\`:\`** — The colon separates the property from the value.
+5. **\`purple\`** — The **Value**. It defines the new state.
+6. **\`;\`** — The **Semicolon**. It marks the end of the rule.
 
-### Wait! Don't Make This Mistake:
+### ⚠️ Common Mistake
 
-A very common mistake is using the wrong symbols. 
 Beginners often use an equals sign \`=\` instead of a colon \`:\`, or they forget the semicolon \`;\`.
-If you write \`color = purple\`, the computer will simply ignore you!
-Always remember: **Property : Value ;**
+
+\`\`\`css
+h1 {
+  color = purple  /* ❌ WRONG: Uses =, missing semicolon */
+  color: purple;  /* ✅ CORRECT */
+}
+\`\`\`
 
 **Your Task:**
-Update the CSS rule for the h1 selector. Change the value of the color property to exactly "purple" to match the CodLift brand aesthetic.`,
+Update the CSS rule for the \`h1\` selector. Change the value of the color property to exactly "purple" to match the CodLift brand aesthetic.`,
         task: 'Set h1 { color: purple; }',
         initial_code: '<style>\n  h1 {\n    color: white;\n  }\n</style>\n<h1>Colorful World</h1>',
         test_cases: { 
@@ -329,28 +292,11 @@ Update the CSS rule for the h1 selector. Change the value of the color property 
         id: 'css_2_1',
         title: 'Enable Flexbox',
         instruction: `
-<div class="p-4 bg-indigo/10 border border-indigo/20 rounded-xl my-4">
-  <h4 class="text-indigo font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you have a large stack of hardcover books. Normally, if you drop them, they will stack on top of each other in a tall tower. But what if you want them to sit neatly side-by-side on a bookshelf? <strong>Flexbox</strong> is like the shelf that forces your items to line up in a beautiful, horizontal row instead of a messy vertical tower.</p>
-</div>
+### What is Flexbox?
 
-### Step 1: The Logic of Alignment
+By default, HTML elements **stack vertically** — one on top of the next. Flexbox is a CSS layout mode that lets you **arrange items in a row or column** with total control over spacing and alignment.
 
-In standard HTML, elements like to stack vertically (one on top of the other).
-But most websites need things to be horizontal (like a menu bar or a row of photos).
-In the old days, this was very hard to do!
-Now, we use **Flexbox**. By telling a parent "box" to be "Flex," all the children inside it will instantly snap into a perfect row.
-
-### Step 2: What is a Container?
-
-Think of Flexbox like a "Parent" and its "Children."
-The parent is the large box that holds everything. 
-When the parent says "I am a Flexbox," it is giving a rule to all its children. 
-It tells them: "Line up and follow my instructions!"
-
-### Step 3: The Simplest Code Example
-
-Here is how you turn a regular box into a Flexbox:
+You activate Flexbox by adding **one line** to the parent element:
 
 \`\`\`css
 .container {
@@ -358,24 +304,21 @@ Here is how you turn a regular box into a Flexbox:
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking It Down
 
-1. **\`.container\`**: This is the **Selector**. It points to the parent box that holds all the items.
-2. **\`{\`**: The start of our styling rules.
-3. **\`display\`**: This is the **Property**. It tells the computer *how* this box should behave on the screen.
-4. **\`:\`**: The colon that separates the property from the value.
-5. **\`flex\`**: This is the **Value**. It is the magic word that activates the Flexbox engine!
-6. **\`;\`**: The end of the instruction.
-7. **\`}\`**: The end of the style rule.
+- **`.container`** — the selector that targets your parent element
+- **`display`** — the property that controls *how* elements are laid out
+- **`flex`** — the value that activates the Flexbox engine
+- **`;`** — the semicolon that ends every CSS declaration
 
-### Wait! Don't Make This Mistake:
+Once you add `display: flex` to a parent, **all direct children** immediately line up horizontally in a row.
 
-A common mistake is putting \`display: flex\` on the small items instead of the large parent box. 
-If you want your books to line up, you give the shelf the instructions, not each individual book. 
-Always remember: set Flexbox on the **Container (the parent)**!
+### Important Rule
+
+`display: flex` goes on the **parent container**, NOT on the child items. You're setting rules for the shelf, not for the books.
 
 **Your Task:**
-Locate the .container class in the CSS. Add the \`display: flex\` property to instantly force all the nested child elements to line up in a horizontal row.`,
+Add \`display: flex\` inside the \`.container\` rule so all three items line up in a horizontal row.`,
         task: 'Set display: flex on the .container class.',
         initial_code: '<style>\n  .container {\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add display: flex here */\n  }\n  .item { background: #a855f7; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">A</div>\n  <div class="item">B</div>\n  <div class="item">C</div>\n</div>',
         test_cases: {
@@ -387,52 +330,41 @@ Locate the .container class in the CSS. Add the \`display: flex\` property to in
         id: 'css_2_2',
         title: 'Justify & Align',
         instruction: `
-<div class="p-4 bg-teal/10 border border-teal/20 rounded-xl my-4">
-  <h4 class="text-teal font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you have an <strong>Incredibly Precise Remote Control</strong> for your layout. You can push a button to move your items to the center, the left, or the right. <strong>Justify-Content</strong> and <strong>Align-Items</strong> are the buttons on that remote control that let you position your items perfectly within their container.</p>
-</div>
+### Aligning Items in Flexbox
 
-### Step 1: The Logic of Two Directions
+Once Flexbox is active, you have two powerful properties to control **where** items sit inside the container:
 
-Once you turn on Flexbox, you gain control over two directions:
-1. **The Main Axis (Horizontal):** Moving things Left, Right, or Center.
-2. **The Cross Axis (Vertical):** Moving things Top, Bottom, or Center.
-By combining these two, you can put an item exactly in the middle of a box—something that used to be a nightmare for web developers!
+| Property | Controls | Common Values |
+|---|---|---|
+| `justify-content` | Horizontal position (left/right) | `flex-start`, `center`, `flex-end`, `space-between` |
+| `align-items` | Vertical position (up/down) | `flex-start`, `center`, `flex-end`, `stretch` |
 
-### Step 2: What is Justify-Content?
-
-Think of this as your "Horizontal Button." 
-If you want your menu links to spread out across the page, or stay huddled together in the center, you use **justify-content**.
-Values like \`center\` or \`space-between\` tell the computer exactly how much "air" (empty space) to put between your items.
-
-### Step 3: The Simplest Code Example
-
-Here is how you perfectly center an item:
+### The Code
 
 \`\`\`css
 .container {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center;  /* centers horizontally */
+  align-items: center;       /* centers vertically */
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### What Each Line Does
 
-1. **\`justify-content\`**: The property for horizontal alignment.
-2. **\`:\`**: The separator.
-3. **\`center\`**: The value that tells the items to move to the middle.
-4. **\`align-items\`**: The property for vertical alignment.
-5. **\`center\`**: The value that tells the items to stay in the middle vertically.
+- **`justify-content: center`** — pushes children to the horizontal center of the container
+- **`align-items: center`** — pushes children to the vertical center of the container
 
-### Wait! Don't Make This Mistake:
+> **Note:** Vertical centering only works if the container has an explicit `height`. The starter code already has `height: 200px` so you're good.
 
-Vertical centering (\`align-items: center\`) only works if your container has a **Height**. 
-If your container is squashed flat like a pancake, you won't see any vertical movement! 
-Always check that your parent box has enough room (\`height\`) for the items to move up and down.
+### Common Values Reference
+
+- `flex-start` — items pile up at the start (left or top)
+- `center` — items sit in the middle
+- `flex-end` — items pile up at the end (right or bottom)
+- `space-between` — items spread out, first and last touch the edges
 
 **Your Task:**
-Inside the .container class, add both \`justify-content: center\` and \`align-items: center\` to perfectly center the nested item both horizontally and vertically.`,
+Add \`justify-content: center\` and \`align-items: center\` inside the \`.container\` rule to center the box in both directions.`,
         task: 'Add justify-content: center and align-items: center to the .container.',
         initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    height: 200px;\n    /* Add justify-content and align-items */\n  }\n  .item { background: #a855f7; padding: 15px; border-radius: 8px; }\n</style>\n<div class="container">\n  <div class="item">Centered!</div>\n</div>',
         test_cases: {
@@ -444,28 +376,27 @@ Inside the .container class, add both \`justify-content: center\` and \`align-it
         id: 'css_2_3',
         title: 'Flex Direction & Wrap',
         instruction: `
-<div class="p-4 bg-amber/10 border border-amber/20 rounded-xl my-4">
-  <h4 class="text-amber font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you have a bookshelf. Sometimes you want the books to sit side-by-side (like a row). But sometimes, if the shelf is too narrow, you want to <strong>Rotate the Shelf</strong> so the books stack one on top of the other (like a column). <strong>Flex-Direction</strong> and <strong>Flex-Wrap</strong> let you control this rotation and flow.</p>
-</div>
+### Controlling Direction and Wrapping
 
-### Step 1: The Logic of Rotation
+Flexbox has two more essential properties:
 
-By default, Flexbox always thinks you want a horizontal row.
-But what if you are building a menu for a mobile phone?
-On a small screen, a long horizontal row will go off the edge of the screen!
-To fix this, we use **flex-direction: column**. This "rotates" the axis so items stack vertically.
+**`flex-direction`** — controls which direction items flow.
 
-### Step 2: What is Wrapping?
+| Value | Effect |
+|---|---|
+| `row` | Left to right (default) |
+| `column` | Top to bottom |
+| `row-reverse` | Right to left |
+| `column-reverse` | Bottom to top |
 
-Think of a word processor (like Google Docs). 
-When you type to the end of a line, the computer automatically moves the next word to the new line below.
-This is called **Wrapping**.
-In Flexbox, we use **flex-wrap: wrap** to tell the items: "If you run out of room, don't shrink! Just move down to the next row."
+**`flex-wrap`** — controls what happens when items don't fit.
 
-### Step 3: The Simplest Code Example
+| Value | Effect |
+|---|---|
+| `nowrap` | Force everything onto one line (default) |
+| `wrap` | Allow items to move to a new line |
 
-Here is how you make a vertical stack that wraps:
+### The Code
 
 \`\`\`css
 .container {
@@ -475,22 +406,19 @@ Here is how you make a vertical stack that wraps:
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+- **`flex-direction: column`** — stacks items from top to bottom instead of left to right
+- **`flex-wrap: wrap`** — when items overflow, they wrap to the next line instead of shrinking
 
-1. **\`flex-direction\`**: The property that chooses Row or Column.
-2. **\`:\`**: The separator.
-3. **\`column\`**: The value that makes things stack vertically.
-4. **\`flex-wrap\`**: The property that controls if items stay on one line or move to many.
-5. **\`wrap\`**: The value that allows items to jump to a new line when they run out of space.
+### ⚠️ Watch Out
 
-### Wait! Don't Make This Mistake:
+When `flex-direction` is `column`, the axes flip:
+- `justify-content` now controls **vertical** alignment
+- `align-items` now controls **horizontal** alignment
 
-When you switch to \`flex-direction: column\`, the "Main Axis" and "Cross Axis" swap places!
-Now, \`justify-content\` will move things Up and Down, and \`align-items\` will move things Left and Right. 
-This is the number one thing that confuses even professional developers!
+This trips up even experienced developers!
 
 **Your Task:**
-Locate the .container class. Add the \`flex-direction: column\` property and the \`flex-wrap: wrap\` property to properly stack the items and allow them to wrap.`,
+Add \`flex-direction: column\` and \`flex-wrap: wrap\` to the \`.container\` rule.`,
         task: 'Add flex-direction: column and flex-wrap: wrap to the .container.',
         initial_code: '<style>\n  .container {\n    display: flex;\n    background: #1a1a2e;\n    padding: 20px;\n    /* Add direction and wrap */\n  }\n  .item { background: #ffd60a; padding: 10px; margin: 5px; }\n</style>\n<div class="container">\n  <div class="item">1</div>\n  <div class="item">2</div>\n  <div class="item">3</div>\n</div>',
         test_cases: {
@@ -511,29 +439,11 @@ Locate the .container class. Add the \`flex-direction: column\` property and the
         id: 'css_3_1',
         title: 'Your First Grid',
         instruction: `
-<div class="p-4 bg-emerald/10 border border-emerald/20 rounded-xl my-4">
-  <h4 class="text-emerald font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">If Flexbox is like a bookshelf (one row), then <strong>CSS Grid</strong> is like an <strong>Advanced Chessboard</strong>. It allows you to control both <strong>Rows</strong> and <strong>Columns</strong> at the exact same time. This is the most powerful tool you have for building the overall layout of a professional website.</p>
-</div>
+### What is CSS Grid?
 
-### Step 1: The Logic of the "Grid"
+CSS Grid is a **two-dimensional** layout system. While Flexbox controls items in one direction (row OR column), Grid lets you control **rows AND columns simultaneously** — perfect for complex page layouts.
 
-Imagine you are designing a newspaper. You have some articles that are narrow, and some that are wide.
-You also have rows of pictures and rows of text.
-Trying to do this with one-dimensional tools is very hard. 
-**CSS Grid** creates an invisible grid of lines on your page, and you just tell the items which "cell" of the grid they should sit in.
-
-### Step 2: What is the "fr" Unit?
-
-In the old days, we had to use percentages (like 33.33%) to make columns.
-This was very annoying!
-Now, we use a special unit called **\`fr\`** (which stands for **Fraction**).
-If you write \`1fr 1fr 1fr\`, you are telling the computer: "Divide the screen into 3 equal pieces and give one piece to each column."
-It handles all the difficult math for you!
-
-### Step 3: The Simplest Code Example
-
-Here is how you make a 3-column grid:
+### Enabling Grid
 
 \`\`\`css
 .grid {
@@ -542,22 +452,28 @@ Here is how you make a 3-column grid:
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### What Each Property Does
 
-1. **\`display: grid\`**: This activates the Grid engine for the parent box.
-2. **\`grid-template-columns\`**: This is the property that defines the vertical columns.
-3. **\`1fr 1fr 1fr\`**: This tells the computer to create three columns, each taking up one equal "Fraction" of the available space.
-4. **\`gap: 15px\`**: This is a bonus property that adds perfectly even space between all the boxes.
+- **`display: grid`** — activates the Grid layout engine on the container
+- **`grid-template-columns`** — defines how many columns to create and how wide each is
+- **`1fr 1fr 1fr`** — creates 3 columns, each taking an equal share of available space
 
-### Wait! Don't Make This Mistake:
+### The `fr` Unit
 
-A common mistake is thinking that \`grid-template-columns\` creates the content. 
-It only creates the **Slots**. 
-If you define 3 columns but you only have 2 items, the 3rd slot will just stay empty. 
-Always make sure your grid plan matches the number of items you have!
+`fr` stands for **fraction**. It divides the available space into equal parts.
+- `1fr 1fr 1fr` → 3 equal columns (33.33% each)
+- `2fr 1fr` → first column is twice as wide as the second
+- You can also write `repeat(3, 1fr)` as a shorthand for `1fr 1fr 1fr`
+
+### Key Difference: Grid vs Flexbox
+
+| | Flexbox | Grid |
+|---|---|---|
+| Dimensions | 1D (row or column) | 2D (rows AND columns) |
+| Best for | Navigation bars, button groups | Page layouts, card grids |
 
 **Your Task:**
-Inside the .grid container class, add \`display: grid\` to enable the engine, and then add \`grid-template-columns: 1fr 1fr 1fr\` to define three equal-width columns.`,
+Add \`display: grid\` and \`grid-template-columns: 1fr 1fr 1fr\` to the \`.grid\` container.`,
         task: 'Set display: grid and grid-template-columns: 1fr 1fr 1fr on the .grid container.',
         initial_code: '<style>\n  .grid {\n    background: #0d131a;\n    padding: 20px;\n    gap: 15px;\n    /* Add grid styles here */\n  }\n  .cell { background: #a855f7; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">1</div>\n  <div class="cell">2</div>\n  <div class="cell">3</div>\n  <div class="cell">4</div>\n  <div class="cell">5</div>\n  <div class="cell">6</div>\n</div>',
         test_cases: {
@@ -569,28 +485,11 @@ Inside the .grid container class, add \`display: grid\` to enable the engine, an
         id: 'css_3_2',
         title: 'Media Queries',
         instruction: `
-<div class="p-4 bg-rose/10 border border-rose/20 rounded-xl my-4">
-  <h4 class="text-rose font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine your website has a <strong>Magic Mirror</strong>. When it looks at a giant desktop monitor, it sees plenty of room and spreads out comfortably. But when it looks at a tiny mobile phone, it realizes it needs to "shrink" and rearrange its furniture to fit. <strong>Media Queries</strong> are the sensors that tell your website how big the screen is.</p>
-</div>
+### Making Your Site Responsive
 
-### Step 1: The Logic of Responsiveness
+A **media query** applies CSS rules **only when a condition is true** — such as when the screen is smaller than a certain width. This is the foundation of responsive web design.
 
-Your website needs to look good on everything from a huge TV to a tiny watch.
-We call this **Responsive Design**.
-A "Media Query" is like an **IF statement** for your styles. 
-It says: "IF the screen is smaller than 600 pixels, THEN change the layout to be a single column."
-
-### Step 2: What is a Breakpoint?
-
-Think of a "Breakpoint" as a line in the sand.
-On one side of the line (Big screens), the website uses its default layout.
-Once the screen size crosses that line (Small screens), the website instantly switches to a new set of rules.
-Most professional sites have breakpoints for Tablets and Phones.
-
-### Step 3: The Simplest Code Example
-
-Here is how you tell a grid to collapse on small screens:
+### The Syntax
 
 \`\`\`css
 @media (max-width: 600px) {
@@ -600,22 +499,27 @@ Here is how you tell a grid to collapse on small screens:
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking It Down
 
-1. **\`@media\`**: The special keyword that tells the computer, "I am starting a screen-size rule."
-2. **\`(max-width: 600px)\`**: The condition. It means: "If the screen is 600 pixels wide or LESS."
-3. **\`{\`**: The start of the special rules for small screens.
-4. **\`.grid { ... }\`**: We put our regular CSS rules *inside* the media query block to override them.
-5. **\`1fr\`**: We change the 3-column grid back to a 1-column stack so it fits on a phone.
+- **`@media`** — the keyword that starts a conditional CSS block
+- **`(max-width: 600px)`** — the condition: "apply these styles when screen width is 600px or less"
+- **`.grid { ... }`** — the CSS to apply when the condition is true
+- **`grid-template-columns: 1fr`** — collapses the 3-column grid into a single column
 
-### Wait! Don't Make This Mistake:
+### Common Breakpoints Used in Production
 
-Always place your \`@media\` rules at the **Bottom** of your CSS file. 
-CSS stands for "Cascading Style Sheets," which means the rules at the bottom of the file always "win" over the rules at the top. 
-If you put your media query at the top, your regular styles might overwrite it!
+| Breakpoint | Target Device |
+|---|---|
+| `max-width: 480px` | Small phones |
+| `max-width: 768px` | Tablets |
+| `max-width: 1024px` | Small laptops |
+
+### ⚠️ Placement Matters
+
+Put `@media` blocks **below** the regular styles they override. CSS reads top-to-bottom, so later rules win.
 
 **Your Task:**
-Below all the existing CSS, add a new media query block: \`@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }\` to force the grid to collapse on tiny screens.`,
+Below the existing styles, add \`@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }\` to collapse the grid to one column on small screens.`,
         task: 'Add a @media (max-width: 600px) block that sets .grid to grid-template-columns: 1fr.',
         initial_code: '<style>\n  .grid {\n    display: grid;\n    grid-template-columns: 1fr 1fr 1fr;\n    gap: 15px;\n    padding: 20px;\n    background: #0d131a;\n  }\n  /* Add media query here */\n  .cell { background: #ffd60a; color: black; padding: 20px; border-radius: 8px; text-align: center; }\n</style>\n<div class="grid">\n  <div class="cell">A</div>\n  <div class="cell">B</div>\n  <div class="cell">C</div>\n</div>',
         test_cases: {
@@ -634,46 +538,50 @@ Below all the existing CSS, add a new media query block: \`@media (max-width: 60
     exercises: [
       {
         id: 'js_1_1',
-        title: 'Creating a Labeled Bucket',
+        title: 'Variables',
         instruction: `
-<div class="p-4 bg-purple/10 border border-purple/20 rounded-xl my-4">
-  <h4 class="text-purple font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you are moving houses. You have a lot of stuff, so you use <strong>Cardboard Boxes</strong>. You write a label on the outside like "Books" so you know what is inside. In JavaScript, we do the exact same thing with <strong>Variables</strong>.</p>
-</div>
+### What is a Variable?
 
-### Step 1: The Logic of Storage
+A variable is a **named storage location** in memory. You use it to save a value so you can use it later in your program.
 
-Computers are incredibly fast, but they have a very short memory. 
-If you tell a computer "My name is Alex," it will forget that name a split-second later unless you save it.
-To save information, we create a "labeled bucket" in the computer's memory.
-We give the bucket a name (the label) so we can find it later when we need it.
+### The Three Keywords
 
-### Step 2: The Simplest Code Example
+| Keyword | When to Use |
+|---|---|
+| `let` | Value might change later |
+| `const` | Value never changes |
+| `var` | Old style — avoid in modern JS |
 
-Here is how we tell the computer to make a new bucket and put something in it:
+### Syntax
 
 \`\`\`javascript
-let myBox = "Books";
+let myName = "Alex";
 \`\`\`
 
-### Step 3: Breaking Down Every Character
+- **`let`** — declares the variable
+- **`myName`** — the name you give it (no spaces, case-sensitive)
+- **`=`** — the assignment operator (puts the value inside)
+- **`"Alex"`** — a string value (text always goes in quotes)
+- **`;`** — ends the statement
 
-1. **\`let\`**: This is a "Keyword." It is a special signal that tells the computer: "I am about to create a new labeled bucket!"
-2. **The Space**: We put a space after \`let\` so the computer doesn't get confused. It needs to know where the "Create" command ends and the "Name" begins.
-3. **\`myBox\`**: This is the **Name** or **Label** of our bucket. You can call it almost anything, like \`userName\` or \`score\`.
-4. **\`=\`**: This is the **Assignment Operator**. In coding, it acts like an **Arrow**. It means: "Take the stuff on the right and put it INTO the bucket on the left."
-5. **\`"Books"\`**: These are **Quotes**. We use them to tell the computer: "This is just plain text, not a command."
-6. **\`;\`**: This is a **Semicolon**. It works just like a **Period** at the end of a sentence. It tells the computer, "I am done with this instruction."
+### Data Types in JavaScript
 
-### Wait! Don't Make This Mistake:
+\`\`\`javascript
+let score = 100;           // Number — no quotes
+let name = "Alex";         // String — use quotes
+let isLoggedIn = true;     // Boolean — true or false
+\`\`\`
 
-Beginners often forget the quotes around words. 
-If you write \`let myBox = Books;\` (without quotes), the computer will look for *another* bucket named Books!
-Since it won't find one, it will panic and show an error. 
-If you want to store a literal word, always wrap it in "quotes".
+### ⚠️ Common Mistake
+
+Forgetting quotes around text:
+\`\`\`javascript
+let name = Alex;   // ❌ ERROR: JavaScript looks for a variable named Alex
+let name = "Alex"; // ✅ CORRECT
+\`\`\`
 
 **Your Task:**
-Create a variable named \`friend\` and store the word \`"Alex"\` inside it.`,
+Create a variable using \`let\` named \`friend\` and store the string \`"Alex"\` in it.`,
         task: 'Create a variable named friend and store "Alex" in it.',
         initial_code: '// Create your variable below this line\n',
         test_cases: { 
@@ -684,57 +592,52 @@ Create a variable named \`friend\` and store the word \`"Alex"\` inside it.`,
       },
       {
         id: 'js_1_2',
-        title: 'Mastering Functions',
+        title: 'Functions',
         instruction: `
-<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
-  <h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you have a <strong>Recipe Card</strong> for baking a cake. You don't want to write down every single step every time you bake; you just want to say "Follow the Cake Recipe." A <strong>Function</strong> is exactly like that recipe card. You write the instructions once, give it a name, and then you can "call" it whenever you need to do that work again.</p>
-</div>
+### What is a Function?
 
-### Step 1: The Logic of Reusability
+A function is a **reusable block of code** with a name. Instead of writing the same logic multiple times, you write it once in a function and call it by name whenever you need it.
 
-In coding, we hate repeating ourselves. 
-If you need to calculate a tax rate or greet a user 100 times, you shouldn't type that logic 100 times.
-Instead, you wrap that logic in a "Function."
-This makes your code clean and easy to fix—if the tax rate changes, you only fix it in one place!
-
-### Step 2: What are Parameters?
-
-Think of a "Coffee Machine." 
-The machine has a set of instructions (grind beans, heat water, pour).
-But you get to choose the **Input**: do you want "Dark Roast" or "Light Roast"?
-In coding, these inputs are called **Parameters**. 
-They are placeholders that let you customize what the function does each time you use it.
-
-### Step 3: The Simplest Code Example
-
-Here is how you write a simple greeting function:
+### Basic Syntax
 
 \`\`\`javascript
-function sayHello(name) {
+function greet(name) {
   return "Hello, " + name + "!";
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### The Parts of a Function
 
-1. **\`function\`**: The keyword that tells the computer, "I am about to write a recipe."
-2. **\`sayHello\`**: The **Name** of the function. This is what you'll use to "call" it later.
-3. **\`(name)\`**: The **Parameter**. It acts like an empty slot where you will drop a specific name later.
-4. **\`{\`**: The start of the instructions.
-5. **\`return\`**: The most important word! it tells the computer, "Give this result back to me."
-6. **\`"Hello, " + name\`**: This "glues" the word Hello to whatever name you provided.
-7. **\`}\`**: The end of the recipe.
+- **`function`** — the keyword that defines a function
+- **`greet`** — the function name (you choose this)
+- **`(name)`** — the parameter — a placeholder for the input value
+- **`{ ... }`** — the function body where your logic lives
+- **`return`** — sends the result back to whoever called the function
 
-### Wait! Don't Make This Mistake:
+### Calling a Function
 
-A common mistake is forgetting the **\`return\`** keyword. 
-If you forget it, the function will do the work in secret but it won't "hand" you the result. 
-It's like a chef who cooks a delicious meal but then throws it in the trash instead of serving it to you! 
-Always use \`return\` if you want to use the result later.
+\`\`\`javascript
+console.log(greet("Student")); // Output: Hello, Student!
+\`\`\`
+
+### String Concatenation
+
+To build strings with variables, use `+` to join pieces:
+\`\`\`javascript
+"Hello, " + name + "!"  // joins 3 parts into one string
+\`\`\`
+
+Or use a template literal (backticks):
+\`\`\`javascript
+\`Hello, \${name}!\`  // same result, cleaner syntax
+\`\`\`
+
+### ⚠️ Don't Forget `return`
+
+`console.log` inside a function just prints to the console — it doesn't give the value back. Always use `return` when the function needs to produce a result.
 
 **Your Task:**
-Define a new function named \`greetUser\` that accepts a single \`name\` parameter. Inside the function, it must return the exact string "Hello, [name]!" using the provided name.`,
+Define a function named \`greetUser\` that takes a \`name\` parameter and returns the string \`"Hello, [name]!"\`.`,
         task: 'Define a function greetUser(name) that returns the string "Hello, [name]!".',
         initial_code: '// Write your function here\n\nconsole.log(greetUser("Student"));',
         test_cases: { 
@@ -749,51 +652,44 @@ Define a new function named \`greetUser\` that accepts a single \`name\` paramet
         id: 'js_1_3',
         title: 'Arrays',
         instruction: `
-<div class="p-4 bg-orange/10 border border-orange/20 rounded-xl my-4">
-  <h4 class="text-orange font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you have a <strong>Large Filing Cabinet</strong> with many drawers. Each drawer is numbered starting from 0, 1, 2, and so on. You use this cabinet to store a long list of related things, like a list of your favorite fruits. An <strong>Array</strong> is exactly like this numbered filing cabinet.</p>
-</div>
+### What is an Array?
 
-### Step 1: The Logic of "Lists"
+An array is a **list of values** stored in a single variable. Instead of making 10 separate variables for 10 fruits, you put them all in one array.
 
-Sometimes, you don't just want one piece of information; you want a whole collection.
-Instead of creating 10 different variables for 10 different fruits, you can just create one "Array" that holds all of them.
-This keeps your code organized and allows you to perform actions on the whole list at once.
-
-### Step 2: What is Zero-Based Indexing?
-
-This is the part that confuses everyone!
-In the real world, we start counting at 1. 
-But in coding, we start counting at **0**. 
-The first drawer in your filing cabinet is always drawer number 0. 
-The second drawer is number 1. 
-Always remember: **Count starts at Zero!**
-
-### Step 3: The Simplest Code Example
-
-Here is how you create a list of fruits and find the first one:
+### Creating an Array
 
 \`\`\`javascript
 const fruits = ["Apple", "Banana", "Cherry"];
-console.log(fruits[0]); // This gives you "Apple"
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+- `[` and `]` — square brackets wrap the array
+- Items are separated by **commas**
+- Use `const` when the array won't be replaced entirely
 
-1. **\`[\`**: The square bracket is the "Cabinet Door." It tells the computer, "A list starts here!"
-2. **\`"Apple"\`**: The first item in the list.
-3. **\`,\`**: The comma is very important. it separates the items so the computer knows they are different.
-4. **\`]\`**: The closing bracket. It means the list is finished.
-5. **\`fruits[0]\`**: This is how you "Open a Drawer." You name the cabinet (\`fruits\`) and then put the drawer number (\`0\`) in square brackets.
+### Accessing Items
 
-### Wait! Don't Make This Mistake:
+Arrays use **zero-based indexing** — the first item is at position `0`:
 
-A common mistake is trying to find the 3rd item by typing \`fruits[3]\`. 
-Because we start at 0, the 3rd item is actually at drawer number **2**! 
-If you type 3, the computer will look for a 4th item, find nothing, and say "undefined."
+\`\`\`javascript
+console.log(fruits[0]); // "Apple"
+console.log(fruits[1]); // "Banana"
+console.log(fruits[2]); // "Cherry"
+\`\`\`
+
+### Useful Array Properties
+
+\`\`\`javascript
+fruits.length; // → 3  (number of items)
+\`\`\`
+
+### ⚠️ Zero-Based Indexing Trap
+
+The most common mistake is using the wrong index:
+- `fruits[1]` is the **second** item, NOT the first
+- `fruits[3]` on a 3-item array returns `undefined`
 
 **Your Task:**
-Create a const array named \`fruits\` with 3 strings. Then log the first item using \`fruits[0]\`.`,
+Create a `const` array named \`fruits\` containing 3 string items. Then use \`console.log(fruits[0])\` to print the first item.`,
         task: 'Create an array named fruits and log the first item.',
         initial_code: '// Create your array here\n',
         test_cases: {
@@ -805,54 +701,52 @@ Create a const array named \`fruits\` with 3 strings. Then log the first item us
         id: 'js_1_4',
         title: 'Objects',
         instruction: `
-<div class="p-4 bg-red/10 border border-red/20 rounded-xl my-4">
-  <h4 class="text-red font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">If an Array is a cabinet with numbered drawers, an <strong>Object</strong> is a cabinet with <strong>Text Labels</strong> on each drawer. Instead of remembering that drawer #0 is the name, you just look for the drawer labeled "Name." Objects are the best way to describe "Things" in the real world, like a Person or a Car.</p>
-</div>
+### What is an Object?
 
-### Step 1: The Logic of "Properties"
+An object groups **related data** together using named keys instead of numbered indexes. Think of it as a structured record describing a single thing.
 
-Real-world objects have characteristics. 
-A car has a Color, a Brand, and a Speed. 
-In coding, we call these characteristics **Properties**. 
-An Object lets you group all these properties together so they don't get lost.
-
-### Step 2: The Key-Value Pair
-
-Every drawer in an Object has two parts:
-1. **The Key:** The label on the drawer (like "age").
-2. **The Value:** The stuff inside the drawer (like "25").
-We use a **Colon** to link them together.
-
-### Step 3: The Simplest Code Example
-
-Here is how you describe a person:
+### Creating an Object
 
 \`\`\`javascript
 const person = {
   name: "Alex",
-  age: 25
+  age: 25,
+  job: "Developer"
 };
-console.log(person.name); // This gives you "Alex"
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### The Parts
 
-1. **\`{\`**: The **Curly Brace** is the "Object Door."
-2. **\`name\`**: The **Key** (the label).
-3. **\`:\`**: The connector.
-4. **\`"Alex"\`**: The **Value** (the content).
-5. **\`,\`**: Separates different properties.
-6. **\`person.name\`**: The **Dot Notation**. This is the easiest way to look inside an object. You say "Object Name" + "Dot" + "Label Name."
+- `{` and `}` — curly braces wrap the object
+- **Keys** — the property names (`name`, `age`, `job`)
+- **Values** — the data stored for each key
+- **Colon** — separates the key from its value: `key: value`
+- **Comma** — separates each property from the next (no comma after the last one)
 
-### Wait! Don't Make This Mistake:
+### Accessing Properties
 
-Don't forget the comma between properties! 
-If you have a name and an age, you must put a comma after the name. 
-If you forget it, the computer will think the name and age are one big, confusing word.
+**Dot notation** (most common):
+\`\`\`javascript
+console.log(person.name); // "Alex"
+console.log(person.age);  // 25
+\`\`\`
+
+**Bracket notation** (useful when key is dynamic):
+\`\`\`javascript
+console.log(person["name"]); // "Alex"
+\`\`\`
+
+### ⚠️ Don't Forget Commas
+
+\`\`\`javascript
+const person = {
+  name: "Alex"   // ❌ missing comma — will cause an error
+  age: 25
+};
+\`\`\`
 
 **Your Task:**
-Create a const object named \`person\` with keys \`name\`, \`age\`, and \`job\`. Then log \`person.name\`.`,
+Create a \`const\` object named \`person\` with three keys: \`name\`, \`age\`, and \`job\`. Then log \`person.name\` to the console.`,
         task: 'Create an object named person and log the name.',
         initial_code: '// Create your object here\n',
         test_cases: {
@@ -864,27 +758,11 @@ Create a const object named \`person\` with keys \`name\`, \`age\`, and \`job\`.
         id: 'js_1_5',
         title: 'Loops',
         instruction: `
-<div class="p-4 bg-yellow/10 border border-yellow/20 rounded-xl my-4">
-  <h4 class="text-yellow font-bold flex items-center gap-2 mb-2">💡 Think of it this way...</h4>
-  <p class="text-sm">Imagine you are in trouble at school and the teacher tells you to write "I will not talk in class" 100 times on the <strong>Chalkboard</strong>. Your hand would get very tired! In coding, a <strong>Loop</strong> is like having a robot write those lines for you. You just tell the robot: "Write this sentence 100 times," and it does all the hard work in a second.</p>
-</div>
+### What is a Loop?
 
-### Step 1: The Logic of Repetition
+A loop lets you **repeat a block of code** multiple times without rewriting it. Instead of writing `console.log(1)` five times, a loop does it in 3 lines.
 
-Computers are perfect for doing boring, repetitive tasks. 
-If you need to print a list of 1,000 users, or check 5,000 files, you use a Loop.
-A loop repeats the same block of code over and over until a specific "stopping point" is reached.
-
-### Step 2: The Three Parts of a Loop
-
-To make a loop work, you need three pieces of information:
-1. **The Starting Point:** Where do we begin counting? (Usually at 0 or 1).
-2. **The Stopping Rule:** When should we stop? (Example: "Stop when you reach 100").
-3. **The Step:** How do we move to the next number? (Example: "Add 1 every time").
-
-### Step 3: The Simplest Code Example
-
-Here is a loop that counts from 1 to 5:
+### The `for` Loop
 
 \`\`\`javascript
 for (let i = 1; i <= 5; i++) {
@@ -892,24 +770,40 @@ for (let i = 1; i <= 5; i++) {
 }
 \`\`\`
 
-### Step 4: Breaking Down Every Character
+### Breaking Down the Three Parts
 
-1. **\`for\`**: The keyword that starts the loop engine.
-2. **\`let i = 1\`**: The **Start**. We create a tiny counter variable named \`i\` and set it to 1.
-3. **\`;\`**: Semicolons separate the three parts of the loop.
-4. **\`i <= 5\`**: The **Rule**. It means: "Keep going as long as \`i\` is less than or equal to 5."
-5. **\`i++\`**: The **Step**. This is a shortcut for "Add 1 to \`i\`."
-6. **\`{ ... }\`**: The code inside these braces is what gets repeated.
+| Part | Code | Meaning |
+|---|---|---|
+| **Initialize** | `let i = 1` | Create counter, start at 1 |
+| **Condition** | `i <= 5` | Keep looping while this is true |
+| **Update** | `i++` | Add 1 to `i` after each loop |
 
-### Wait! Don't Make This Mistake:
+The loop body `{ ... }` runs once for each iteration.
 
-The most dangerous mistake is the **Infinite Loop**. 
-If you forget to add the "Step" (\`i++\`), the counter will stay at 1 forever. 
-The computer will keep looping forever and ever until it crashes or your computer gets very hot! 
-Always make sure your "Stopping Rule" will eventually become true.
+### What `i++` Does
+
+`i++` is shorthand for `i = i + 1`. It increments the counter so the loop eventually stops.
+
+### The Output
+
+\`\`\`
+1
+2
+3
+4
+5
+\`\`\`
+
+### ⚠️ Infinite Loop Warning
+
+If you forget `i++`, the counter never changes. The condition `i <= 5` stays true forever and your code crashes. Always include the update part!
+
+Other common mistakes:
+- `i < 5` instead of `i <= 5` → prints 1 to 4 only
+- `i = 0` instead of `i = 1` → starts from 0
 
 **Your Task:**
-Write a classic for loop starting exactly at 1 and ending exactly at 5. Inside the loop, use \`console.log()\` to print the current number during each iteration.`,
+Write a \`for\` loop that starts at \`1\`, ends at \`5\`, and uses \`console.log(i)\` to print each number.`,
         task: 'Write a for loop starting at 1, ending at 5, that prints each number.',
         initial_code: '// Write your loop here\n',
         test_cases: {
