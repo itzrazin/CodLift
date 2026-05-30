@@ -286,16 +286,16 @@ You activate Flexbox by adding **one line** to the parent element:
 
 ### Breaking It Down
 
-- **`.container`** — the selector that targets your parent element
-- **`display`** — the property that controls *how* elements are laid out
-- **`flex`** — the value that activates the Flexbox engine
-- **`;`** — the semicolon that ends every CSS declaration
+- **\`.container\`** — the selector that targets your parent element
+- **\`display\`** — the property that controls *how* elements are laid out
+- **\`flex\`** — the value that activates the Flexbox engine
+- **\`;\`** — the semicolon that ends every CSS declaration
 
-Once you add `display: flex` to a parent, **all direct children** immediately line up horizontally in a row.
+Once you add \`display: flex\` to a parent, **all direct children** immediately line up horizontally in a row.
 
 ### Important Rule
 
-`display: flex` goes on the **parent container**, NOT on the child items. You're setting rules for the shelf, not for the books.
+\`display: flex\` goes on the **parent container**, NOT on the child items. You're setting rules for the shelf, not for the books.
 
 **Your Task:**
 Add \`display: flex\` inside the \`.container\` rule so all three items line up in a horizontal row.`,
@@ -316,8 +316,8 @@ Once Flexbox is active, you have two powerful properties to control **where** it
 
 | Property | Controls | Common Values |
 |---|---|---|
-| `justify-content` | Horizontal position (left/right) | `flex-start`, `center`, `flex-end`, `space-between` |
-| `align-items` | Vertical position (up/down) | `flex-start`, `center`, `flex-end`, `stretch` |
+| \`justify-content\` | Horizontal position (left/right) | \`flex-start\`, \`center\`, \`flex-end\`, \`space-between\` |
+| \`align-items\` | Vertical position (up/down) | \`flex-start\`, \`center\`, \`flex-end\`, \`stretch\` |
 
 ### The Code
 
@@ -331,17 +331,17 @@ Once Flexbox is active, you have two powerful properties to control **where** it
 
 ### What Each Line Does
 
-- **`justify-content: center`** — pushes children to the horizontal center of the container
-- **`align-items: center`** — pushes children to the vertical center of the container
+- **\`justify-content: center\`** — pushes children to the horizontal center of the container
+- **\`align-items: center\`** — pushes children to the vertical center of the container
 
-> **Note:** Vertical centering only works if the container has an explicit `height`. The starter code already has `height: 200px` so you're good.
+> **Note:** Vertical centering only works if the container has an explicit \`height\`. The starter code already has \`height: 200px\` so you're good.
 
 ### Common Values Reference
 
-- `flex-start` — items pile up at the start (left or top)
-- `center` — items sit in the middle
-- `flex-end` — items pile up at the end (right or bottom)
-- `space-between` — items spread out, first and last touch the edges
+- \`flex-start\` — items pile up at the start (left or top)
+- \`center\` — items sit in the middle
+- \`flex-end\` — items pile up at the end (right or bottom)
+- \`space-between\` — items spread out, first and last touch the edges
 
 **Your Task:**
 Add \`justify-content: center\` and \`align-items: center\` inside the \`.container\` rule to center the box in both directions.`,
@@ -360,21 +360,21 @@ Add \`justify-content: center\` and \`align-items: center\` inside the \`.contai
 
 Flexbox has two more essential properties:
 
-**`flex-direction`** — controls which direction items flow.
+**\`flex-direction\`** — controls which direction items flow.
 
 | Value | Effect |
 |---|---|
-| `row` | Left to right (default) |
-| `column` | Top to bottom |
-| `row-reverse` | Right to left |
-| `column-reverse` | Bottom to top |
+| \`row\` | Left to right (default) |
+| \`column\` | Top to bottom |
+| \`row-reverse\` | Right to left |
+| \`column-reverse\` | Bottom to top |
 
-**`flex-wrap`** — controls what happens when items don't fit.
+**\`flex-wrap\`** — controls what happens when items don't fit.
 
 | Value | Effect |
 |---|---|
-| `nowrap` | Force everything onto one line (default) |
-| `wrap` | Allow items to move to a new line |
+| \`nowrap\` | Force everything onto one line (default) |
+| \`wrap\` | Allow items to move to a new line |
 
 ### The Code
 
@@ -386,14 +386,14 @@ Flexbox has two more essential properties:
 }
 \`\`\`
 
-- **`flex-direction: column`** — stacks items from top to bottom instead of left to right
-- **`flex-wrap: wrap`** — when items overflow, they wrap to the next line instead of shrinking
+- **\`flex-direction: column\`** — stacks items from top to bottom instead of left to right
+- **\`flex-wrap: wrap\`** — when items overflow, they wrap to the next line instead of shrinking
 
 ### ⚠️ Watch Out
 
-When `flex-direction` is `column`, the axes flip:
-- `justify-content` now controls **vertical** alignment
-- `align-items` now controls **horizontal** alignment
+When \`flex-direction\` is \`column\`, the axes flip:
+- \`justify-content\` now controls **vertical** alignment
+- \`align-items\` now controls **horizontal** alignment
 
 This trips up even experienced developers!
 
@@ -434,16 +434,16 @@ CSS Grid is a **two-dimensional** layout system. While Flexbox controls items in
 
 ### What Each Property Does
 
-- **`display: grid`** — activates the Grid layout engine on the container
-- **`grid-template-columns`** — defines how many columns to create and how wide each is
-- **`1fr 1fr 1fr`** — creates 3 columns, each taking an equal share of available space
+- **\`display: grid\`** — activates the Grid layout engine on the container
+- **\`grid-template-columns\`** — defines how many columns to create and how wide each is
+- **\`1fr 1fr 1fr\`** — creates 3 columns, each taking an equal share of available space
 
-### The `fr` Unit
+### The \`fr\` Unit
 
-`fr` stands for **fraction**. It divides the available space into equal parts.
-- `1fr 1fr 1fr` → 3 equal columns (33.33% each)
-- `2fr 1fr` → first column is twice as wide as the second
-- You can also write `repeat(3, 1fr)` as a shorthand for `1fr 1fr 1fr`
+\`fr\` stands for **fraction**. It divides the available space into equal parts.
+- \`1fr 1fr 1fr\` → 3 equal columns (33.33% each)
+- \`2fr 1fr\` → first column is twice as wide as the second
+- You can also write \`repeat(3, 1fr)\` as a shorthand for \`1fr 1fr 1fr\`
 
 ### Key Difference: Grid vs Flexbox
 
@@ -481,22 +481,22 @@ A **media query** applies CSS rules **only when a condition is true** — such a
 
 ### Breaking It Down
 
-- **`@media`** — the keyword that starts a conditional CSS block
-- **`(max-width: 600px)`** — the condition: "apply these styles when screen width is 600px or less"
-- **`.grid { ... }`** — the CSS to apply when the condition is true
-- **`grid-template-columns: 1fr`** — collapses the 3-column grid into a single column
+- **\`@media\`** — the keyword that starts a conditional CSS block
+- **\`(max-width: 600px)\`** — the condition: "apply these styles when screen width is 600px or less"
+- **\`.grid { ... }\`** — the CSS to apply when the condition is true
+- **\`grid-template-columns: 1fr\`** — collapses the 3-column grid into a single column
 
 ### Common Breakpoints Used in Production
 
 | Breakpoint | Target Device |
 |---|---|
-| `max-width: 480px` | Small phones |
-| `max-width: 768px` | Tablets |
-| `max-width: 1024px` | Small laptops |
+| \`max-width: 480px\` | Small phones |
+| \`max-width: 768px\` | Tablets |
+| \`max-width: 1024px\` | Small laptops |
 
 ### ⚠️ Placement Matters
 
-Put `@media` blocks **below** the regular styles they override. CSS reads top-to-bottom, so later rules win.
+Put \`@media\` blocks **below** the regular styles they override. CSS reads top-to-bottom, so later rules win.
 
 **Your Task:**
 Below the existing styles, add \`@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }\` to collapse the grid to one column on small screens.`,
@@ -528,9 +528,9 @@ A variable is a **named storage location** in memory. You use it to save a value
 
 | Keyword | When to Use |
 |---|---|
-| `let` | Value might change later |
-| `const` | Value never changes |
-| `var` | Old style — avoid in modern JS |
+| \`let\` | Value might change later |
+| \`const\` | Value never changes |
+| \`var\` | Old style — avoid in modern JS |
 
 ### Syntax
 
@@ -538,11 +538,11 @@ A variable is a **named storage location** in memory. You use it to save a value
 let myName = "Alex";
 \`\`\`
 
-- **`let`** — declares the variable
-- **`myName`** — the name you give it (no spaces, case-sensitive)
-- **`=`** — the assignment operator (puts the value inside)
-- **`"Alex"`** — a string value (text always goes in quotes)
-- **`;`** — ends the statement
+- **\`let\`** — declares the variable
+- **\`myName\`** — the name you give it (no spaces, case-sensitive)
+- **\`=\`** — the assignment operator (puts the value inside)
+- **\`"Alex"\`** — a string value (text always goes in quotes)
+- **\`;\`** — ends the statement
 
 ### Data Types in JavaScript
 
@@ -588,11 +588,11 @@ function greet(name) {
 
 ### The Parts of a Function
 
-- **`function`** — the keyword that defines a function
-- **`greet`** — the function name (you choose this)
-- **`(name)`** — the parameter — a placeholder for the input value
-- **`{ ... }`** — the function body where your logic lives
-- **`return`** — sends the result back to whoever called the function
+- **\`function\`** — the keyword that defines a function
+- **\`greet\`** — the function name (you choose this)
+- **\`(name)\`** — the parameter — a placeholder for the input value
+- **\`{ ... }\`** — the function body where your logic lives
+- **\`return\`** — sends the result back to whoever called the function
 
 ### Calling a Function
 
@@ -602,7 +602,7 @@ console.log(greet("Student")); // Output: Hello, Student!
 
 ### String Concatenation
 
-To build strings with variables, use `+` to join pieces:
+To build strings with variables, use \`+\` to join pieces:
 \`\`\`javascript
 "Hello, " + name + "!"  // joins 3 parts into one string
 \`\`\`
@@ -612,9 +612,9 @@ Or use a template literal (backticks):
 \`Hello, \${name}!\`  // same result, cleaner syntax
 \`\`\`
 
-### ⚠️ Don't Forget `return`
+### ⚠️ Don't Forget \`return\`
 
-`console.log` inside a function just prints to the console — it doesn't give the value back. Always use `return` when the function needs to produce a result.
+\`console.log\` inside a function just prints to the console — it doesn't give the value back. Always use \`return\` when the function needs to produce a result.
 
 **Your Task:**
 Define a function named \`greetUser\` that takes a \`name\` parameter and returns the string \`"Hello, [name]!"\`.`,
@@ -642,13 +642,13 @@ An array is a **list of values** stored in a single variable. Instead of making 
 const fruits = ["Apple", "Banana", "Cherry"];
 \`\`\`
 
-- `[` and `]` — square brackets wrap the array
+- \`[\` and \`]\` — square brackets wrap the array
 - Items are separated by **commas**
-- Use `const` when the array won't be replaced entirely
+- Use \`const\` when the array won't be replaced entirely
 
 ### Accessing Items
 
-Arrays use **zero-based indexing** — the first item is at position `0`:
+Arrays use **zero-based indexing** — the first item is at position \`0\`:
 
 \`\`\`javascript
 console.log(fruits[0]); // "Apple"
@@ -665,11 +665,11 @@ fruits.length; // → 3  (number of items)
 ### ⚠️ Zero-Based Indexing Trap
 
 The most common mistake is using the wrong index:
-- `fruits[1]` is the **second** item, NOT the first
-- `fruits[3]` on a 3-item array returns `undefined`
+- \`fruits[1]\` is the **second** item, NOT the first
+- \`fruits[3]\` on a 3-item array returns \`undefined\`
 
 **Your Task:**
-Create a `const` array named \`fruits\` containing 3 string items. Then use \`console.log(fruits[0])\` to print the first item.`,
+Create a \`const\` array named \`fruits\` containing 3 string items. Then use \`console.log(fruits[0])\` to print the first item.`,
         task: 'Create an array named fruits and log the first item.',
         initial_code: '// Create your array here\n',
         test_cases: {
@@ -697,10 +697,10 @@ const person = {
 
 ### The Parts
 
-- `{` and `}` — curly braces wrap the object
-- **Keys** — the property names (`name`, `age`, `job`)
+- \`{\` and \`}\` — curly braces wrap the object
+- **Keys** — the property names (\`name\`, \`age\`, \`job\`)
 - **Values** — the data stored for each key
-- **Colon** — separates the key from its value: `key: value`
+- **Colon** — separates the key from its value: \`key: value\`
 - **Comma** — separates each property from the next (no comma after the last one)
 
 ### Accessing Properties
@@ -740,9 +740,9 @@ Create a \`const\` object named \`person\` with three keys: \`name\`, \`age\`, a
         instruction: `
 ### What is a Loop?
 
-A loop lets you **repeat a block of code** multiple times without rewriting it. Instead of writing `console.log(1)` five times, a loop does it in 3 lines.
+A loop lets you **repeat a block of code** multiple times without rewriting it. Instead of writing \`console.log(1)\` five times, a loop does it in 3 lines.
 
-### The `for` Loop
+### The \`for\` Loop
 
 \`\`\`javascript
 for (let i = 1; i <= 5; i++) {
@@ -754,15 +754,15 @@ for (let i = 1; i <= 5; i++) {
 
 | Part | Code | Meaning |
 |---|---|---|
-| **Initialize** | `let i = 1` | Create counter, start at 1 |
-| **Condition** | `i <= 5` | Keep looping while this is true |
-| **Update** | `i++` | Add 1 to `i` after each loop |
+| **Initialize** | \`let i = 1\` | Create counter, start at 1 |
+| **Condition** | \`i <= 5\` | Keep looping while this is true |
+| **Update** | \`i++\` | Add 1 to \`i\` after each loop |
 
-The loop body `{ ... }` runs once for each iteration.
+The loop body \`{ ... }\` runs once for each iteration.
 
-### What `i++` Does
+### What \`i++\` Does
 
-`i++` is shorthand for `i = i + 1`. It increments the counter so the loop eventually stops.
+\`i++\` is shorthand for \`i = i + 1\`. It increments the counter so the loop eventually stops.
 
 ### The Output
 
@@ -776,11 +776,11 @@ The loop body `{ ... }` runs once for each iteration.
 
 ### ⚠️ Infinite Loop Warning
 
-If you forget `i++`, the counter never changes. The condition `i <= 5` stays true forever and your code crashes. Always include the update part!
+If you forget \`i++\`, the counter never changes. The condition \`i <= 5\` stays true forever and your code crashes. Always include the update part!
 
 Other common mistakes:
-- `i < 5` instead of `i <= 5` → prints 1 to 4 only
-- `i = 0` instead of `i = 1` → starts from 0
+- \`i < 5\` instead of \`i <= 5\` → prints 1 to 4 only
+- \`i = 0\` instead of \`i = 1\` → starts from 0
 
 **Your Task:**
 Write a \`for\` loop that starts at \`1\`, ends at \`5\`, and uses \`console.log(i)\` to print each number.`,
