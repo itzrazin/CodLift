@@ -30,7 +30,8 @@ function increment(count, setCount) {
 }`,
         test_cases: {
           expected_output: '1',
-          solution: 'setCount(count + 1)'
+          solution: 'function increment(count, setCount) {\n  setCount(count + 1);\n}',
+          force_ai: true
         }
       }
     ]
@@ -58,12 +59,14 @@ function increment(count, setCount) {
         `,
         task: 'Implement the compress(arr) function.',
         initial_code: `function compress(arr) {
-  // Write your code here
+  // Filter out duplicates, keep unique odd integers, and sort ascending.
+  // Example: compress([4, 1, 3, 3, 2, 9, 4, 1]) -> [1, 3, 9]
   
 }`,
         test_cases: {
           expected_output: '[1,3,9]',
-          solution: 'filter'
+          solution: 'function compress(arr) { return [...new Set(arr)].filter(n => n % 2 !== 0).sort((a,b) => a-b); }',
+          force_ai: true
         }
       }
     ]
@@ -96,12 +99,16 @@ function increment(count, setCount) {
         `,
         task: 'Implement the authorize(user, requiredRole) function.',
         initial_code: `function authorize(user, requiredRole) {
-  // Write your auth validation logic here
+  // Return true if:
+  // 1. user exists
+  // 2. user.is_verified is true
+  // 3. user.role matches requiredRole (or is 'admin')
   
 }`,
         test_cases: {
           expected_output: 'true',
-          solution: 'role'
+          solution: 'function authorize(user, requiredRole) { return !!(user && user.is_verified && (user.role === "admin" || user.role === requiredRole)); }',
+          force_ai: true
         }
       }
     ]
@@ -131,22 +138,14 @@ function increment(count, setCount) {
         task: 'Implement the singleNonDuplicate(nums) function.',
         initial_code: `function singleNonDuplicate(nums) {
   // Implement binary search O(log n) here
-  let left = 0;
-  let right = nums.length - 1;
-  while (left < right) {
-    let mid = left + Math.floor((right - left) / 2);
-    if (mid % 2 === 1) mid--;
-    if (nums[mid] === nums[mid + 1]) {
-      left = mid + 2;
-    } else {
-      right = mid;
-    }
-  }
-  return nums[left];
+  // The array is sorted. Every element appears twice except one.
+  // Find the single element.
+  
 }`,
         test_cases: {
           expected_output: '2',
-          solution: 'while'
+          solution: 'function singleNonDuplicate(nums) { let l = 0, r = nums.length - 1; while (l < r) { let m = l + Math.floor((r - l) / 2); if (m % 2 === 1) m--; if (nums[m] === nums[m + 1]) l = m + 2; else r = m; } return nums[l]; }',
+          force_ai: true
         }
       }
     ]

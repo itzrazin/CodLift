@@ -11,10 +11,6 @@ export const clientCurriculum = [
         id: 'html_1_1',
         title: 'The Skeleton of the Web',
         instruction: `
-      {
-        id: 'html_1_1',
-        title: 'The Skeleton of the Web',
-        instruction: `
 ### What is HTML?
 
 HTML (HyperText Markup Language) provides the structural skeleton of every website. It tells the browser exactly how to arrange text, images, and other content on the screen. 
@@ -62,10 +58,6 @@ Update the text inside the existing \`<h1>\` tag in the editor to exactly read: 
         id: 'html_1_2',
         title: 'Paragraphs & Text Blocks',
         instruction: `
-      {
-        id: 'html_1_2',
-        title: 'Paragraphs & Text Blocks',
-        instruction: `
 ### The Paragraph Tag
 
 Websites consist mostly of text, but reading one giant "wall of text" is overwhelming. The **Paragraph tag (\`<p>\`)** breaks text into readable blocks.
@@ -107,10 +99,6 @@ Below the existing heading, add a new \`<p>\` tag and set its text content to ex
           force_ai: true
         }
       },
-      {
-        id: 'html_1_3',
-        title: 'Hyperlinks & Global Connectivity',
-        instruction: `
       {
         id: 'html_1_3',
         title: 'Hyperlinks & Global Connectivity',
@@ -168,10 +156,6 @@ Create a new anchor tag that says "Visit CodLift". You must set the href attribu
         id: 'html_2_1',
         title: 'Semantic Layout',
         instruction: `
-      {
-        id: 'html_2_1',
-        title: 'Semantic Layout',
-        instruction: `
 ### Semantic HTML
 
 "Semantic" means "meaningful." Early websites used generic tags (\`<div>\`) for everything, making it impossible for browsers or screen readers to know which part was the menu, the main content, or the footer. 
@@ -225,10 +209,6 @@ Wrap the existing \`<h1>\` heading exactly inside a proper \`<header>\` element.
     language: 'css',
     description: 'Transform plain HTML into beautiful, high-performance interfaces with modern CSS techniques.',
     exercises: [
-      {
-        id: 'css_1_1',
-        title: 'Painting with CSS',
-        instruction: `
       {
         id: 'css_1_1',
         title: 'Painting with CSS',
