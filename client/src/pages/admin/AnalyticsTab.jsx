@@ -12,10 +12,18 @@ const AnalyticsTab = () => {
       try {
         const res = await api.get('/admin/stats/lesson-completion');
         if (res.data.success) {
+          const detectLang = (id) => {
+            if (id.includes('html')) return 'HTML';
+            if (id.includes('css')) return 'CSS';
+            if (id.includes('js') || id.includes('javascript')) return 'JS';
+            if (id.includes('py') || id.includes('python')) return 'PY';
+            return id.split('-')[0].toUpperCase().slice(0, 4);
+          };
+
           const mappedStats = res.data.data.map(item => ({
             id: item.lesson_id,
             title: item.lesson_id.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
-            lang: item.lesson_id.includes('html') ? 'HTML' : item.lesson_id.includes('css') ? 'CSS' : item.lesson_id.includes('js') ? 'JS' : 'PY',
+            lang: detectLang(item.lesson_id),
             attempts: parseInt(item.total_attempts),
             completions: parseInt(item.total_completions),
             rate: parseFloat(item.completion_rate)
@@ -49,22 +57,32 @@ const AnalyticsTab = () => {
         <GlassCard className="p-6 border-white/5 bg-red-500/5 border-red-500/10">
           <TrendingDown className="w-6 h-6 text-red-500 mb-4" />
           <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Highest Drop-off</h4>
-          <p className="text-xl font-syne font-black text-white mt-1">JS Loops</p>
-          <p className="text-[10px] font-mono text-red-400 mt-2">72% of users stall here</p>
+          <p className="text-xl font-syne font-black text-white mt-1">
+            {stats.length ? stats.reduce((a, b) => a.rate < b.rate ? a : b)?.title : 'N/A'}
+          </p>
+          <p className="text-[10px] font-mono text-red-400 mt-2">
+            {stats.length ? `${100 - stats.reduce((a, b) => a.rate < b.rate ? a : b)?.rate}% of users stall here` : '---'}
+          </p>
         </GlassCard>
         
         <GlassCard className="p-6 border-white/5 bg-cyber-green/5 border-cyber-green/10">
           <Award className="w-6 h-6 text-cyber-green mb-4" />
           <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Golden Path</h4>
-          <p className="text-xl font-syne font-black text-white mt-1">HTML Basics</p>
-          <p className="text-[10px] font-mono text-cyber-green mt-2">89% completion efficiency</p>
+          <p className="text-xl font-syne font-black text-white mt-1">
+            {stats.length ? stats.reduce((a, b) => a.rate > b.rate ? a : b)?.title : 'N/A'}
+          </p>
+          <p className="text-[10px] font-mono text-cyber-green mt-2">
+            {stats.length ? `${stats.reduce((a, b) => a.rate > b.rate ? a : b)?.rate}% completion efficiency` : '---'}
+          </p>
         </GlassCard>
 
         <GlassCard className="p-6 border-white/5">
           <Globe className="w-6 h-6 text-blue-400 mb-4" />
           <h4 className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Platform Average</h4>
-          <p className="text-xl font-syne font-black text-white mt-1">54.2% Rate</p>
-          <p className="text-[10px] font-mono text-gray-500 mt-2">+2.4% from last month</p>
+          <p className="text-xl font-syne font-black text-white mt-1">
+            {stats.length ? (stats.reduce((sum, s) => sum + s.rate, 0) / stats.length).toFixed(1) : '0.0'}% Rate
+          </p>
+          <p className="text-[10px] font-mono text-gray-500 mt-2">Overall completion average</p>
         </GlassCard>
       </div>
 

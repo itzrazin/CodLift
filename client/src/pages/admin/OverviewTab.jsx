@@ -8,6 +8,7 @@ const OverviewTab = () => {
   const [growthData, setGrowthData] = useState([]);
   const [topLearners, setTopLearners] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [autoRefresh, setAutoRefresh] = useState(false);
 
   const fetchStats = async () => {
@@ -22,6 +23,7 @@ const OverviewTab = () => {
       setTopLearners(learnersRes.data.data);
     } catch (err) {
       console.error('Failed to fetch stats:', err);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -38,6 +40,12 @@ const OverviewTab = () => {
     }
     return () => clearInterval(interval);
   }, [autoRefresh]);
+
+  if (error) return (
+    <div className="text-center py-20 text-red-500 font-mono text-xs uppercase tracking-widest">
+      Failed to load dashboard data — check API connection
+    </div>
+  );
 
   if (loading || !stats) {
     return (

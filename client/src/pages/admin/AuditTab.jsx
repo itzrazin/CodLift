@@ -8,13 +8,17 @@ const AuditTab = () => {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [search, setSearch] = useState('');
+  const [actionFilter, setActionFilter] = useState('');
 
   const fetchLogs = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await api.get('/admin/audit-log', { params: { page } });
+      const res = await api.get('/admin/audit-log', { params: { page, search, action: actionFilter } });
       setLogs(res.data.logs);
       setTotalPages(res.data.pagination.totalPages);
+      setTotalCount(res.data.pagination.total);
     } catch (err) {
       console.error(err);
     } finally {
@@ -25,6 +29,10 @@ const AuditTab = () => {
   useEffect(() => {
     fetchLogs();
   }, [fetchLogs]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, actionFilter]);
 
   const downloadCSV = () => {
     const headers = ['Timestamp', 'Admin', 'Action', 'Target Type', 'Target ID', 'Details'];
@@ -62,6 +70,29 @@ const AuditTab = () => {
         >
           <Download className="w-3.5 h-3.5" /> EXPORT CSV
         </button>
+      </div>
+
+      <div className="flex gap-3 p-4 bg-white/5 border-b border-white/10 rounded-t-2xl">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search by admin or target..."
+            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl font-mono text-xs focus:border-cyber-cyan/50 outline-none text-white"
+          />
+        </div>
+        <select
+          value={actionFilter}
+          onChange={e => setActionFilter(e.target.value)}
+          className="px-3 py-2 bg-white/5 border border-white/10 rounded-xl font-mono text-xs outline-none focus:border-cyber-cyan/50 text-white appearance-none"
+        >
+          <option value="">ALL ACTIONS</option>
+          <option value="DELETE">DELETE</option>
+          <option value="BAN">BAN</option>
+          <option value="UNBAN">UNBAN</option>
+          <option value="BROADCAST">BROADCAST</option>
+        </select>
       </div>
 
       <GlassCard className="border-white/5 overflow-hidden">
@@ -106,7 +137,7 @@ const AuditTab = () => {
         {/* Pagination */}
         <div className="p-4 bg-white/5 border-t border-white/10 flex justify-between items-center">
           <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">
-            Showing entry {((page-1)*50)+1} - {Math.min(page*50, logs.length)}
+            Showing entry {((page-1)*50)+1} - {Math.min(page*50, totalCount)} of {totalCount}
           </p>
           <div className="flex gap-2">
             <button 

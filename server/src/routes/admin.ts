@@ -43,6 +43,7 @@ router.put('/inquiries/:inquiryId/status', adminController.updateInquiryStatus);
 // Broadcast & Announcements
 router.post('/broadcast/email', broadcastLimiter, adminController.broadcastEmail);
 router.post('/announcements', adminController.createAnnouncement);
+router.patch('/announcements/:id/toggle', adminController.toggleAnnouncement);
 router.delete('/announcements/:id', adminController.deleteAnnouncement);
 
 // Audit Log

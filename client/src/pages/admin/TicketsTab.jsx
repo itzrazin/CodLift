@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GlassCard } from '../../components/ui/Core';
-import { Mail, Clock, CheckCircle2, MessageSquare, Send, Trash2 } from 'lucide-react';
+import { Mail, Clock, CheckCircle2, MessageSquare, Send } from 'lucide-react';
 import api from '../../api/axios';
 
 const TicketsTab = () => {
@@ -9,6 +9,18 @@ const TicketsTab = () => {
   const [selectedInquiry, setSelectedInquiry] = useState(null);
   const [replyText, setReplyText] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const showError = (msg) => {
+    setErrorMsg(msg);
+    setTimeout(() => setErrorMsg(''), 4000);
+  };
+
+  const showSuccess = (msg) => {
+    setSuccessMsg(msg);
+    setTimeout(() => setSuccessMsg(''), 4000);
+  };
 
   const fetchInquiries = async () => {
     try {
@@ -35,8 +47,9 @@ const TicketsTab = () => {
       if (selectedInquiry?.id === id) {
         setSelectedInquiry({ ...selectedInquiry, status });
       }
+      showSuccess('Status updated');
     } catch (err) {
-      alert('Update failed');
+      showError('Update failed');
     }
   };
 
@@ -46,10 +59,10 @@ const TicketsTab = () => {
     try {
       await api.post(`/admin/inquiries/${selectedInquiry.id}/reply`, { message: replyText });
       setReplyText('');
-      alert('Reply sent via email');
+      showSuccess('Reply sent via email');
       fetchInquiries();
     } catch (err) {
-      alert('Failed to send reply');
+      showError('Failed to send reply');
     } finally {
       setSendingReply(false);
     }
@@ -62,6 +75,8 @@ const TicketsTab = () => {
       {/* Ticket List */}
       <div className="w-full lg:w-1/3 flex flex-col gap-4 overflow-y-auto custom-scrollbar pr-2">
         <h3 className="text-xs font-black text-gray-500 uppercase tracking-[0.2em] mb-2">Open Tickets</h3>
+        {errorMsg && <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-mono text-[10px] text-center uppercase tracking-[0.2em] animate-pulse">{errorMsg}</div>}
+        {successMsg && <div className="p-4 rounded-xl bg-cyber-green/10 border border-cyber-green/20 text-cyber-green font-mono text-[10px] text-center uppercase tracking-[0.2em]">{successMsg}</div>}
         {inquiries.map((ticket) => (
           <button
             key={ticket.id}

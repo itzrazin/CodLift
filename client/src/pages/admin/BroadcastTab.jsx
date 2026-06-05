@@ -7,6 +7,7 @@ const BroadcastTab = () => {
   const [audience, setAudience] = useState('all');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [priority, setPriority] = useState('Normal');
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -26,7 +27,7 @@ const BroadcastTab = () => {
     setSending(true);
     setShowConfirm(false);
     try {
-      await api.post('/admin/broadcast/email', { audience, subject, message });
+      await api.post('/admin/broadcast/email', { audience, subject, message, priority });
       setSuccess(true);
       setSubject('');
       setMessage('');
@@ -94,7 +95,14 @@ const BroadcastTab = () => {
               <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest ml-1">Priority Level</label>
               <div className="flex gap-2">
                 {['Normal', 'High', 'Critical'].map(level => (
-                  <div key={level} className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-center text-[10px] font-black text-gray-400 cursor-pointer hover:bg-white/10 transition-all uppercase tracking-tighter">
+                  <div
+                    key={level}
+                    onClick={() => setPriority(level)}
+                    className={`flex-1 border rounded-xl px-4 py-3 text-center text-[10px] font-black cursor-pointer transition-all uppercase tracking-tighter
+                      ${priority === level
+                        ? 'bg-cyber-pink/20 border-cyber-pink/50 text-cyber-pink'
+                        : 'bg-white/5 border-white/10 text-gray-400 hover:bg-white/10'}`}
+                  >
                     {level}
                   </div>
                 ))}

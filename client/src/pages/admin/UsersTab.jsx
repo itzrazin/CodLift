@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { GlassCard } from '../../components/ui/Core';
 import { 
   Search, Filter, MoreVertical, 
-  ShieldAlert, UserPlus, Mail, Trash2, 
-  RotateCcw, Eye, ShieldCheck, ChevronLeft, ChevronRight
+  ShieldAlert, Trash2, 
+  RotateCcw, ShieldCheck, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import api from '../../api/axios';
 
@@ -25,6 +25,8 @@ const UsersTab = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState('');
   
+  const [showUserMenu, setShowUserMenu] = useState(null);
+
   const [errorMsg, setErrorMsg] = useState('');
 
   const showError = (msg) => {
@@ -185,14 +187,24 @@ const UsersTab = () => {
                   </td>
                   <td className="py-4 px-4 text-gray-500">{new Date(user.created_at).toLocaleDateString()}</td>
                   <td className="py-4 px-4 text-right">
-                    <div className="flex justify-end gap-2">
-                      <button 
-                        onClick={() => { setSelectedUser(user); setShowBanModal(true); }}
-                        className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-red-500 transition-all"
-                        title="Ban User"
-                      >
-                        <ShieldAlert className="w-4 h-4" />
-                      </button>
+                    <div className="flex justify-end gap-2 relative">
+                      {user.is_banned ? (
+                        <button
+                          onClick={() => handleUnban(user.id)}
+                          className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-cyber-green transition-all"
+                          title="Unban User"
+                        >
+                          <RotateCcw className="w-4 h-4" />
+                        </button>
+                      ) : (
+                        <button 
+                          onClick={() => { setSelectedUser(user); setShowBanModal(true); }}
+                          className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-red-500 transition-all"
+                          title="Ban User"
+                        >
+                          <ShieldAlert className="w-4 h-4" />
+                        </button>
+                      )}
                       <button 
                         onClick={() => { setSelectedUser(user); setShowDeleteModal(true); }}
                         className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-red-600 transition-all"
@@ -200,9 +212,21 @@ const UsersTab = () => {
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
-                      <button className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all">
+                      <button 
+                        onClick={() => setShowUserMenu(showUserMenu === user.id ? null : user.id)}
+                        className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all"
+                      >
                         <MoreVertical className="w-4 h-4" />
                       </button>
+                      {showUserMenu === user.id && (
+                        <div className="absolute right-0 top-full mt-2 w-48 bg-[#0a0f1c] border border-white/10 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-200">
+                          <button onClick={() => { console.log('View Profile', user.id); setShowUserMenu(null); }} className="w-full text-left px-4 py-2 hover:bg-white/5 text-[10px] font-mono text-gray-300">View Profile</button>
+                          <button onClick={() => { api.put(`/admin/users/${user.id}/role`, { role: user.role === 'admin' ? 'user' : 'admin' }).then(fetchUsers); setShowUserMenu(null); }} className="w-full text-left px-4 py-2 hover:bg-white/5 text-[10px] font-mono text-gray-300">{user.role === 'admin' ? 'Demote to User' : 'Promote to Admin'}</button>
+                          <button onClick={() => { api.put(`/admin/users/${user.id}/reset-xp`).then(fetchUsers); setShowUserMenu(null); }} className="w-full text-left px-4 py-2 hover:bg-white/5 text-[10px] font-mono text-gray-300">Reset XP</button>
+                          <button onClick={() => { api.put(`/admin/users/${user.id}/reset-progress`).then(fetchUsers); setShowUserMenu(null); }} className="w-full text-left px-4 py-2 hover:bg-white/5 text-[10px] font-mono text-gray-300">Reset Progress</button>
+                          <button onClick={() => { api.post(`/admin/users/${user.id}/send-email`, { subject: 'Admin Notice', message: 'Hello' }).then(() => console.log('Sent')); setShowUserMenu(null); }} className="w-full text-left px-4 py-2 hover:bg-white/5 text-[10px] font-mono text-gray-300">Send Email</button>
+                        </div>
+                      )}
                     </div>
                   </td>
                 </tr>
