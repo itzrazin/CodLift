@@ -7,6 +7,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: false,
+    chunkSizeWarningLimit: 5000,
+    rollupOptions: {
+      checks: {
+        pluginTimings: false
+      }
+    }
   },
   server: {
     port: 5173,

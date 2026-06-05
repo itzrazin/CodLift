@@ -802,3 +802,11 @@ export const getLessonsByLevel = (level) =>
 // Helper: get a specific lesson
 export const getLessonById = (id) =>
   clientCurriculum.find(l => l.id === id);
+
+// Helper: get the next lesson after the given lesson ID.
+// Returns null if currentId is the last lesson in the curriculum.
+export const getNextLesson = (currentId) => {
+  const idx = clientCurriculum.findIndex(l => l.id === currentId);
+  if (idx === -1 || idx >= clientCurriculum.length - 1) return null;
+  return clientCurriculum[idx + 1];
+};
