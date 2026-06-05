@@ -1,4 +1,10 @@
 import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load .env from parent directory
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+dotenv.config();
 
 // 1. Centralized Transporter Configuration
 const transporter = nodemailer.createTransport({
@@ -11,7 +17,7 @@ const transporter = nodemailer.createTransport({
   },
   // Default 'from' so you don't repeat it in every function
   defaults: {
-    from: '"CodLift" <noreply@codlift.site>'
+    from: '"CodLift" <razinisop123@gmail.com>'
   }
 } as any);
 
@@ -24,6 +30,16 @@ transporter.verify((error, success) => {
   }
 });
 
+const escapeHtml = (str: string) => {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 /**
  * Sends a high-energy welcome email to new users
  */
@@ -33,7 +49,7 @@ export const sendWelcomeEmail = async (email: string, username: string) => {
     subject: 'Welcome to CodLift! 🚀',
     html: `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #080b10; color: #ffffff; border-radius: 20px; border: 1px solid #1a1e26;">
-        <h1 style="color: #00f5d4; font-size: 32px; text-align: center;">Welcome, ${username}!</h1>
+        <h1 style="color: #00f5d4; font-size: 32px; text-align: center;">Welcome, ${escapeHtml(username)}!</h1>
         <p style="font-size: 18px; line-height: 1.6; text-align: center; color: #cbd5e1;">
           You've just taken your first step towards becoming a coding master. 
           Get ready for a gamified, high-energy learning experience.
@@ -63,12 +79,12 @@ export const sendWelcomeEmail = async (email: string, username: string) => {
  */
 export const sendLoginAlert = async (email: string, username: string) => {
   const mailOptions = {
-    from: '"CodLift Security" <security@codlift.site>',
+    from: '"CodLift Security" <razinisop123@gmail.com>',
     to: email,
     subject: 'New Login to CodLift 🛡️',
     html: `
       <div style="font-family: sans-serif; padding: 20px; color: #333;">
-        <p>Hi <strong>${username}</strong>,</p>
+        <p>Hi <strong>${escapeHtml(username)}</strong>,</p>
         <p>There was a new login to your CodLift account. If this wasn't you, please reset your password immediately.</p>
         <p>Stay safe,<br>The CodLift Security Team</p>
       </div>
@@ -93,7 +109,7 @@ export const sendCustomEmail = async (to: string, subject: string, message: stri
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #080b10; color: #ffffff; border-radius: 20px;">
         <h2 style="color: #a855f7;">Message from CodLift Support</h2>
         <div style="font-size: 16px; line-height: 1.6; color: #cbd5e1; white-space: pre-wrap;">
-          ${message}
+          ${escapeHtml(message)}
         </div>
         <p style="color: #64748b; font-size: 12px; margin-top: 40px; border-top: 1px solid #1a1e26; padding-top: 20px;">
           This is an official communication from CodLift.
@@ -126,7 +142,7 @@ export const sendBulkEmail = async (recipients: string[], subject: string, messa
         <div style="font-family: sans-serif; padding: 30px; background-color: #080b10; color: #ffffff;">
           <h1 style="color: #00f5d4;">CodLift Platform Announcement</h1>
           <div style="font-size: 16px; line-height: 1.6; white-space: pre-wrap;">
-            ${message}
+            ${escapeHtml(message)}
           </div>
         </div>
       `,

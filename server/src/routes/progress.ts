@@ -3,6 +3,14 @@ import { authMiddleware, AuthenticatedRequest } from '../middleware/authMiddlewa
 import * as db from '../db';
 import { curriculum } from '../data/curriculum';
 import levelsData from '../data/levels.json';
+import { consumeVerificationToken } from '../utils/verificationStore';
+import rateLimit from 'express-rate-limit';
+
+const progressLimiter = rateLimit({
+  windowMs: 5000,
+  max: 2,
+  message: { error: 'Too many progress updates, please try again later.' }
+});
 
 const router = express.Router();
 
@@ -44,13 +52,36 @@ router.get('/', authMiddleware, async (req: AuthenticatedRequest, res: Response)
 });
 
 // POST /api/progress/update-progress - Record lesson completion and award XP
-router.post('/update-progress', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
+router.post('/update-progress', authMiddleware, progressLimiter, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { lesson_id, exercise_id, code_submitted, solve_time_ms } = req.body;
+    const { lesson_id, exercise_id, code_submitted, solve_time_ms, verificationToken } = req.body;
     const userId = req.user!.id;
 
-    if (!lesson_id || !exercise_id) {
-      return res.status(400).json({ error: 'Missing lesson_id or exercise_id' });
+    if (!lesson_id || !exercise_id || !verificationToken) {
+      return res.status(400).json({ error: 'Missing lesson_id, exercise_id, or verification token' });
+    }
+
+    if (code_submitted && code_submitted.length > 50000) {
+      return res.status(400).json({ error: 'Code submitted is too large' });
+    }
+
+    // 0. Resolve the actual string ID for the token (since client sends numerical index)
+    let tokenExerciseId = exercise_id;
+    const lesson = curriculum.find(l => l.id === lesson_id);
+    if (lesson && !isNaN(parseInt(exercise_id))) {
+      const idx = parseInt(exercise_id) - 1;
+      if (lesson.exercises[idx]) {
+        tokenExerciseId = lesson.exercises[idx].id;
+      }
+    } else if (lesson_id === 'arena') {
+      // For arena, client usually sends the string ID directly, but let's be safe.
+      tokenExerciseId = exercise_id;
+    }
+
+    // 0.5 Verify the token
+    const isValidToken = consumeVerificationToken(verificationToken, userId, lesson_id, tokenExerciseId);
+    if (!isValidToken) {
+      return res.status(403).json({ error: 'Invalid or expired verification token. Please re-verify your code.' });
     }
 
     // 1. Check if already completed

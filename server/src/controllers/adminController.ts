@@ -132,7 +132,7 @@ export const getLessonCompletionStats = async (req: AuthenticatedRequest, res: R
 export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 20;
+    const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
     const offset = (page - 1) * limit;
     const search = req.query.search as string || '';
     const role = req.query.role as string || 'all';
@@ -229,10 +229,14 @@ export const updateUserRole = async (req: AuthenticatedRequest, res: Response) =
     if (!['admin', 'user'].includes(role)) {
       return res.status(400).json({ error: 'Invalid role' });
     }
+    const target = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    if (target.rows[0]?.role === 'admin' && req.user!.email !== 'admin@codlift.site') {
+      return res.status(403).json({ error: 'Cannot modify another admin account' });
+    }
 
     await db.query('UPDATE users SET role = $1 WHERE id = $2', [role, userId]);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'UPDATE_USER_ROLE', 'user', userId, { role });
 
     res.json({ success: true, message: 'Role updated' });
@@ -248,6 +252,10 @@ export const banUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId } = req.params;
     const { reason } = req.body;
+    const target = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    if (target.rows[0]?.role === 'admin' && req.user!.email !== 'admin@codlift.site') {
+      return res.status(403).json({ error: 'Cannot ban another admin account' });
+    }
 
     if (!reason) return res.status(400).json({ error: 'Ban reason is required' });
 
@@ -256,7 +264,7 @@ export const banUser = async (req: AuthenticatedRequest, res: Response) => {
       [reason, userId]
     );
 
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'BAN_USER', 'user', userId, { reason });
 
     res.json({ success: true, message: 'User banned' });
@@ -273,7 +281,7 @@ export const unbanUser = async (req: AuthenticatedRequest, res: Response) => {
     const { userId } = req.params;
     await db.query('UPDATE users SET is_banned = false, ban_reason = NULL, banned_at = NULL WHERE id = $1', [userId]);
 
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'UNBAN_USER', 'user', userId);
 
     res.json({ success: true, message: 'User unbanned' });
@@ -295,7 +303,7 @@ export const sendEmailToUser = async (req: AuthenticatedRequest, res: Response) 
 
     await mailer.sendCustomEmail(user.email, subject, message);
 
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'SEND_EMAIL', 'user', userId, { subject });
 
     res.json({ success: true, message: 'Email sent' });
@@ -310,7 +318,7 @@ export const sendEmailToUser = async (req: AuthenticatedRequest, res: Response) 
 export const getAllInquiries = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const limit = Math.min(parseInt(req.query.limit as string) || 10, 100);
     const offset = (page - 1) * limit;
     const status = req.query.status as string || 'all';
 
@@ -363,7 +371,7 @@ export const replyToInquiry = async (req: AuthenticatedRequest, res: Response) =
 
     await db.query("UPDATE inquiries SET status = 'In Progress' WHERE id = $1 AND status = 'Pending'", [inquiryId]);
 
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'REPLY_INQUIRY', 'inquiry', inquiryId);
 
     res.json({ success: true, message: 'Reply sent' });
@@ -386,7 +394,7 @@ export const updateInquiryStatus = async (req: AuthenticatedRequest, res: Respon
 
     await db.query('UPDATE inquiries SET status = $1 WHERE id = $2', [status, inquiryId]);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'UPDATE_INQUIRY_STATUS', 'inquiry', inquiryId, { status });
 
     res.json({ success: true, message: 'Status updated' });
@@ -402,10 +410,14 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { userId } = req.params;
     if (req.user?.id === userId) return res.status(400).json({ error: 'Cannot delete self' });
+    const target = await db.query('SELECT role FROM users WHERE id = $1', [userId]);
+    if (target.rows[0]?.role === 'admin' && req.user!.email !== 'admin@codlift.site') {
+      return res.status(403).json({ error: 'Cannot delete another admin account' });
+    }
 
     await db.query('DELETE FROM users WHERE id = $1', [userId]);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'DELETE_USER', 'user', userId);
 
     res.json({ success: true, message: 'User deleted' });
@@ -420,7 +432,7 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
 export const getAuditLog = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 50;
+    const limit = Math.min(parseInt(req.query.limit as string) || 50, 100);
     const offset = (page - 1) * limit;
 
     const total = (await db.query('SELECT COUNT(*) FROM admin_audit_log')).rows[0].count;
@@ -452,7 +464,7 @@ export const resetUserXP = async (req: AuthenticatedRequest, res: Response) => {
     const { userId } = req.params;
     await db.query('UPDATE users SET xp = 0, xp_total = 0 WHERE id = $1', [userId]);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'RESET_XP', 'user', userId);
     
     res.json({ success: true, message: 'XP reset successfully' });
@@ -469,7 +481,7 @@ export const resetUserProgress = async (req: AuthenticatedRequest, res: Response
     const { userId } = req.params;
     await db.query('DELETE FROM progress WHERE user_id = $1', [userId]);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'RESET_PROGRESS', 'user', userId);
     
     res.json({ success: true, message: 'Progress reset successfully' });
@@ -486,15 +498,22 @@ export const broadcastEmail = async (req: AuthenticatedRequest, res: Response) =
     const { audience, subject, message } = req.body;
     
     let query = 'SELECT email FROM users WHERE is_banned = false';
-    if (audience === 'admins') query += " AND role = 'admin'";
-    else if (['beginner', 'pro', 'master'].includes(audience)) query += ` AND level = '${audience}'`;
-    
-    const result = await db.query(query);
+    const params: any[] = [];
+    if (audience === 'admins') {
+      query += ' AND role = $1';
+      params.push('admin');
+    } else if (['beginner', 'pro', 'master'].includes(audience)) {
+      query += ' AND level = $1';
+      params.push(audience);
+    } else if (audience !== 'all') {
+      return res.status(400).json({ error: 'Invalid audience parameter' });
+    }
+    const result = await db.query(query, params);
     const emails = result.rows.map(r => r.email);
     
     await mailer.sendBulkEmail(emails, subject, message);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'BROADCAST_EMAIL', 'platform', 'all', { audience, subject });
     
     res.json({ success: true, message: `Email sent to ${emails.length} users` });
@@ -514,7 +533,7 @@ export const createAnnouncement = async (req: AuthenticatedRequest, res: Respons
       [title, message, type, expires_at, req.user!.id]
     );
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'CREATE_ANNOUNCEMENT', 'announcement', 'new');
     
     res.json({ success: true, message: 'Announcement created' });
@@ -543,7 +562,7 @@ export const deleteAnnouncement = async (req: AuthenticatedRequest, res: Respons
     const { id } = req.params;
     await db.query('DELETE FROM announcements WHERE id = $1', [id]);
     
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction({ id: req.user!.id, email: adminEmail }, 'DELETE_ANNOUNCEMENT', 'announcement', id);
 
     res.json({ success: true, message: 'Announcement deleted' });
@@ -565,7 +584,7 @@ export const toggleAnnouncement = async (req: AuthenticatedRequest, res: Respons
     );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Announcement not found' });
 
-    const adminEmail = (await db.query('SELECT email FROM users WHERE id = $1', [req.user!.id])).rows[0].email;
+    const adminEmail = req.user!.email || 'unknown';
     await logAdminAction(
       { id: req.user!.id, email: adminEmail },
       result.rows[0].is_active ? 'ACTIVATE_ANNOUNCEMENT' : 'DEACTIVATE_ANNOUNCEMENT',

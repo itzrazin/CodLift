@@ -3,6 +3,9 @@ import axios from 'axios';
 import crypto from 'crypto';
 import { authMiddleware, AuthenticatedRequest } from '../middleware/authMiddleware';
 import { validateExercise } from '../utils/manualValidators';
+import { curriculum } from '../data/curriculum';
+import { arenaChallenges } from '../data/challenges';
+import { createVerificationToken } from '../utils/verificationStore';
 
 const router = express.Router();
 
@@ -98,7 +101,7 @@ router.post('/', async (req: Request, res: Response) => {
 
 // ─── POST /execute/verify — Validate ─────────────────────────────────────────
 router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Response) => {
-  const { id, code, topic, instruction, task, language, test_cases, start_time } = req.body;
+  const { id, code, language } = req.body; // VULN-AUTH-02: IGNORING client test_cases
 
   if (!code || typeof code !== 'string' || code.trim().length === 0) {
     return res.status(400).json({
@@ -125,7 +128,35 @@ router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Re
 
   recordSubmission(userId, id || language, code);
 
-  // ── Step 1: Deterministic Manual Validation ───────────────────────────────
+  // ── Step 1: Find Exercise Server-Side ─────────────────────────────────────
+  let serverTestCases: any = null;
+  let foundLessonId: string = 'arena'; // default if arena
+
+  for (const lesson of curriculum) {
+    const exercise = lesson.exercises.find(e => e.id === id);
+    if (exercise) {
+      serverTestCases = exercise.test_cases;
+      foundLessonId = lesson.id;
+      break;
+    }
+  }
+
+  // Check arena challenges if not in curriculum
+  if (!serverTestCases) {
+    for (const challenge of arenaChallenges) {
+      const exercise = challenge.exercises.find(e => e.id === id);
+      if (exercise) {
+        serverTestCases = exercise.test_cases;
+        break;
+      }
+    }
+  }
+
+  if (!serverTestCases) {
+    return res.status(400).json({ isCorrect: false, feedback: '### ❌ Invalid Exercise ID' });
+  }
+
+  // ── Step 2: Deterministic Manual Validation ───────────────────────────────
   if (id || language) {
     const manualResult = validateExercise(id, code, language);
 
@@ -133,11 +164,12 @@ router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Re
       return res.json(manualResult);
     }
     if (manualResult && manualResult.isCorrect) {
-      return res.json(manualResult);
+      const token = createVerificationToken(userId, id, foundLessonId);
+      return res.json({ ...manualResult, verificationToken: token });
     }
   }
 
-  // ── Step 2: Run code through Piston ──────────────────────────────────────
+  // ── Step 3: Run code through Piston ──────────────────────────────────────
   let actualOutput = '';
   const lang = getPistonLang(language);
 
@@ -147,7 +179,7 @@ router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Re
         language: lang,
         version:  '*',
         files:    [{ content: code }],
-        stdin:    test_cases?.stdin || ''
+        stdin:    serverTestCases?.stdin || ''
       }, { timeout: PISTON_TIMEOUT });
 
       actualOutput    = runRes.data.run.stdout || '';
@@ -172,9 +204,9 @@ router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Re
     actualOutput = code;
   }
 
-  // ── Step 3: Deterministic Fallback Verification ───────────────────────────
-  const expected     = test_cases?.expected_output || '';
-  const solutionText = test_cases?.solution || '';
+  // ── Step 4: Deterministic Fallback Verification ───────────────────────────
+  const expected     = serverTestCases?.expected_output || '';
+  const solutionText = serverTestCases?.solution || '';
 
   let isCorrect = false;
 
@@ -189,8 +221,14 @@ router.post('/verify', authMiddleware, async (req: AuthenticatedRequest, res: Re
     isCorrect = true;
   }
 
+  let verificationToken = undefined;
+  if (isCorrect) {
+    verificationToken = createVerificationToken(userId, id, foundLessonId);
+  }
+
   return res.json({
     isCorrect,
+    verificationToken,
     feedback: isCorrect
       ? '### ✅ Accepted\n\nYour code successfully fulfills the requirements.'
       : `### ❌ Rejected\n\nYour code must include the required output: \`${expected}\``

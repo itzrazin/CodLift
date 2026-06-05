@@ -6,6 +6,7 @@ export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     role?: string;
+    email?: string;
   };
 }
 
@@ -36,7 +37,7 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string };
     
     // Check if user exists and is not banned
-    const userResult = await db.query('SELECT id, role, is_banned FROM users WHERE id = $1', [decoded.id]);
+    const userResult = await db.query('SELECT id, role, email, is_banned FROM users WHERE id = $1', [decoded.id]);
     const user = userResult.rows[0];
 
     if (!user) {
@@ -50,7 +51,8 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
     // If it passes, attach user data to req.user
     req.user = { 
       id: user.id,
-      role: user.role
+      role: user.role,
+      email: user.email
     };
     
     // Call next() to pass control to the actual route handler

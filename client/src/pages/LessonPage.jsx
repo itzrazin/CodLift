@@ -155,7 +155,6 @@ const LessonPage = () => {
       : null;
 
     try {
-      // 1. Verify code via AI/Sandbox
       const res = await api.post('/execute/verify', {
         id:          exercise.id,
         code,
@@ -163,7 +162,6 @@ const LessonPage = () => {
         instruction: exercise.instruction,
         task:        exercise.task,
         language:    lesson.language,
-        test_cases:  exercise.test_cases,
         start_time:  startTimeRef.current
       });
 
@@ -171,9 +169,9 @@ const LessonPage = () => {
 
       if (data.isCorrect) {
         // 2. Try to save progress — but NEVER block the user if it fails
-        if (token) {
+        if (token && data.verificationToken) {
           try {
-            await submitProgress(lesson.id, exercise.number, code, solveTimeMs);
+            await submitProgress(lesson.id, exercise.number, code, solveTimeMs, data.verificationToken);
           } catch (err) {
             // Progress save failed (e.g. server down) — log but don't block
             console.warn('Progress sync failed (non-blocking):', err);

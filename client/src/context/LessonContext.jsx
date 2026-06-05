@@ -48,7 +48,7 @@ export const LessonProvider = ({ children }) => {
   }, [fetchProgress]);
 
   // Centralized updateUserProgress function
-  const submitProgress = async (trackId, exerciseId, codeSubmitted, solveTimeMs) => {
+  const submitProgress = async (trackId, exerciseId, codeSubmitted, solveTimeMs, verificationToken) => {
     if (!token) {
       return { success: false, error: 'No authentication token' };
     }
@@ -58,7 +58,8 @@ export const LessonProvider = ({ children }) => {
         lesson_id: trackId,
         exercise_id: exerciseId.toString(),
         code_submitted: codeSubmitted,
-        solve_time_ms: solveTimeMs
+        solve_time_ms: solveTimeMs,
+        verificationToken: verificationToken
       });
 
       if (res.data.success) {
