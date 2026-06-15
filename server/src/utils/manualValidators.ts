@@ -1,11 +1,16 @@
 /**
  * CodLift Manual Verification Library
  * Covers ALL lessons: HTML Basics, HTML Structure, CSS Styling, CSS Flexbox,
- * CSS Grid, JS Fundamentals, and Arena challenges.
+ * CSS Grid, JS Fundamentals, and all Pro Track lessons:
+ * DOM Manipulation, Events & Forms, Async JS, Closures, Array Methods, OOP & Classes.
  * Predicts every plausible user error — but passes immediately on correct code.
  */
 
-const FULL_DOC = new Set(['html_1_1', 'dom_1_1', 'dom_1_2', 'events_1_1', 'events_1_2']);
+const FULL_DOC = new Set([
+  'html_1_1',
+  'dom_1_1', 'dom_1_2', 'dom_1_3',
+  'events_1_1', 'events_1_2', 'events_1_3',
+]);
 
 // ─── CORE HELPERS ─────────────────────────────────────────────────────────────
 
@@ -663,6 +668,649 @@ const V: Record<string, (code: string) => string[]> = {
     if (!hasReturn) e.push('Concept Misunderstanding: Missing `return` statement. The function must return the unique element.');
     if (code.includes('for') && !code.includes('while') && code.match(/for\s*\(\s*let\s+i\s*=\s*0/))
       e.push('Logical Error: A simple `for` loop is O(n) time. The task requires O(log n) binary search with `while (left < right)`.');
+    return e;
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRO TRACK — DOM MANIPULATION
+  // ══════════════════════════════════════════════════════════════════════════
+
+  dom_1_1(code) {
+    const e: string[] = [];
+    const lc = code.toLowerCase();
+
+    const hasQuery   = code.includes('querySelector');
+    const hasOutput  = code.includes("'#output'") || code.includes('"#output"');
+    const hasText    = code.includes('textContent');
+    const hasValue   = code.includes('DOM Selected!');
+
+    if (hasQuery && hasOutput && hasText && hasValue) return [];
+
+    if (!hasQuery) {
+      if (code.includes('getElementById'))
+        e.push('Logical Error: `getElementById` works but this exercise requires `querySelector`. Use `document.querySelector(\'#output\')`.');
+      else if (code.includes('getElement'))
+        e.push('Concept Misunderstanding: `getElementByClassName/TagName` returns a collection, not a single element. Use `document.querySelector(\'#output\')`.');
+      else
+        e.push('Missing `document.querySelector()`. Use it to select the `#output` element.');
+    }
+    if (hasQuery && !hasOutput) {
+      if (code.includes("querySelector('output'") || code.includes('querySelector("output"'))
+        e.push('Syntax Pitfall: Selecting by ID requires a `#` prefix. Use `\'#output\'` not `\'output\'`.');
+      else if (code.includes("querySelector('.output'") || code.includes('querySelector(".output"'))
+        e.push('Syntax Pitfall: `.output` selects by class. For an ID, use `#output` with a hash symbol.');
+      else
+        e.push('Logical Error: Target the correct element using `document.querySelector(\'#output\')`.');
+    }
+    if (!hasText) {
+      if (code.includes('innerHTML'))
+        e.push('Concept Misunderstanding: `innerHTML` works but exposes XSS risks. Prefer `textContent` for setting plain text.');
+      else if (code.includes('innerText'))
+        e.push('Concept Misunderstanding: `innerText` is similar but triggers layout reflow. Prefer `textContent` for this exercise.');
+      else
+        e.push('Missing `.textContent` assignment. Set `element.textContent = \'DOM Selected!\'` to update the text.');
+    }
+    if (hasText && !hasValue)
+      e.push('Logical Error: The text must be exactly `"DOM Selected!"`. Check capitalization and punctuation.');
+    return e;
+  },
+
+  dom_1_2(code) {
+    const e: string[] = [];
+
+    const hasQuery  = code.includes('querySelector');
+    const hasBox    = code.includes("'#box'") || code.includes('"#box"');
+    const hasBG     = code.includes('backgroundColor') || code.includes('background-color');
+    const hasBGVal  = code.includes('crimson');
+    const hasColor  = code.includes('.style.color');
+    const hasColorV = code.includes('white');
+
+    if (hasQuery && hasBox && hasBG && hasBGVal && hasColor && hasColorV) return [];
+
+    if (!hasQuery)
+      e.push('Missing `document.querySelector()`. Select the element with `document.querySelector(\'#box\')`.');
+    if (hasQuery && !hasBox)
+      e.push('Logical Error: Select the correct element: `document.querySelector(\'#box\')`.');
+    if (!hasBG) {
+      if (code.includes('background-color'))
+        e.push('Syntax Pitfall: In JavaScript `style` object, use camelCase: `backgroundColor` not `background-color`. Hyphens are invalid property names.');
+      else
+        e.push('Missing `.style.backgroundColor` assignment. Set `element.style.backgroundColor = \'crimson\'`.');
+    }
+    if (hasBG && !hasBGVal)
+      e.push('Logical Error: The background color value must be exactly `\'crimson\'`. Check the string value.');
+    if (!hasColor)
+      e.push('Missing `.style.color` assignment. Also set the text color: `element.style.color = \'white\'`.');
+    if (hasColor && !hasColorV)
+      e.push('Logical Error: The text color value must be exactly `\'white\'`.');
+    if (code.includes('style.background-color'))
+      e.push('Syntax Pitfall: `style.background-color` is a syntax error in JavaScript. Use camelCase: `style.backgroundColor`.');
+    return e;
+  },
+
+  dom_1_3(code) {
+    const e: string[] = [];
+
+    const hasCreate    = code.includes('createElement');
+    const hasPTag      = code.includes("createElement('p')") || code.includes('createElement("p")');
+    const hasText      = code.includes('textContent');
+    const hasTextVal   = code.includes('I was created by JS');
+    const hasAppend    = code.includes('appendChild');
+    const hasContainer = code.includes('#container') || code.includes('container');
+
+    if (hasCreate && hasPTag && hasText && hasTextVal && hasAppend && hasContainer) return [];
+
+    if (!hasCreate) {
+      if (code.includes('innerHTML'))
+        e.push('Concept Misunderstanding: `innerHTML` can work but the task requires `document.createElement(\'p\')` — the proper DOM method.');
+      else
+        e.push('Missing `document.createElement(\'p\')`. Create the element with this method first.');
+    }
+    if (hasCreate && !hasPTag)
+      e.push('Logical Error: You must create a `<p>` element. Use `document.createElement(\'p\')`.');
+    if (!hasText)
+      e.push('Missing `.textContent` assignment. Set `element.textContent = \'I was created by JS\'` after creating it.');
+    if (hasText && !hasTextVal)
+      e.push('Logical Error: The textContent must be exactly `"I was created by JS"`. Check spelling and capitalization.');
+    if (!hasAppend) {
+      if (code.includes('prepend'))
+        e.push('Logical Error: `prepend` inserts at the beginning. The task requires `appendChild` to add at the end.');
+      else if (code.includes('innerHTML'))
+        e.push('Concept Misunderstanding: You cannot `appendChild` an HTML string. Create a real element with `createElement` then use `appendChild`.');
+      else
+        e.push('Missing `appendChild()`. After creating the element, attach it to the page: `container.appendChild(p)`.');
+    }
+    if (hasCreate && hasAppend && !hasContainer)
+      e.push('Logical Error: Append the new element to `#container`. Use `document.querySelector(\'#container\').appendChild(p)`.');
+    if (hasCreate && !hasAppend && hasContainer)
+      e.push('Logical Error: You selected the container but forgot to call `appendChild()`. The element is only in memory — not on the page yet!');
+    return e;
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRO TRACK — EVENTS & FORMS
+  // ══════════════════════════════════════════════════════════════════════════
+
+  events_1_1(code) {
+    const e: string[] = [];
+
+    const hasListener = code.includes('addEventListener');
+    const hasClick    = code.includes("'click'") || code.includes('"click"');
+    const hasBtn      = code.includes("'#myBtn'") || code.includes('"#myBtn"');
+    const hasResult   = code.includes("'#result'") || code.includes('"#result"');
+    const hasText     = code.includes('textContent');
+    const hasValue    = code.includes('Button clicked!');
+
+    if (hasListener && hasClick && hasBtn && hasResult && hasText && hasValue) return [];
+
+    if (!hasListener) {
+      if (code.includes('.onclick'))
+        e.push('Concept Misunderstanding: `element.onclick = fn` is older style. Use `addEventListener(\'click\', fn)` — it supports multiple listeners and is the professional approach.');
+      else
+        e.push('Missing `addEventListener`. Attach the event listener: `btn.addEventListener(\'click\', function() { ... })`.');
+    }
+    if (!hasClick) {
+      if (code.includes('"click"') || code.includes("'click'"))  {
+        // already present
+      } else if (code.includes('mouse') || code.includes('hover'))
+        e.push('Logical Error: Use the event type `\'click\'` not `\'mouseover\'` or `\'hover\'`.');
+      else if (hasListener)
+        e.push('Missing event type `\'click\'`. First argument to `addEventListener` must be the event name as a string: `\'click\'`.');
+    }
+    if (!hasBtn)
+      e.push('Logical Error: Select the correct button: `document.querySelector(\'#myBtn\')`.');
+    if (!hasResult)
+      e.push('Logical Error: Inside the callback, target `#result`: `document.querySelector(\'#result\').textContent = \'Button clicked!\'`.');
+    if (!hasText)
+      e.push('Missing `.textContent` assignment. Set the text: `element.textContent = \'Button clicked!\'`.');
+    if (hasText && !hasValue)
+      e.push('Logical Error: The text must be exactly `"Button clicked!"` with correct capitalization and punctuation.');
+    if (code.match(/addEventListener\s*\(\s*['"]click['"]\s*,\s*\w+\s*\(\s*\)/))
+      e.push('Syntax Pitfall: You called the function with `()` inside `addEventListener`. Remove the parentheses — pass the function reference, not its return value.');
+    return e;
+  },
+
+  events_1_2(code) {
+    const e: string[] = [];
+
+    const hasListener  = code.includes('addEventListener');
+    const hasClick     = code.includes("'click'") || code.includes('"click"');
+    const hasInput     = code.includes('nameInput') || code.includes("'#nameInput'") || code.includes('"#nameInput"');
+    const hasValue     = code.includes('.value');
+    const hasOutput    = code.includes('output');
+    const hasText      = code.includes('textContent');
+    const hasHello     = code.includes('Hello,') || code.includes("'Hello, '") || code.includes('"Hello, "');
+
+    if (hasListener && hasClick && hasInput && hasValue && hasOutput && hasText && hasHello) return [];
+
+    if (!hasListener)
+      e.push('Missing `addEventListener`. Add: `document.querySelector(\'#submitBtn\').addEventListener(\'click\', function() { ... })`.');
+    if (!hasInput)
+      e.push('Missing reference to `#nameInput`. Select it with `document.querySelector(\'#nameInput\')`.');
+    if (!hasValue) {
+      if (code.includes('innerHTML') && code.includes('input'))
+        e.push('Concept Misunderstanding: To read what the user typed, use `.value` not `.innerHTML`. Input elements store their text in `.value`.');
+      else
+        e.push('Missing `.value` property. Read user input with `document.querySelector(\'#nameInput\').value`.');
+    }
+    if (hasValue && !code.match(/\.value\s*(?!\s*=)/))
+      e.push('Logical Error: You might be assigning to `.value` instead of reading from it. Assign to `textContent` of `#output` instead.');
+    if (!hasOutput)
+      e.push('Missing reference to `#output`. Set its text: `document.querySelector(\'#output\').textContent = \'Hello, \' + val + \'!\'`.');
+    if (!hasHello)
+      e.push('Logical Error: The output must start with `"Hello, "`. Format: `\'Hello, \' + val + \'!\'`.');
+    if (hasValue && !hasListener)
+      e.push('Logical Error: You read `.value` outside an event handler. Move the code inside the `click` callback so it runs AFTER the user types.');
+    return e;
+  },
+
+  events_1_3(code) {
+    const e: string[] = [];
+
+    const hasListener  = code.includes('addEventListener');
+    const hasList      = code.includes("'#list'") || code.includes('"#list"');
+    const hasEvent     = code.match(/function\s*\(\s*event\s*\)/) || code.match(/\(\s*e\s*\)\s*=>/) || code.match(/\(\s*event\s*\)\s*=>/);
+    const hasTarget    = code.includes('event.target') || code.includes('e.target');
+    const hasTagName   = code.includes('tagName');
+    const hasLI        = code.includes("'LI'") || code.includes('"LI"');
+    const hasFontBold  = code.includes('fontWeight') && (code.includes('bold') || code.includes("'bold'"));
+
+    if (hasListener && hasList && hasEvent && hasTarget && hasTagName && hasLI && hasFontBold) return [];
+
+    if (!hasListener)
+      e.push('Missing `addEventListener`. Attach a single listener to `#list`: `document.querySelector(\'#list\').addEventListener(\'click\', function(event) { ... })`.');
+    if (!hasList)
+      e.push('Logical Error: The listener must be on `#list` (the parent), not on individual `<li>` elements. Use `document.querySelector(\'#list\')`.');
+    if (hasListener && !hasEvent)
+      e.push('Missing event parameter. Your callback needs to accept the event object: `function(event) { ... }`.');
+    if (!hasTarget)
+      e.push('Missing `event.target`. Use it to find what was actually clicked: `if (event.target.tagName === \'LI\')`.');
+    if (!hasTagName)
+      e.push('Missing `.tagName` check. Before reacting, verify the clicked element is an `<li>`: `event.target.tagName === \'LI\'`.');
+    if (hasTagName && !hasLI) {
+      if (code.includes("'li'") || code.includes('"li"'))
+        e.push('Logical Error: `tagName` returns UPPERCASE strings in HTML. Use `\'LI\'` not `\'li\'`.');
+      else
+        e.push('Logical Error: Compare against `\'LI\'` (uppercase) — `tagName` always returns uppercase in HTML.');
+    }
+    if (!hasFontBold) {
+      if (code.includes('fontWeight') && !code.includes('bold'))
+        e.push('Logical Error: Set `fontWeight` to the string `\'bold\'`: `event.target.style.fontWeight = \'bold\'`.');
+      else
+        e.push('Missing `fontWeight` assignment. Set `event.target.style.fontWeight = \'bold\'` inside the `if` block.');
+    }
+    return e;
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRO TRACK — ASYNC JAVASCRIPT
+  // ══════════════════════════════════════════════════════════════════════════
+
+  async_1_1(code) {
+    const e: string[] = [];
+
+    const hasTimeout  = code.includes('setTimeout');
+    const has1000     = code.includes('1000');
+    const hasCallback = code.match(/setTimeout\s*\(\s*function/)  || code.match(/setTimeout\s*\(\s*\(/);
+    const hasText     = code.includes('textContent');
+    const hasLoaded   = code.includes('Loaded!');
+
+    if (hasTimeout && has1000 && hasCallback && hasText && hasLoaded) return [];
+
+    if (!hasTimeout)
+      e.push('Missing `setTimeout`. Start with `setTimeout(function() { ... }, 1000)`.');
+    if (hasTimeout && !has1000) {
+      if (code.includes('1') && code.match(/setTimeout\s*\([^)]+,\s*[0-9]+/))
+        e.push('Logical Error: The delay must be exactly `1000` milliseconds (1 second).');
+      else
+        e.push('Logical Error: Specify the delay as `1000` (milliseconds) as the second argument: `setTimeout(fn, 1000)`.');
+    }
+    if (hasTimeout && code.match(/setTimeout\s*\(\s*\w+\s*\(\s*\)/))
+      e.push('Syntax Pitfall: You passed a function call (with `()`) to `setTimeout`. This runs the function immediately! Pass the reference without parentheses, or wrap in `function() { ... }`.');
+    if (!hasCallback && hasTimeout)
+      e.push('Missing callback function inside `setTimeout`. The first argument must be a function: `setTimeout(function() { ... }, 1000)`.');
+    if (!hasText)
+      e.push('Missing `.textContent` assignment inside the callback. Set `document.querySelector(\'#message\').textContent = \'Loaded!\'`.');
+    if (hasText && !hasLoaded)
+      e.push('Logical Error: The text must be exactly `"Loaded!"` with the exclamation mark.');
+    return e;
+  },
+
+  async_1_2(code) {
+    const e: string[] = [];
+
+    const hasFetchCall = code.match(/fetchData\s*\(\s*\)/);
+    const hasThen      = code.includes('.then(');
+    const hasCatch     = code.includes('.catch(');
+    const hasDataMsg   = code.includes('data.message');
+    const hasLog       = code.includes('console.log') || code.includes('console.error');
+
+    if (hasFetchCall && hasThen && hasCatch && hasDataMsg && hasLog) return [];
+
+    if (!hasFetchCall)
+      e.push('Missing `fetchData()` call. Call the function and chain `.then()` and `.catch()` onto it.');
+    if (!hasThen) {
+      if (code.includes('async') && code.includes('await'))
+        e.push('Concept Misunderstanding: This exercise requires Promise chaining with `.then()` and `.catch()`, not `async/await`. Save `async/await` for the next exercise!');
+      else
+        e.push('Missing `.then()`. Chain it onto `fetchData()`: `fetchData().then(function(data) { ... })`.');
+    }
+    if (!hasCatch)
+      e.push('Missing `.catch()`. Always handle errors: chain `.catch(function(error) { ... })` at the end.');
+    if (hasThen && !hasDataMsg)
+      e.push('Logical Error: Inside `.then()`, log `data.message` not just `data`. The response object has a `message` property.');
+    if (hasThen && code.match(/\.then\s*\(\s*function\s*\([^)]*\)\s*\{[^}]*(?!return)[^}]*\}/))
+      e.push('Concept Misunderstanding: If your `.then()` callback needs to pass data to the next `.then()`, remember to `return` the value inside the callback.');
+    return e;
+  },
+
+  async_1_3(code) {
+    const e: string[] = [];
+
+    const hasAsync    = code.includes('async function');
+    const hasGetData  = code.match(/async\s+function\s+getData/);
+    const hasAwait    = code.includes('await');
+    const hasTryCatch = code.includes('try') && code.includes('catch');
+    const hasLog      = code.includes('console.log') && code.includes('user.name');
+    const hasCatchLog = code.includes('console.error') || (code.includes('catch') && code.includes('console.log'));
+    const hasCall     = code.match(/getData\s*\(\s*\)/);
+
+    if (hasGetData && hasAwait && hasTryCatch && hasLog && hasCatchLog) return [];
+
+    if (!hasAsync)
+      e.push('Missing `async` keyword. Declare the function with: `async function getData() { ... }`.');
+    if (hasAsync && !hasGetData)
+      e.push('Logical Error: The function must be named exactly `getData`. Check the function name.');
+    if (!hasAwait) {
+      if (code.includes('.then('))
+        e.push('Concept Misunderstanding: Use `await` instead of `.then()` for this exercise. The `async/await` pattern is cleaner for sequential async operations.');
+      else
+        e.push('Missing `await`. Pause execution until `fetchUser()` resolves: `const user = await fetchUser()`.');
+    }
+    if (hasAwait && !code.includes('async'))
+      e.push('Syntax Pitfall: `await` can only be used inside an `async` function. Add `async` before `function getData()`.');
+    if (!hasTryCatch) {
+      if (code.includes('.catch('))
+        e.push('Concept Misunderstanding: When using `async/await`, handle errors with `try { ... } catch(error) { ... }` instead of `.catch()`.');
+      else
+        e.push('Missing `try/catch` block. Wrap your `await` in `try { ... } catch(error) { ... }` to handle network errors.');
+    }
+    if (!hasLog)
+      e.push('Missing `console.log(user.name)` inside the `try` block.');
+    if (!hasCatchLog)
+      e.push('Missing error logging in `catch`. Add `console.error(error.message)` inside the `catch` block.');
+    if (!hasCall)
+      e.push('Missing `getData()` call. After defining the function, call it: `getData();`.');
+    return e;
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRO TRACK — CLOSURES & SCOPE
+  // ══════════════════════════════════════════════════════════════════════════
+
+  closures_1_1(code) {
+    const e: string[] = [];
+
+    const hasConst    = code.match(/const\s+appName/);
+    const hasCodLift  = code.includes('CodLift');
+    const hasFunc     = code.match(/function\s+printApp/);
+    const hasLog      = code.includes('console.log') && code.includes('appName');
+    const hasCall     = code.match(/printApp\s*\(\s*\)/);
+
+    if (hasConst && hasCodLift && hasFunc && hasLog && hasCall) return [];
+
+    if (!hasConst) {
+      if (code.match(/let\s+appName/))
+        e.push('Logical Error: Use `const` for a value that never changes. Replace `let appName` with `const appName`.');
+      else if (code.match(/var\s+appName/))
+        e.push('Concept Misunderstanding: Use `const` not `var`. Modern JavaScript prefers `const`/`let`.');
+      else
+        e.push('Missing `const appName`. Declare it in the global scope: `const appName = \'CodLift\'`.');
+    }
+    if (!hasCodLift)
+      e.push('Logical Error: The value of `appName` must be exactly `\'CodLift\'` (capital C, capital L, no spaces).');
+    if (!hasFunc) {
+      if (code.match(/const\s+printApp\s*=\s*/))
+        e.push('Concept Misunderstanding: You used an arrow/expression function. The task requires a regular `function printApp() { ... }` declaration.');
+      else
+        e.push('Missing `function printApp() { ... }` declaration.');
+    }
+    if (hasFunc && !hasLog)
+      e.push('Missing `console.log(appName)` inside `printApp`. The function must log the `appName` variable.');
+    if (hasLog && !code.includes('appName') && code.includes('console.log(\'CodLift\')'))
+      e.push('Logical Error: Log the variable `appName`, not the literal string `\'CodLift\'`. The whole point is to access the outer scope variable.');
+    if (!hasCall)
+      e.push('Missing `printApp()` call. After defining the function, call it to execute it.');
+    if (hasFunc && code.match(/function\s+printApp[^{]+\{[^}]*const\s+appName/))
+      e.push('Concept Misunderstanding: `const appName` is declared INSIDE `printApp`. It must be in the OUTER (global) scope so the function accesses it via the scope chain.');
+    return e;
+  },
+
+  closures_1_2(code) {
+    const e: string[] = [];
+
+    const hasFunc      = code.match(/function\s+makeMultiplier\s*\(\s*factor\s*\)/);
+    const hasInnerFunc = code.match(/return\s+function/);
+    const hasNumber    = code.match(/function\s*\(\s*number\s*\)/);
+    const hasMultiply  = code.includes('number * factor') || code.includes('factor * number');
+    const hasDouble    = code.match(/const\s+double\s*=\s*makeMultiplier\s*\(\s*2\s*\)/);
+    const hasLog       = code.includes('console.log') && code.includes('double(5)');
+
+    if (hasFunc && hasInnerFunc && hasNumber && hasMultiply && hasDouble && hasLog) return [];
+
+    if (!hasFunc) {
+      if (code.match(/function\s+makeMultiplier\s*\(/))
+        e.push('Logical Error: The outer function must accept exactly one parameter named `factor`. Check: `function makeMultiplier(factor)`.');
+      else
+        e.push('Missing outer function `makeMultiplier`. Start with `function makeMultiplier(factor) { ... }`.');
+    }
+    if (hasFunc && !hasInnerFunc) {
+      if (code.match(/const\s+\w+\s*=\s*\(\s*number\s*\)\s*=>/))
+        e.push('Concept Misunderstanding: You used an arrow function expression. Try using `return function(number) { ... }` instead — it works the same way and is easier to read.');
+      else
+        e.push('Missing `return function(number) { ... }` inside `makeMultiplier`. The outer function must return the inner function.');
+    }
+    if (hasInnerFunc && !hasNumber)
+      e.push('Logical Error: The returned inner function must accept a parameter named `number`: `return function(number) { ... }`.');
+    if (!hasMultiply) {
+      if (code.includes('number + factor') || code.includes('number - factor'))
+        e.push('Logical Error: The inner function must MULTIPLY `number` by `factor`: `return number * factor`.');
+      else if (hasInnerFunc)
+        e.push('Missing multiplication. Inside the returned function, `return number * factor`.');
+    }
+    if (!hasDouble)
+      e.push('Missing `const double = makeMultiplier(2)`. Create the specialized double function by calling `makeMultiplier(2)`.');
+    if (!hasLog)
+      e.push('Missing `console.log(double(5))`. Call `double(5)` and log the result — it should print `10`.');
+    if (hasFunc && code.match(/function\s+makeMultiplier[^{]+\{[^}]*return[^;]*\*[^}]*\}/) && !hasInnerFunc)
+      e.push('Concept Misunderstanding: `makeMultiplier` must return a NEW FUNCTION, not directly return the multiplication result. The closure is the key pattern here.');
+    return e;
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRO TRACK — ARRAY METHODS
+  // ══════════════════════════════════════════════════════════════════════════
+
+  arr_1_1(code) {
+    const e: string[] = [];
+
+    const hasPrices     = code.includes('prices');
+    const hasMap        = code.includes('.map(');
+    const hasDiscounted = code.match(/const\s+discounted\s*=/);
+    const hasCallback   = code.match(/\.map\s*\(\s*(function|\()/);
+    const hasReturn     = code.match(/\.map\s*\([^)]*function[^{]*\{[^}]*return/) || code.match(/\.map\s*\([^)]*=>/);
+    const has09         = code.includes('0.9') || code.includes('* 0.9') || code.includes('* .9');
+    const hasLog        = code.includes('console.log') && code.includes('discounted');
+
+    if (hasPrices && hasMap && hasDiscounted && hasReturn && has09 && hasLog) return [];
+
+    if (!hasMap) {
+      if (code.includes('forEach'))
+        e.push('Concept Misunderstanding: `.forEach()` iterates but does NOT return a new array. Use `.map()` which creates and returns the transformed array.');
+      else if (code.includes('for '))
+        e.push('Concept Misunderstanding: A `for` loop works, but this exercise requires `.map()` — the functional, modern approach.');
+      else
+        e.push('Missing `.map()`. Apply it to the `prices` array: `prices.map(function(price) { ... })`.');
+    }
+    if (!hasDiscounted)
+      e.push('Missing `const discounted =`. Store the result of `.map()` in a variable named `discounted`.');
+    if (hasMap && !hasReturn) {
+      if (code.match(/\.map\s*\(\s*function[^{]*\{(?!.*return)/s))
+        e.push('Logical Error: Missing `return` inside the `.map()` callback! Without it, every item becomes `undefined`. Add `return price * 0.9`.');
+    }
+    if (!has09) {
+      if (code.includes('0.1') || code.includes('- 10'))
+        e.push('Logical Error: To get 90% of the price (10% off), multiply by `0.9`, not `0.1` or subtract `10`.');
+      else if (hasMap)
+        e.push('Logical Error: The transformation must multiply each price by `0.9`: `return price * 0.9`.');
+    }
+    if (!hasLog)
+      e.push('Missing `console.log(discounted)` to display the result.');
+    return e;
+  },
+
+  arr_1_2(code) {
+    const e: string[] = [];
+
+    const hasWords     = code.includes('words');
+    const hasFilter    = code.includes('.filter(');
+    const hasLongWords = code.match(/const\s+longWords\s*=/);
+    const hasLength    = code.includes('.length') && code.includes('> 4');
+    const hasReturn    = code.match(/\.filter\s*\([^)]*function[^{]*\{[^}]*return/) || code.match(/\.filter\s*\([^)]*=>/);
+    const hasLog       = code.includes('console.log') && code.includes('longWords');
+
+    if (hasWords && hasFilter && hasLongWords && hasLength && hasReturn && hasLog) return [];
+
+    if (!hasFilter) {
+      if (code.includes('.map('))
+        e.push('Concept Misunderstanding: `.map()` transforms items but keeps ALL of them. Use `.filter()` to keep ONLY the items that pass a test.');
+      else if (code.includes('for '))
+        e.push('Concept Misunderstanding: A `for` loop works but this exercise requires `.filter()` — the functional, modern approach.');
+      else
+        e.push('Missing `.filter()`. Apply it to the `words` array: `words.filter(function(word) { return word.length > 4; })`.');
+    }
+    if (!hasLongWords)
+      e.push('Missing `const longWords =`. Store the filtered result in a variable named `longWords`.');
+    if (hasFilter && !hasReturn) {
+      if (code.match(/\.filter\s*\(\s*function[^{]*\{(?!.*return)/s))
+        e.push('Logical Error: Missing `return` inside the `.filter()` callback! Without it, all items are kept (falsy return = discard, but `undefined` is falsy). Add `return word.length > 4`.');
+    }
+    if (!hasLength) {
+      if (code.includes('.length') && code.includes('> 5'))
+        e.push('Logical Error: The condition must be `word.length > 4` (greater than 4), not `> 5`.');
+      else if (code.includes('.length') && code.includes('>= 5'))
+        e.push('Logical Error: `>= 5` means 5 or more characters. The task requires strictly more than 4: `> 4`.');
+      else if (hasFilter)
+        e.push('Missing length check. The callback must test `word.length > 4`.');
+    }
+    if (!hasLog)
+      e.push('Missing `console.log(longWords)` to display the result.');
+    return e;
+  },
+
+  arr_1_3(code) {
+    const e: string[] = [];
+
+    const hasScores  = code.includes('scores');
+    const hasReduce  = code.includes('.reduce(');
+    const hasSum     = code.match(/const\s+sum\s*=/);
+    const hasAcc     = code.match(/\.reduce\s*\(\s*(function|\()/) && (code.includes('total') || code.includes('acc') || code.includes('sum'));
+    const hasReturn  = code.match(/\.reduce\s*\([^{]*\{[^}]*return/) || code.match(/\.reduce\s*\([^)]*=>/);
+    const hasInitVal = code.match(/\.reduce\s*\([^)]+,\s*0\s*\)/);
+    const hasLog     = code.includes('console.log') && code.includes('sum');
+
+    if (hasScores && hasReduce && hasSum && hasReturn && hasInitVal && hasLog) return [];
+
+    if (!hasReduce) {
+      if (code.includes('.map(') || code.includes('.filter('))
+        e.push('Concept Misunderstanding: `.map()` and `.filter()` return arrays. Use `.reduce()` to combine all array values into a SINGLE number.');
+      else if (code.includes('for '))
+        e.push('Concept Misunderstanding: A `for` loop works but this exercise requires `.reduce()` — the functional approach for accumulation.');
+      else
+        e.push('Missing `.reduce()`. Use it: `scores.reduce(function(total, score) { return total + score; }, 0)`.');
+    }
+    if (!hasSum)
+      e.push('Missing `const sum =`. Store the result: `const sum = scores.reduce(...)`.');
+    if (hasReduce && !hasReturn)
+      e.push('Logical Error: Missing `return` in the `.reduce()` callback. Without it, `total` becomes `undefined` after the first iteration. Add `return total + score`.');
+    if (hasReduce && !hasInitVal) {
+      if (code.match(/\.reduce\s*\([^)]+\)/) && !code.includes(', 0)'))
+        e.push('Logical Error: Missing initial value for the accumulator. Add `0` as the second argument: `.reduce(function(total, score) { ... }, 0)`.');
+    }
+    if (hasReduce && code.match(/\.reduce\s*\([^{]*\{[^}]*total\s*\*\s*score/))
+      e.push('Logical Error: You multiplied `total * score` instead of adding. Use `return total + score` to sum the values.');
+    if (!hasLog)
+      e.push('Missing `console.log(sum)` to display the total.');
+    return e;
+  },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // PRO TRACK — OOP & CLASSES
+  // ══════════════════════════════════════════════════════════════════════════
+
+  oop_1_1(code) {
+    const e: string[] = [];
+
+    const hasClass      = code.match(/class\s+Car/);
+    const hasCtor       = code.match(/constructor\s*\(\s*brand\s*,\s*speed\s*\)/);
+    const hasThisBrand  = code.includes('this.brand') && code.includes('this.speed');
+    const hasDescribe   = code.match(/describe\s*\(\s*\)/);
+    const hasReturn     = code.includes('return') && (code.includes('brand') || code.includes('this.brand'));
+    const hasKmh        = code.includes('km/h');
+    const hasNew        = code.match(/new\s+Car\s*\(/);
+    const hasLog        = code.includes('console.log') && code.includes('describe()');
+
+    if (hasClass && hasCtor && hasThisBrand && hasDescribe && hasReturn && hasKmh && hasNew && hasLog) return [];
+
+    if (!hasClass) {
+      if (code.match(/function\s+Car\s*\(/))
+        e.push('Concept Misunderstanding: You used a constructor function. The task requires ES6 `class` syntax: `class Car { constructor(brand, speed) { ... } }`.');
+      else
+        e.push('Missing `class Car { ... }`. Define your class first.');
+    }
+    if (hasClass && !hasCtor) {
+      if (code.match(/constructor\s*\(\s*brand\s*\)/))
+        e.push('Logical Error: The constructor needs TWO parameters: `constructor(brand, speed)`.');
+      else if (code.match(/constructor/))
+        e.push('Logical Error: The constructor parameter names must be exactly `brand` and `speed`.');
+      else
+        e.push('Missing `constructor(brand, speed)` inside the `Car` class.');
+    }
+    if (hasClass && !hasThisBrand) {
+      if (code.includes('brand') && !code.includes('this.brand'))
+        e.push('Logical Error: Store the parameters on the instance using `this`: `this.brand = brand; this.speed = speed;`.');
+    }
+    if (!hasDescribe) {
+      if (code.includes('describe'))
+        e.push('Logical Error: The method must be named exactly `describe` with no typos, defined as `describe() { ... }` inside the class.');
+      else
+        e.push('Missing `describe()` method inside the `Car` class.');
+    }
+    if (hasDescribe && !hasReturn)
+      e.push('Missing `return` in `describe()`. The method must return the string, not log it. Use `return this.brand + \' goes \' + this.speed + \'km/h\'`.');
+    if (hasDescribe && hasReturn && !hasKmh)
+      e.push('Logical Error: The returned string must include `"km/h"`. Format: `"[brand] goes [speed]km/h"`.');
+    if (!hasNew) {
+      if (code.includes('Car('))
+        e.push('Syntax Pitfall: Missing `new` keyword. Use `new Car(\'Tesla\', 200)` to create an instance.');
+    }
+    if (!hasLog)
+      e.push('Missing `console.log(myCar.describe())`. Call the method and log its result.');
+    if (hasNew && code.match(/Car\s*\(\s*['"]Tesla['"]\s*\)/) && !code.match(/Car\s*\(\s*['"]Tesla['"]\s*,\s*200/))
+      e.push('Logical Error: Pass both arguments when instantiating: `new Car(\'Tesla\', 200)`.');
+    return e;
+  },
+
+  oop_1_2(code) {
+    const e: string[] = [];
+
+    const hasVehicle    = code.match(/class\s+Vehicle/);
+    const hasVehicleCtr = code.match(/class\s+Vehicle[^{]*\{[\s\S]*?constructor\s*\(\s*type\s*\)/);
+    const hasThisType   = code.includes('this.type');
+    const hasDescribe   = code.match(/describe\s*\(\s*\)/);
+    const hasTruck      = code.match(/class\s+Truck\s+extends\s+Vehicle/);
+    const hasTruckCtr   = code.match(/class\s+Truck[^{]*\{[\s\S]*?constructor\s*\(\s*payload\s*\)/);
+    const hasSuper      = code.includes('super(');
+    const hasSuperTruck = code.includes("super('Truck')") || code.includes('super("Truck")');
+    const hasPayload    = code.includes('this.payload');
+    const hasInfo       = code.match(/info\s*\(\s*\)/);
+    const hasNew        = code.match(/new\s+Truck\s*\(/);
+    const hasLog        = code.includes('console.log') && code.includes('describe()') && code.includes('info()');
+
+    if (hasVehicle && hasVehicleCtr && hasThisType && hasDescribe && hasTruck && hasTruckCtr && hasSuperTruck && hasPayload && hasInfo && hasNew && hasLog) return [];
+
+    if (!hasVehicle)
+      e.push('Missing `class Vehicle { ... }`. Define the parent class first.');
+    if (hasVehicle && !hasVehicleCtr)
+      e.push('Missing `constructor(type)` in the `Vehicle` class. Add it to store `this.type = type`.');
+    if (hasVehicle && !hasThisType)
+      e.push('Missing `this.type = type` inside `Vehicle`\'s constructor.');
+    if (!hasDescribe)
+      e.push('Missing `describe()` method in `Vehicle`. Add: `describe() { return \'Vehicle type: \' + this.type; }`.');
+    if (!hasTruck) {
+      if (code.match(/class\s+Truck/) && !code.match(/extends\s+Vehicle/))
+        e.push('Missing `extends Vehicle`. The `Truck` class must inherit from `Vehicle`: `class Truck extends Vehicle`.');
+      else
+        e.push('Missing `class Truck extends Vehicle { ... }`.');
+    }
+    if (hasTruck && !hasTruckCtr)
+      e.push('Missing `constructor(payload)` in `Truck`. Add it to call `super(\'Truck\')` and set `this.payload`.');
+    if (!hasSuper) {
+      if (hasTruck)
+        e.push('Missing `super()` call inside `Truck\'s constructor. Call `super(\'Truck\')` before using `this`.');
+    }
+    if (hasSuper && !hasSuperTruck)
+      e.push('Logical Error: Call `super(\'Truck\')` to initialize the parent `Vehicle` with the type `\'Truck\'`.');
+    if (hasTruck && !hasPayload)
+      e.push('Missing `this.payload = payload` inside `Truck`\'s constructor.');
+    if (!hasInfo)
+      e.push('Missing `info()` method in `Truck`. Add: `info() { return \'Truck with \' + this.payload + \'t payload\'; }`.');
+    if (!hasNew)
+      e.push('Missing `new Truck(5)` instantiation.');
+    if (!hasLog)
+      e.push('Missing `console.log` calls. Log both `t.describe()` and `t.info()`.');
+    if (code.match(/class\s+Truck[^{]*\{[\s\S]*?constructor[^{]*\{[\s\S]*?this\.[^;]+;[\s\S]*?super/))
+      e.push('Syntax Pitfall: Inside a subclass constructor, `super()` must be called BEFORE any `this.` assignments. Move `super(\'Truck\')` to the top of the constructor.');
     return e;
   }
 };

@@ -792,6 +792,1036 @@ Write a \`for\` loop that starts at \`1\`, ends at \`5\`, and uses \`console.log
         }
       }
     ]
+  },
+
+  // ─── PRO TRACK ────────────────────────────────────────────────────────────
+  {
+    id: 'dom-manipulation',
+    title: 'DOM Manipulation',
+    level: 'pro',
+    language: 'javascript',
+    description: 'Learn to dynamically read and rewrite any element on the page using the Document Object Model — the live, programmable map of your webpage.',
+    exercises: [
+      {
+        id: 'dom_1_1',
+        title: 'Selecting Elements',
+        instruction: `
+### What is the DOM?
+
+When the browser loads your HTML, it converts every tag into a live JavaScript object — forming a tree called the **Document Object Model (DOM)**. JavaScript can grab any node in this tree and change it instantly, without reloading the page.
+
+### querySelector — Your Universal Selector
+
+\`\`\`javascript
+const title = document.querySelector('h1');
+title.textContent = 'Hello from JavaScript!';
+\`\`\`
+
+### Breaking It Down
+
+| Part | Meaning |
+|---|---|
+| \`document\` | The global object for the whole page |
+| \`.querySelector()\` | Finds the first element matching a CSS selector |
+| \`'h1'\` | Selects the first \`<h1>\` tag |
+| \`.textContent\` | Gets or sets the visible text inside an element |
+
+### Selector Cheat Sheet
+
+| You want | Write |
+|---|---|
+| Tag | \`'h1'\`, \`'p'\`, \`'div'\` |
+| ID | \`'#myId'\` |
+| Class | \`'.myClass'\` |
+
+### ⚠️ Common Mistake
+
+Forgetting the \`#\` or \`.\` prefix:
+\`\`\`javascript
+document.querySelector('myId')    // ❌ Looks for a tag named "myId"
+document.querySelector('#myId')   // ✅ Correct — selects by ID
+\`\`\`
+
+**Your Task:**
+Use \`document.querySelector\` to select the element with id \`output\`. Set its \`textContent\` to exactly: "DOM Selected!"`,
+        task: 'Use querySelector to select #output and set its textContent to "DOM Selected!"',
+        initial_code: `<!DOCTYPE html>
+<html>
+<body>
+  <p id="output">Original text</p>
+  <script>
+    // Write your code here
+  </script>
+</body>
+</html>`,
+        test_cases: {
+          solution: `<!DOCTYPE html>\n<html>\n<body>\n  <p id="output">Original text</p>\n  <script>\n    const el = document.querySelector('#output');\n    el.textContent = 'DOM Selected!';\n  </script>\n</body>\n</html>`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'dom_1_2',
+        title: 'Changing Styles Dynamically',
+        instruction: `
+### The style Property
+
+Every DOM element has a \`style\` property that maps directly to inline CSS. Setting it changes the element's appearance instantly.
+
+\`\`\`javascript
+const box = document.querySelector('#box');
+box.style.backgroundColor = 'purple';
+box.style.fontSize = '24px';
+\`\`\`
+
+### camelCase Rule
+
+CSS uses hyphens, but JavaScript uses camelCase for the same properties:
+
+| CSS | JavaScript |
+|---|---|
+| \`background-color\` | \`backgroundColor\` |
+| \`font-size\` | \`fontSize\` |
+| \`border-radius\` | \`borderRadius\` |
+| \`text-align\` | \`textAlign\` |
+
+All values must be **strings** — even numeric ones: \`box.style.width = '200px'\`.
+
+### ⚠️ Common Mistake
+
+\`\`\`javascript
+box.style.background-color = 'red'; // ❌ Syntax error — JS reads - as minus
+box.style.backgroundColor = 'red';  // ✅ Correct camelCase
+\`\`\`
+
+**Your Task:**
+Select the element with id \`box\`. Set its \`backgroundColor\` to \`'crimson'\` and its \`color\` (text color) to \`'white'\`.`,
+        task: 'Select #box, set its backgroundColor to "crimson" and color to "white".',
+        initial_code: `<!DOCTYPE html>
+<html>
+<body>
+  <div id="box" style="padding:20px;">Hello Box</div>
+  <script>
+    // Write your code here
+  </script>
+</body>
+</html>`,
+        test_cases: {
+          solution: `<!DOCTYPE html>\n<html>\n<body>\n  <div id="box" style="padding:20px;">Hello Box</div>\n  <script>\n    const box = document.querySelector('#box');\n    box.style.backgroundColor = 'crimson';\n    box.style.color = 'white';\n  </script>\n</body>\n</html>`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'dom_1_3',
+        title: 'Creating & Appending Elements',
+        instruction: `
+### Building Elements from Scratch
+
+JavaScript lets you create brand-new HTML elements and insert them anywhere on the page — no page reload needed.
+
+### The Two-Step Process
+
+\`\`\`javascript
+// Step 1: Build (exists only in memory)
+const newItem = document.createElement('li');
+newItem.textContent = 'Added by JavaScript!';
+
+// Step 2: Attach to the page
+document.querySelector('ul').appendChild(newItem);
+\`\`\`
+
+### Breaking It Down
+
+| Method | What it does |
+|---|---|
+| \`createElement('li')\` | Creates a detached \`<li>\` node in memory |
+| \`.textContent = '...'\` | Sets the visible text content |
+| \`.appendChild(el)\` | Attaches the node as the last child |
+
+### Other Useful Methods
+
+- \`prepend(el)\` — inserts as first child
+- \`insertAdjacentElement('beforeend', el)\` — flexible positioning
+- \`remove()\` — removes an element from the DOM
+
+### ⚠️ Common Mistake
+
+Only creating, but never appending:
+\`\`\`javascript
+const p = document.createElement('p'); // ❌ Still invisible!
+// You MUST append it:
+document.querySelector('#container').appendChild(p); // ✅
+\`\`\`
+
+**Your Task:**
+Create a new \`<p>\` element. Set its \`textContent\` to \`"I was created by JS"\`. Then append it to the \`#container\` element.`,
+        task: 'Create a <p> element, set its text, and append it to #container.',
+        initial_code: `<!DOCTYPE html>
+<html>
+<body>
+  <div id="container"></div>
+  <script>
+    // Write your code here
+  </script>
+</body>
+</html>`,
+        test_cases: {
+          solution: `<!DOCTYPE html>\n<html>\n<body>\n  <div id="container"></div>\n  <script>\n    const p = document.createElement('p');\n    p.textContent = 'I was created by JS';\n    document.querySelector('#container').appendChild(p);\n  </script>\n</body>\n</html>`,
+          force_ai: true
+        }
+      }
+    ]
+  },
+  {
+    id: 'events-and-forms',
+    title: 'Events & Forms',
+    level: 'pro',
+    language: 'javascript',
+    description: 'Make your websites react to user input — clicks, keypresses, form submissions — using the browser\'s event system.',
+    exercises: [
+      {
+        id: 'events_1_1',
+        title: 'Click Events',
+        instruction: `
+### Event-Driven Programming
+
+The web is event-driven: code runs in response to user actions (clicks, keypresses, etc.). The professional way to listen for events is \`addEventListener\`.
+
+\`\`\`javascript
+const btn = document.querySelector('#myButton');
+btn.addEventListener('click', function() {
+  alert('Clicked!');
+});
+\`\`\`
+
+### Breaking It Down
+
+| Part | Meaning |
+|---|---|
+| \`addEventListener\` | Registers an event listener on the element |
+| \`'click'\` | The event type to listen for |
+| \`function() { ... }\` | The callback — runs when the event fires |
+
+### Common Event Types
+
+| Event | Trigger |
+|---|---|
+| \`'click'\` | Mouse click |
+| \`'mouseover'\` | Mouse enters element |
+| \`'keydown'\` | Key pressed |
+| \`'submit'\` | Form submitted |
+| \`'input'\` | Input field value changes |
+
+### ⚠️ Common Mistake
+
+\`\`\`javascript
+btn.onclick = myFunc();  // ❌ Calls myFunc() IMMEDIATELY
+btn.onclick = myFunc;    // ✅ Passes the function reference
+btn.addEventListener('click', myFunc); // ✅ Best practice
+\`\`\`
+
+**Your Task:**
+Select the button with id \`myBtn\`. Add a \`click\` event listener. When clicked, set \`#result\`'s \`textContent\` to exactly: "Button clicked!"`,
+        task: 'Add a click listener on #myBtn that sets #result textContent to "Button clicked!"',
+        initial_code: `<!DOCTYPE html>
+<html>
+<body>
+  <button id="myBtn">Click Me</button>
+  <p id="result">Waiting...</p>
+  <script>
+    // Write your code here
+  </script>
+</body>
+</html>`,
+        test_cases: {
+          solution: `<!DOCTYPE html>\n<html>\n<body>\n  <button id="myBtn">Click Me</button>\n  <p id="result">Waiting...</p>\n  <script>\n    const btn = document.querySelector('#myBtn');\n    btn.addEventListener('click', function() {\n      document.querySelector('#result').textContent = 'Button clicked!';\n    });\n  </script>\n</body>\n</html>`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'events_1_2',
+        title: 'Reading Form Input',
+        instruction: `
+### The .value Property
+
+Every \`<input>\` element has a \`.value\` property that holds whatever the user has typed. You read it inside an event handler:
+
+\`\`\`javascript
+document.querySelector('#submitBtn').addEventListener('click', function() {
+  const name = document.querySelector('#nameInput').value;
+  console.log('User typed:', name);
+});
+\`\`\`
+
+### Building a Dynamic Response
+
+\`\`\`javascript
+document.querySelector('#submitBtn').addEventListener('click', function() {
+  const val = document.querySelector('#nameInput').value;
+  document.querySelector('#output').textContent = 'Hello, ' + val + '!';
+});
+\`\`\`
+
+### event.preventDefault()
+
+When a \`<form>\` is submitted, the browser refreshes the page by default. Call \`event.preventDefault()\` inside a \`submit\` handler to stop this:
+\`\`\`javascript
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  // Now handle submission in JS
+});
+\`\`\`
+
+### ⚠️ Common Mistake
+
+Reading \`.value\` before the user interacts:
+\`\`\`javascript
+const val = input.value; // ❌ Empty string — user hasn't typed yet!
+btn.addEventListener('click', function() {
+  const val = input.value; // ✅ Read INSIDE the callback
+});
+\`\`\`
+
+**Your Task:**
+Add a \`click\` listener to \`#submitBtn\`. Read \`#nameInput\`'s \`.value\` and set \`#output\`'s \`textContent\` to \`"Hello, [value]!"\`.`,
+        task: 'Read #nameInput.value on button click and display "Hello, [value]!" in #output.',
+        initial_code: `<!DOCTYPE html>
+<html>
+<body>
+  <input id="nameInput" type="text" placeholder="Enter your name" />
+  <button id="submitBtn">Submit</button>
+  <p id="output"></p>
+  <script>
+    // Write your code here
+  </script>
+</body>
+</html>`,
+        test_cases: {
+          solution: `<!DOCTYPE html>\n<html>\n<body>\n  <input id="nameInput" type="text" placeholder="Enter your name" />\n  <button id="submitBtn">Submit</button>\n  <p id="output"></p>\n  <script>\n    document.querySelector('#submitBtn').addEventListener('click', function() {\n      const val = document.querySelector('#nameInput').value;\n      document.querySelector('#output').textContent = 'Hello, ' + val + '!';\n    });\n  </script>\n</body>\n</html>`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'events_1_3',
+        title: 'Event Delegation',
+        instruction: `
+### The Problem with Many Listeners
+
+Attaching individual listeners to 100 list items wastes memory. Dynamically added items won't have listeners at all!
+
+### Event Bubbling
+
+When you click an \`<li>\`, the click event **bubbles up** through every ancestor: \`li → ul → body → document\`. We can listen at the parent and catch all child events.
+
+\`\`\`javascript
+document.querySelector('#list').addEventListener('click', function(event) {
+  if (event.target.tagName === 'LI') {
+    event.target.style.color = 'purple';
+  }
+});
+\`\`\`
+
+### The event Object
+
+The \`event\` parameter is automatically passed to every listener callback:
+
+| Property | Meaning |
+|---|---|
+| \`event.target\` | The exact element that was clicked |
+| \`event.currentTarget\` | The element the listener is attached to |
+| \`event.type\` | The event type (e.g. \`'click'\`) |
+
+### ⚠️ Common Mistake
+
+\`tagName\` always returns **UPPERCASE** in HTML:
+\`\`\`javascript
+event.target.tagName === 'li'  // ❌ Never matches
+event.target.tagName === 'LI'  // ✅ Correct
+\`\`\`
+
+**Your Task:**
+Add one \`click\` listener to \`#list\`. Inside, check if \`event.target.tagName === 'LI'\`. If so, set \`event.target.style.fontWeight\` to \`'bold'\`.`,
+        task: 'Add one click listener on #list. Bold any <li> that is clicked using event delegation.',
+        initial_code: `<!DOCTYPE html>
+<html>
+<body>
+  <ul id="list">
+    <li>Item One</li>
+    <li>Item Two</li>
+    <li>Item Three</li>
+  </ul>
+  <script>
+    // Write your code here
+  </script>
+</body>
+</html>`,
+        test_cases: {
+          solution: `<!DOCTYPE html>\n<html>\n<body>\n  <ul id="list">\n    <li>Item One</li>\n    <li>Item Two</li>\n    <li>Item Three</li>\n  </ul>\n  <script>\n    document.querySelector('#list').addEventListener('click', function(event) {\n      if (event.target.tagName === 'LI') {\n        event.target.style.fontWeight = 'bold';\n      }\n    });\n  </script>\n</body>\n</html>`,
+          force_ai: true
+        }
+      }
+    ]
+  },
+  {
+    id: 'async-javascript',
+    title: 'Async JavaScript',
+    level: 'pro',
+    language: 'javascript',
+    description: 'Master the art of asynchronous programming — fetching data from APIs, handling Promises, and writing clean async/await code.',
+    exercises: [
+      {
+        id: 'async_1_1',
+        title: 'Callbacks & setTimeout',
+        instruction: `
+### Why Async Matters
+
+JavaScript runs on a single thread. Without async, waiting for a slow operation (network, timer) would freeze your entire UI.
+
+Asynchronous code says: "Start this task, give me a callback to run when it's done, and keep going."
+
+### setTimeout — The Classic Async Tool
+
+\`\`\`javascript
+console.log('Start');
+
+setTimeout(function() {
+  console.log('Runs after 2 seconds');
+}, 2000);
+
+console.log('End'); // Prints BEFORE the timeout!
+\`\`\`
+
+Output: \`Start → End → Runs after 2 seconds\`
+
+### Breaking It Down
+
+| Part | Meaning |
+|---|---|
+| \`setTimeout\` | Schedules code to run after a delay |
+| \`function() { ... }\` | The callback to run when timer expires |
+| \`2000\` | Delay in milliseconds (2 seconds) |
+
+### ⚠️ Common Mistake
+
+\`\`\`javascript
+setTimeout(myFunc(), 1000);  // ❌ Calls myFunc() immediately, passes its result
+setTimeout(myFunc, 1000);    // ✅ Passes the function reference
+setTimeout(function() { myFunc(); }, 1000); // ✅ Also correct
+\`\`\`
+
+**Your Task:**
+Write a \`setTimeout\` with a 1000ms delay. Inside the callback, set \`document.querySelector('#message').textContent\` to \`"Loaded!"\`.`,
+        task: 'Use setTimeout (1000ms) to set #message textContent to "Loaded!" after 1 second.',
+        initial_code: `// Simulate a delayed data load
+const msg = document.querySelector('#message');
+// Write your setTimeout here
+`,
+        test_cases: {
+          solution: `const msg = document.querySelector('#message');\nsetTimeout(function() {\n  document.querySelector('#message').textContent = 'Loaded!';\n}, 1000);`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'async_1_2',
+        title: 'Promises',
+        instruction: `
+### What is a Promise?
+
+A Promise is an object representing a **future value**. It has three states:
+
+| State | Meaning |
+|---|---|
+| Pending | Operation in progress |
+| Fulfilled | Succeeded — value available |
+| Rejected | Failed — error available |
+
+### .then() and .catch()
+
+\`\`\`javascript
+fetchData()
+  .then(function(data) {
+    console.log(data.message);
+  })
+  .catch(function(error) {
+    console.error('Error:', error);
+  });
+\`\`\`
+
+### Chaining .then()
+
+Each \`.then()\` receives the return value of the previous one. You can chain multiple \`.then()\` calls in sequence:
+
+\`\`\`javascript
+fetch('/api/user')
+  .then(response => response.json())   // parse JSON
+  .then(user => console.log(user.name)) // use the data
+  .catch(err => console.error(err));
+\`\`\`
+
+### ⚠️ Common Mistake
+
+Not returning inside a \`.then()\`:
+\`\`\`javascript
+.then(response => {
+  response.json(); // ❌ No return — next .then gets undefined
+})
+.then(response => {
+  return response.json(); // ✅ Correct
+})
+\`\`\`
+
+And always add \`.catch()\` — unhandled rejections cause silent bugs!
+
+**Your Task:**
+Call \`fetchData()\`. Chain a \`.then()\` that logs \`data.message\`. Chain a \`.catch()\` that logs any error.`,
+        task: 'Chain .then() and .catch() on fetchData() to log data.message or the error.',
+        initial_code: `function fetchData() {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({ message: 'Hello from API' }), 500);
+  });
+}
+
+// Call fetchData() and chain .then() and .catch() here
+`,
+        test_cases: {
+          solution: `function fetchData() {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve({ message: 'Hello from API' }), 500);\n  });\n}\n\nfetchData()\n  .then(function(data) {\n    console.log(data.message);\n  })\n  .catch(function(error) {\n    console.error(error);\n  });`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'async_1_3',
+        title: 'Async / Await',
+        instruction: `
+### Cleaner Async Code
+
+\`async/await\` is syntactic sugar over Promises. It makes async code read like synchronous code — top-to-bottom, no callback chains.
+
+\`\`\`javascript
+async function loadUser() {
+  try {
+    const user = await fetchUser();
+    console.log(user.name);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+\`\`\`
+
+### The Rules
+
+| Keyword | Rule |
+|---|---|
+| \`async\` | Goes before \`function\`. Makes the function return a Promise. |
+| \`await\` | Can only be used INSIDE an \`async\` function. Pauses until the Promise resolves. |
+| \`try/catch\` | Replaces \`.catch()\` for error handling in async functions. |
+
+### async/await vs .then()
+
+Both are equivalent — use whichever is cleaner:
+\`\`\`javascript
+// Promise chain
+fetchUser().then(u => console.log(u.name)).catch(e => console.error(e));
+
+// async/await
+async function go() {
+  try { console.log((await fetchUser()).name); }
+  catch(e) { console.error(e); }
+}
+\`\`\`
+
+### ⚠️ Common Mistakes
+
+\`\`\`javascript
+// Forgetting await:
+const user = fetchUser(); // ❌ user is a Promise, not the data!
+const user = await fetchUser(); // ✅
+
+// Using await outside async:
+const data = await fetch('/api'); // ❌ SyntaxError at top level
+async function go() { const data = await fetch('/api'); } // ✅
+\`\`\`
+
+**Your Task:**
+Write an \`async\` function named \`getData\`. Inside, \`await\` the \`fetchUser()\` call, log \`user.name\`, and catch errors with try/catch.`,
+        task: 'Write async function getData() that awaits fetchUser(), logs user.name, catches errors.',
+        initial_code: `function fetchUser() {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve({ name: 'Alex', role: 'admin' }), 500);
+  });
+}
+
+// Write your async function here
+`,
+        test_cases: {
+          solution: `function fetchUser() {\n  return new Promise((resolve) => {\n    setTimeout(() => resolve({ name: 'Alex', role: 'admin' }), 500);\n  });\n}\n\nasync function getData() {\n  try {\n    const user = await fetchUser();\n    console.log(user.name);\n  } catch (error) {\n    console.error(error.message);\n  }\n}\n\ngetData();`,
+          force_ai: true
+        }
+      }
+    ]
+  },
+  {
+    id: 'js-closures',
+    title: 'Closures & Scope',
+    level: 'pro',
+    language: 'javascript',
+    description: 'Understand one of JavaScript\'s most powerful (and misunderstood) features — closures — and how scope determines what variables your functions can see.',
+    exercises: [
+      {
+        id: 'closures_1_1',
+        title: 'Scope & the Scope Chain',
+        instruction: `
+### Variable Scope
+
+Scope determines which variables are accessible where. JavaScript has three scope levels:
+
+| Scope | Created with | Accessible where |
+|---|---|---|
+| Global | Outside all functions | Everywhere |
+| Function | Inside a function | Only inside that function |
+| Block | Inside \`{ }\` with \`let\`/\`const\` | Only inside that block |
+
+### var vs let vs const
+
+\`\`\`javascript
+if (true) {
+  var x = 10;   // function-scoped — leaks out!
+  let y = 20;   // block-scoped — stays inside
+}
+console.log(x); // 10 ✅
+console.log(y); // ReferenceError ❌
+\`\`\`
+
+### The Scope Chain
+
+Inner functions can access outer scope variables:
+\`\`\`javascript
+const appName = 'CodLift';
+function printApp() {
+  console.log(appName); // ✅ Found in outer (global) scope
+}
+printApp();
+\`\`\`
+
+### ⚠️ Common Mistake
+
+Forgetting \`let\`/\`const\` accidentally creates a global:
+\`\`\`javascript
+function bad() {
+  myVar = 'oops'; // ❌ No declaration — becomes global!
+}
+\`\`\`
+
+Always use \`let\` or \`const\` to avoid polluting global scope.
+
+**Your Task:**
+Declare \`const appName = "CodLift"\` in the global scope. Write a function \`printApp()\` that logs \`appName\`. Call \`printApp()\`.`,
+        task: 'Declare const appName globally. Write printApp() that logs it. Call printApp().',
+        initial_code: `// Declare appName here (outer scope)
+
+function printApp() {
+  // Log appName here (from outer scope)
+}
+
+printApp();`,
+        test_cases: {
+          solution: `const appName = 'CodLift';\n\nfunction printApp() {\n  console.log(appName);\n}\n\nprintApp();`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'closures_1_2',
+        title: 'Closures — Functions with Memory',
+        instruction: `
+### What is a Closure?
+
+A **closure** is a function that remembers the variables from its outer scope — even after that outer function has returned.
+
+\`\`\`javascript
+function makeCounter() {
+  let count = 0;
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+const counter = makeCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+console.log(counter()); // 3
+\`\`\`
+
+### Why \`count\` Persists
+
+Normally, \`count\` would be destroyed when \`makeCounter\` returns. But the returned function holds a **reference to \`count\`'s scope**, keeping it alive.
+
+### Practical Uses
+
+- **Private state** — variables not accessible from outside
+- **Factory functions** — create specialized functions on demand
+- **Memoization** — cache results
+
+### ⚠️ Classic Closure Bug (Loop + var)
+
+\`\`\`javascript
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // Prints 3, 3, 3 ❌
+}
+// Fix: use let instead of var
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 0); // Prints 0, 1, 2 ✅
+}
+\`\`\`
+
+**Your Task:**
+Write \`makeMultiplier(factor)\` that returns a function. The returned function takes a \`number\` and returns \`number * factor\`. Create \`const double = makeMultiplier(2)\` and log \`double(5)\`.`,
+        task: 'Write makeMultiplier(factor) that returns a function multiplying by factor. Test with double(5).',
+        initial_code: `// Write your closure here
+
+const double = makeMultiplier(2);
+console.log(double(5)); // Should print 10`,
+        test_cases: {
+          solution: `function makeMultiplier(factor) {\n  return function(number) {\n    return number * factor;\n  };\n}\n\nconst double = makeMultiplier(2);\nconsole.log(double(5));`,
+          force_ai: true
+        }
+      }
+    ]
+  },
+  {
+    id: 'array-methods',
+    title: 'Array Methods',
+    level: 'pro',
+    language: 'javascript',
+    description: 'Unlock the full power of JavaScript arrays with map, filter, and reduce — the three functional programming tools that replace 90% of all loops.',
+    exercises: [
+      {
+        id: 'arr_1_1',
+        title: 'Array.map()',
+        instruction: `
+### What is .map()?
+
+\`.map()\` transforms every item in an array into a new item, returning a **brand new array** of the same length. The original array is never modified.
+
+\`\`\`javascript
+const numbers = [1, 2, 3];
+const doubled = numbers.map(function(num) {
+  return num * 2;
+});
+console.log(doubled); // [2, 4, 6]
+console.log(numbers); // [1, 2, 3] — unchanged
+\`\`\`
+
+### Arrow Function Version
+
+\`\`\`javascript
+const doubled = numbers.map(num => num * 2);
+\`\`\`
+
+### When to Use .map()
+
+Use \`.map()\` when you want to **transform** every item. The output always has the same number of items as the input.
+
+| Method | Purpose | Output length |
+|---|---|---|
+| \`.map()\` | Transform items | Same as input |
+| \`.filter()\` | Remove items | ≤ input length |
+| \`.reduce()\` | Combine to one value | Single value |
+
+### ⚠️ Common Mistake
+
+Forgetting \`return\` in the callback:
+\`\`\`javascript
+const result = numbers.map(function(num) {
+  num * 2;  // ❌ No return — every item becomes undefined!
+  return num * 2; // ✅
+});
+\`\`\`
+
+**Your Task:**
+Given the \`prices\` array, use \`.map()\` to create \`discounted\` — every price multiplied by \`0.9\` (10% off). Log \`discounted\`.`,
+        task: 'Use .map() on prices array to create discounted (×0.9). Log it.',
+        initial_code: `const prices = [100, 200, 300, 400, 500];
+
+// Create discounted array using .map()
+const discounted = prices.map(/* your callback here */);
+
+console.log(discounted);`,
+        test_cases: {
+          solution: `const prices = [100, 200, 300, 400, 500];\n\nconst discounted = prices.map(function(price) {\n  return price * 0.9;\n});\n\nconsole.log(discounted);`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'arr_1_2',
+        title: 'Array.filter()',
+        instruction: `
+### What is .filter()?
+
+\`.filter()\` creates a new array with only the items where the callback returns \`true\`. Items returning \`false\` are removed.
+
+\`\`\`javascript
+const ages = [12, 18, 25, 14, 30];
+const adults = ages.filter(function(age) {
+  return age >= 18;
+});
+console.log(adults); // [18, 25, 30]
+\`\`\`
+
+### The Callback Must Return a Boolean
+
+- Return \`true\` → keep the item
+- Return \`false\` → discard the item
+
+### Chaining with .map()
+
+These methods can be combined:
+\`\`\`javascript
+const expensiveDiscounted = prices
+  .filter(p => p > 100)    // only expensive items
+  .map(p => p * 0.9);      // apply discount
+\`\`\`
+
+### ⚠️ Common Mistakes
+
+\`\`\`javascript
+// Returning the value instead of a condition (truthy values still "pass"):
+ages.filter(age => age); // ❌ Keeps all non-zero ages, not just adults
+
+// Mutating inside .filter() (don't do this):
+ages.filter(age => { ages.push(99); return age >= 18; }); // ❌
+\`\`\`
+
+**Your Task:**
+Given the \`words\` array, use \`.filter()\` to create \`longWords\` — only words with \`length\` greater than 4. Log \`longWords\`.`,
+        task: 'Use .filter() on words to create longWords (length > 4). Log it.',
+        initial_code: `const words = ['cat', 'elephant', 'dog', 'javascript', 'sun', 'moon'];
+
+// Filter words longer than 4 characters
+const longWords = words.filter(/* your callback here */);
+
+console.log(longWords);`,
+        test_cases: {
+          solution: `const words = ['cat', 'elephant', 'dog', 'javascript', 'sun', 'moon'];\n\nconst longWords = words.filter(function(word) {\n  return word.length > 4;\n});\n\nconsole.log(longWords);`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'arr_1_3',
+        title: 'Array.reduce()',
+        instruction: `
+### What is .reduce()?
+
+\`.reduce()\` processes every item in an array and combines them into a **single value** using an accumulator.
+
+\`\`\`javascript
+const scores = [10, 20, 30];
+const total = scores.reduce(function(acc, score) {
+  return acc + score;
+}, 0);
+console.log(total); // 60
+\`\`\`
+
+### The Two Arguments
+
+\`.reduce(callback, initialValue)\`
+
+The callback receives:
+1. \`acc\` — the running total (starts as \`initialValue\`)
+2. \`current\` — the current array item
+
+### Trace Through the Example
+
+| Step | acc | score | returns |
+|---|---|---|---|
+| 1 | 0 | 10 | 10 |
+| 2 | 10 | 20 | 30 |
+| 3 | 30 | 30 | 60 |
+
+### Beyond Summing
+
+\`.reduce()\` can build any type of result:
+\`\`\`javascript
+// Count occurrences
+['a','b','a','c','a'].reduce((acc, x) => {
+  acc[x] = (acc[x] || 0) + 1; return acc;
+}, {}); // { a:3, b:1, c:1 }
+\`\`\`
+
+### ⚠️ Common Mistake
+
+Forgetting the initial value:
+\`\`\`javascript
+[].reduce((a, b) => a + b);        // ❌ TypeError on empty arrays
+[].reduce((a, b) => a + b, 0);     // ✅ Always provide initial value
+\`\`\`
+
+**Your Task:**
+Use \`.reduce()\` on the \`scores\` array to calculate the total sum, starting from \`0\`. Log \`sum\`.`,
+        task: 'Use .reduce() on scores to sum all values starting from 0. Log sum.',
+        initial_code: `const scores = [85, 90, 78, 92, 88];
+
+// Calculate the total sum using .reduce()
+const sum = scores.reduce(/* your callback and initial value here */);
+
+console.log(sum);`,
+        test_cases: {
+          solution: `const scores = [85, 90, 78, 92, 88];\n\nconst sum = scores.reduce(function(total, score) {\n  return total + score;\n}, 0);\n\nconsole.log(sum);`,
+          force_ai: true
+        }
+      }
+    ]
+  },
+  {
+    id: 'oop-basics',
+    title: 'OOP & Classes',
+    level: 'pro',
+    language: 'javascript',
+    description: 'Model real-world entities with JavaScript classes — write structured, reusable, and maintainable code using Object-Oriented Programming principles.',
+    exercises: [
+      {
+        id: 'oop_1_1',
+        title: 'Classes & Constructors',
+        instruction: `
+### What is a Class?
+
+A class is a **blueprint** for creating objects. All instances share the same structure (properties and methods) but have their own data.
+
+\`\`\`javascript
+class Animal {
+  constructor(name, sound) {
+    this.name = name;
+    this.sound = sound;
+  }
+
+  speak() {
+    return this.name + ' says ' + this.sound;
+  }
+}
+
+const dog = new Animal('Rex', 'Woof');
+console.log(dog.speak()); // Rex says Woof
+\`\`\`
+
+### Anatomy of a Class
+
+| Part | Purpose |
+|---|---|
+| \`class Name\` | Declares the class |
+| \`constructor()\` | Runs when \`new\` is called — sets up initial data |
+| \`this.prop\` | Stores data on the instance |
+| Method | A function shared by all instances |
+
+### Creating Instances
+
+\`\`\`javascript
+const cat = new Animal('Whiskers', 'Meow');
+const bird = new Animal('Tweety', 'Tweet');
+\`\`\`
+
+Each instance has its own \`name\` and \`sound\`, but shares the \`speak()\` method.
+
+### ⚠️ Common Mistakes
+
+\`\`\`javascript
+Animal('Rex', 'Woof');      // ❌ Missing \`new\` — \`this\` is undefined
+new Animal('Rex', 'Woof');  // ✅
+
+// Using arrow functions as methods (breaks \`this\`):
+class Bad {
+  describe = () => this.name; // ⚠️ Works but not class prototype — avoid
+  describe() { return this.name; } // ✅ Standard method syntax
+}
+\`\`\`
+
+**Your Task:**
+Create a class \`Car\` with \`constructor(brand, speed)\`. Add a method \`describe()\` returning \`"[brand] goes [speed]km/h"\`. Instantiate with \`new Car('Tesla', 200)\` and log \`describe()\`.`,
+        task: 'Create class Car(brand, speed) with describe() method. Instantiate and log describe().',
+        initial_code: `// Define your Car class here
+
+const myCar = new Car('Tesla', 200);
+console.log(myCar.describe()); // Tesla goes 200km/h`,
+        test_cases: {
+          solution: `class Car {\n  constructor(brand, speed) {\n    this.brand = brand;\n    this.speed = speed;\n  }\n\n  describe() {\n    return this.brand + ' goes ' + this.speed + 'km/h';\n  }\n}\n\nconst myCar = new Car('Tesla', 200);\nconsole.log(myCar.describe());`,
+          force_ai: true
+        }
+      },
+      {
+        id: 'oop_1_2',
+        title: 'Inheritance with extends',
+        instruction: `
+### What is Inheritance?
+
+A child class can **inherit** all properties and methods from a parent class using \`extends\`. It can also add new methods or override existing ones.
+
+\`\`\`javascript
+class Animal {
+  constructor(name) { this.name = name; }
+  speak() { return this.name + ' makes a sound'; }
+}
+
+class Dog extends Animal {
+  constructor(name) {
+    super(name); // MUST call super() first!
+  }
+  speak() {
+    return this.name + ' barks'; // override
+  }
+}
+
+const rex = new Dog('Rex');
+console.log(rex.speak()); // Rex barks
+\`\`\`
+
+### The super() Rule
+
+If a subclass defines a \`constructor\`, it **must** call \`super()\` before accessing \`this\`:
+
+\`\`\`javascript
+constructor(name, breed) {
+  super(name);        // ✅ Initialize parent first
+  this.breed = breed; // ✅ Now safe to use this
+}
+\`\`\`
+
+### Method Resolution Order
+
+When you call \`dog.speak()\`, JavaScript looks:
+1. On the instance itself
+2. On \`Dog.prototype\`
+3. On \`Animal.prototype\`
+
+### ⚠️ Common Mistakes
+
+\`\`\`javascript
+// Forgetting super() in subclass constructor:
+class Dog extends Animal {
+  constructor(name) {
+    this.name = name; // ❌ ReferenceError: Must call super() first
+    super(name);
+  }
+}
+
+// Not calling super() at all:
+class Dog extends Animal {
+  constructor(name) { /* no super */ } // ❌ ReferenceError
+}
+\`\`\`
+
+**Your Task:**
+Create a \`Vehicle\` class with \`constructor(type)\` and \`describe()\` returning \`"Vehicle type: [type]"\`. Create \`Truck extends Vehicle\` with \`constructor(payload)\` calling \`super('Truck')\`, and \`info()\` returning \`"Truck with [payload]t payload"\`. Log both methods.`,
+        task: 'Create Vehicle and Truck (extends Vehicle) classes. Instantiate Truck and log describe() and info().',
+        initial_code: `// Define Vehicle class here
+
+// Define Truck class that extends Vehicle here
+
+const t = new Truck(5);
+console.log(t.describe()); // Vehicle type: Truck
+console.log(t.info());     // Truck with 5t payload`,
+        test_cases: {
+          solution: `class Vehicle {\n  constructor(type) {\n    this.type = type;\n  }\n  describe() {\n    return 'Vehicle type: ' + this.type;\n  }\n}\n\nclass Truck extends Vehicle {\n  constructor(payload) {\n    super('Truck');\n    this.payload = payload;\n  }\n  info() {\n    return 'Truck with ' + this.payload + 't payload';\n  }\n}\n\nconst t = new Truck(5);\nconsole.log(t.describe());\nconsole.log(t.info());`,
+          force_ai: true
+        }
+      }
+    ]
   }
 ];
 
